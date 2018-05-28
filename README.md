@@ -1,0 +1,3 @@
+# Metaproteomics database creation
+
+This project describes the methodology that will focus on the three strategies (metagenome, non-assembled metagenome and taxonomy-based) that has been used for database creation and the quality of the analyses in terms of coverage, number of protein identified and structural and functional diversity (quantitatively only) obtained (e.g. how many different function we obtain with the three database).
