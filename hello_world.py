@@ -1,11 +1,6 @@
 #!/usr/bin/env python
 
-import argparse
+from obtain_sequences import use_amplicon
 
-parser = argparse.ArgumentParser()
-parser.add_argument("-s", "--sunshine", action="store_true",
-                    dest = "sunshine", default=False)
-arguments = parser.parse_args()
-
-if arguments.sunshine:
-    print("hello sunshine")
+res = use_amplicon.get_taxid(input_file="data/genus_list.txt")
+print(res)
