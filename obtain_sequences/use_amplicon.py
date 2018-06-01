@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
-from ete3 import NCBITaxa
 import os
 import urllib.parse
 import urllib.request
+from ete3 import NCBITaxa
 
 
 def get_taxid(input_file):
@@ -53,7 +53,7 @@ def get_protein_sequences(tax_list, output_folder, reviewed=False):
     """
 
     for taxid in tax_list:
-        filename = output_folder + str(taxid) + ".fasta"
+        filename = output_folder + "/" + str(taxid) + ".fasta"
 
         taxon_queries = ['taxonomy:"%s"' % tid for tid in [taxid]]
         taxon_query = ' OR '.join(taxon_queries)
