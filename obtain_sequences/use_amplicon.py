@@ -32,3 +32,21 @@ def get_taxid(input_file):
     tax_list = list(set(tax_list))
 
     return tax_list
+
+
+# import urllib.parse, urllib.request
+#
+# taxids = set(["146825"])
+# taxon_queries = ['taxonomy:"%s"' % taxid for taxid in taxids]
+# taxon_query = ' OR '.join(taxon_queries)
+# # reviewed = True
+# reviewed = False
+# rev = " reviewed:%s" % reviewed if reviewed else ''
+# url = 'http://www.uniprot.org/uniprot/'
+# query = "%s%s" % (taxon_query, rev)
+# params = {'query': query, 'force': 'yes', 'format': 'fasta'}
+# data = urllib.urlencode(params)
+# (fname, msg) = urllib.urlretrieve(url=url, filename="/tmp/out.fasta", data=data)
+# headers = {j[0]: j[1].strip() for j in [i.split(':', 1) for i in str(msg).strip().splitlines()]}
+# if 'Content-Length' in headers and headers['Content-Length'] == 0:
+#     pass
