@@ -5,6 +5,8 @@ import urllib.parse
 import urllib.request
 from ete3 import NCBITaxa
 
+ncbi = NCBITaxa()
+
 
 def get_taxid(input_file):
     """
@@ -20,7 +22,6 @@ def get_taxid(input_file):
       tax_list: unique list with tax IDs
     """
 
-    ncbi = NCBITaxa()
     names_list = []
     tax_list = []
 
@@ -49,7 +50,7 @@ def get_protein_sequences(tax_list, output_folder, reviewed=False):
       reviewed: use TrEMBL (False) or SwissProt (True)
 
     Returns:
-      taxon_list: unique list with taxon IDs
+      None
     """
 
     for taxid in tax_list:
@@ -64,10 +65,61 @@ def get_protein_sequences(tax_list, output_folder, reviewed=False):
         params = {'query': query, 'force': 'yes', 'format': 'fasta'}
         data = urllib.parse.urlencode(params).encode("utf-8")
         print(taxid)
-        (fname, msg) = urllib.request.urlretrieve(url=url, filename=filename, data=data)
-        headers = {j[0]: j[1].strip() for j in [i.split(':', 1) for i in str(msg).strip().splitlines()]}
+        (fname, msg) = urllib.request.urlretrieve(url=url,
+                                                  filename=filename, data=data)
+        headers = {j[0]: j[1].strip()
+            for j in [i.split(':', 1) for i in str(msg).strip().splitlines()]}
 
         if 'Content-Length' in headers and headers['Content-Length'] == 0:
             os.remove(filename)
 
     return
+
+
+
+# import re
+#
+# def get_desired_ranks(taxid):
+#     """Get taxonomic rest on taxid for desired ranks."""
+#     if taxid == -1:
+#         return {"superkingdom": -1, "phylum": -1, "class": -1, "order": -1, "family": -1, "genus": -1, "species": -1}
+#     lineage = ncbi.get_lineage(taxid)
+#     lineage2ranks = ncbi.get_rank(lineage)
+#     ranks2lineage = dict((rank, taxid) for (taxid, rank) in lineage2ranks.items())
+#     for item in list(ranks2lineage):
+#         for taxrank in ["superkingdom", "phylum", "class", "order", "family", "genus", "species"]:
+#             if taxrank not in ranks2lineage:
+#                 ranks2lineage[taxrank] = -1
+#     return ranks2lineage
+#
+# ncbi = NCBITaxa()
+#
+# ncbi_tax_dict = {}
+# ncbi_tax_dict[-1] = -1
+# with open("names.dmp") as f:
+#     for line in f:
+#         curr_line = re.split(r"\t*\|\t*", line.rstrip())
+#         if curr_line[-2] == "scientific name":
+#             ncbi_tax_dict[int(curr_line[0])] = curr_line[1]
+#
+# os.chdir("/data/projects/Stirling/Metaproteomics_Day_Night_Cycle/build_proteomic_database/proteome_data")
+# for fileold in os.listdir("."):
+#     rx_match = re.search(r"^(\d+)\.faa$", fileold)
+#     if rx_match:
+#         # print(file)
+#         taxid = rx_match.group(1)
+#
+#         res = []
+#         for rank in ["superkingdom", "phylum", "class", "order", "family", "genus"]:
+#             res.append(str(ncbi_tax_dict[get_desired_ranks(taxid)[rank]]))
+#
+#         print(fileold)
+#         header_extension = ", ".join(res)
+#         filenewname = fileold.replace(".faa", "_headerext.faa")
+#
+#         filenew = open(filenewname, "w")
+#         for line in open(fileold, "r"):
+#             if line.startswith(">"):
+#                 filenew.write(line.rstrip() + " TAX=" + header_extension + "\n")
+#             else:
+#                 filenew.write(line)
