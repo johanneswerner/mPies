@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 import os
+import re
+import sys
 import urllib.parse
 import urllib.request
 from ete3 import NCBITaxa
@@ -54,6 +56,7 @@ def get_protein_sequences(tax_list, output_folder, reviewed=False):
     """
 
     for taxid in tax_list:
+        # TODO: use os module to concatenate folder and filename
         filename = output_folder + "/" + str(taxid) + ".fasta"
 
         taxon_queries = ['taxonomy:"%s"' % tid for tid in [taxid]]
@@ -68,10 +71,68 @@ def get_protein_sequences(tax_list, output_folder, reviewed=False):
         (fname, msg) = urllib.request.urlretrieve(url=url,
                                                   filename=filename, data=data)
         headers = {j[0]: j[1].strip()
-            for j in [i.split(':', 1) for i in str(msg).strip().splitlines()]}
+                   for j in [i.split(':', 1)
+                             for i in str(msg).strip().splitlines()]}
 
         if 'Content-Length' in headers and headers['Content-Length'] == 0:
             os.remove(filename)
+
+        # TODO: @kerssema Can I call the function from here or would it be
+        # nicer to call this in the main loop with a for loop over the
+        # directory?
+        # transform multiline sequences into singelline sequences
+        remove_linebreaks_from_fasta(filename, remove_backup=True)
+
+    return
+
+
+def remove_linebreaks_from_fasta(fasta_file, remove_backup=True):
+    """
+    The function removes all line breaks within sequences.
+
+    The function `remove_linebreaks_from_fasta` reads a fasta file and removes
+    all linebreaks from the sequences. The resulting fasta file is saved as the
+    same name as the previous one (the old file gets backed up and deleted -
+    this can be adjusted with a parameter).
+
+    Parameters:
+      fasta_file: input fasta file (multiline sequence)
+      remove_backup: remove backup of old file (True)
+
+    Returns:
+      None
+    """
+    try:
+        with open(fasta_file, "r") as newFile:
+            sequences = newFile.read()
+            sequences = re.split("^>", sequences, flags=re.MULTILINE)
+            del sequences[0]
+    except IOError:
+        print("Failed to open " + fasta_file)
+        # TODO: set correct error code
+        sys.exit(1)
+
+    # TODO: check permission
+    inFile_backup = fasta_file + ".bak"
+    os.rename(fasta_file, inFile_backup)
+
+    try:
+        with open(fasta_file, "w") as newFasta:
+            for fasta in sequences:
+                try:
+                    header, sequence = fasta.split("\n", 1)
+                except ValueError:
+                    print(fasta)
+                header = ">" + header + "\n"
+                sequence = sequence.replace("\n", "") + "\n"
+                newFasta.write(header + sequence)
+    except IOError:
+        print("Failed to open " + fasta_file)
+        sys.exit(2)
+
+    # TODO: set correct error code
+    if remove_backup:
+        os.remove(inFile_backup)
 
     return
 
