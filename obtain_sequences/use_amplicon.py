@@ -10,6 +10,36 @@ from ete3 import NCBITaxa
 ncbi = NCBITaxa()
 
 
+def get_desired_ranks(taxid):
+    """
+    Get taxonomic lineage on taxid for desired ranks.
+
+    The function get_desired_ranks uses a taxid as input and returns a dict
+    of ranks (superkingdom, phylum, class, order, family, genus, species) as
+    keys and corresponding taxIDs as values.
+
+    Parameters:
+      taxid: TaxID (-1 represents unclassified)
+
+    Returns:
+      ranks2lineage: dict with ranks as keys and taxIDs as values
+    """
+
+    if taxid == -1:
+        return {"superkingdom": -1, "phylum": -1, "class": -1, "order": -1,
+                "family": -1, "genus": -1, "species": -1}
+    lineage = ncbi.get_lineage(taxid)
+    lineage2ranks = ncbi.get_rank(lineage)
+    ranks2lineage = dict((rank, taxid)
+                         for (taxid, rank) in lineage2ranks.items())
+    for item in list(ranks2lineage):
+        for taxrank in ["superkingdom", "phylum", "class", "order",
+                        "family", "genus", "species"]:
+            if taxrank not in ranks2lineage:
+                ranks2lineage[taxrank] = -1
+    return ranks2lineage
+
+
 def get_taxid(input_file):
     """
     The function `get_taxid` returns a list of tax IDs based on tax names.
@@ -49,6 +79,7 @@ def get_protein_sequences(tax_list, output_folder, reviewed=False):
 
     Parameters:
       tax_list: unique list with tax IDs
+      output_folder: output folder for the downloaded protein sequences
       reviewed: use TrEMBL (False) or SwissProt (True)
 
     Returns:
@@ -81,6 +112,7 @@ def get_protein_sequences(tax_list, output_folder, reviewed=False):
         # nicer to call this in the main loop with a for loop over the
         # directory?
         # transform multiline sequences into singelline sequences
+
         remove_linebreaks_from_fasta(filename, remove_backup=True)
 
     return
@@ -137,23 +169,8 @@ def remove_linebreaks_from_fasta(fasta_file, remove_backup=True):
     return
 
 
-
 # import re
 #
-# def get_desired_ranks(taxid):
-#     """Get taxonomic rest on taxid for desired ranks."""
-#     if taxid == -1:
-#         return {"superkingdom": -1, "phylum": -1, "class": -1, "order": -1, "family": -1, "genus": -1, "species": -1}
-#     lineage = ncbi.get_lineage(taxid)
-#     lineage2ranks = ncbi.get_rank(lineage)
-#     ranks2lineage = dict((rank, taxid) for (taxid, rank) in lineage2ranks.items())
-#     for item in list(ranks2lineage):
-#         for taxrank in ["superkingdom", "phylum", "class", "order", "family", "genus", "species"]:
-#             if taxrank not in ranks2lineage:
-#                 ranks2lineage[taxrank] = -1
-#     return ranks2lineage
-#
-# ncbi = NCBITaxa()
 #
 # ncbi_tax_dict = {}
 # ncbi_tax_dict[-1] = -1
