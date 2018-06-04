@@ -3,13 +3,13 @@
 import os
 import re
 import sys
+import tarfile
 import urllib.parse
 import urllib.request
 from ete3 import NCBITaxa
 
 ncbi = NCBITaxa()
 
-# TODO: get names.dmp
 # TODO: create tax dict
 # ncbi_tax_dict = {}
 # ncbi_tax_dict[-1] = -1
@@ -179,6 +179,38 @@ def remove_linebreaks_from_fasta(fasta_file, remove_backup=True):
     # TODO: set correct error code
     if remove_backup:
         os.remove(inFile_backup)
+
+    return
+
+
+def get_names_dmp(names_dmp=None):
+    """
+    Download names.dmp.
+
+    The function downloades the names.dmp file if not already existing or if the file size is zero.
+
+    Parameter
+    ---------
+      names_dmp: location of names.dmp (default: None)
+
+    Returns
+    -------
+      None
+
+
+    """
+    if names_dmp is not None:
+        if os.stat(names_dmp).st_size == 0:
+            os.remove(names_dmp)
+        else:
+            return
+
+    urllib.request.urlretrieve("ftp://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz",
+                               filename="taxdump.tar.gz")
+    tar = tarfile.open("taxdump.tar.gz")
+    tar.extract("names.dmp")
+    tar.close()
+    os.remove("taxdump.tar.gz")
 
     return
 
