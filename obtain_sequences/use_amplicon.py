@@ -9,6 +9,17 @@ from ete3 import NCBITaxa
 
 ncbi = NCBITaxa()
 
+# TODO: get names.dmp
+# TODO: create tax dict
+# ncbi_tax_dict = {}
+# ncbi_tax_dict[-1] = -1
+# with open("names.dmp") as f:
+#     for line in f:
+#         curr_line = re.split(r"\t*\|\t*", line.rstrip())
+#         if curr_line[-2] == "scientific name":
+#             ncbi_tax_dict[int(curr_line[0])] = curr_line[1]
+#
+
 
 def get_desired_ranks(taxid):
     """
@@ -169,17 +180,7 @@ def remove_linebreaks_from_fasta(fasta_file, remove_backup=True):
     return
 
 
-# import re
-#
-#
-# ncbi_tax_dict = {}
-# ncbi_tax_dict[-1] = -1
-# with open("names.dmp") as f:
-#     for line in f:
-#         curr_line = re.split(r"\t*\|\t*", line.rstrip())
-#         if curr_line[-2] == "scientific name":
-#             ncbi_tax_dict[int(curr_line[0])] = curr_line[1]
-#
+# TODO: add taxonomy
 # os.chdir("/data/projects/Stirling/Metaproteomics_Day_Night_Cycle/build_proteomic_database/proteome_data")
 # for fileold in os.listdir("."):
 #     rx_match = re.search(r"^(\d+)\.faa$", fileold)
