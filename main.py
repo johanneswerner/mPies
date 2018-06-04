@@ -4,10 +4,10 @@ import argparse
 from obtain_sequences import use_amplicon
 
 parser = argparse.ArgumentParser()
-parser.add_argument("-g", "--genus_list", action="store",
-                    dest="genus_list", required=True)
-parser.add_argument("-o", "--output_folder", action="store",
-                    dest="output_folder", required=True)
+parser.add_argument("-g", "--genus_list", action="store", dest="genus_list", required=True,
+                    help="list of genera used for amplicon analysis")
+parser.add_argument("-o", "--output_folder", action="store", dest="output_folder", required=True,
+                    help="output folder")
 args = parser.parse_args()
 
 # TODO: exclusive list of arguments for amplicon, assmbled, not-assembled
