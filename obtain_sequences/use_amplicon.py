@@ -25,17 +25,18 @@ def get_desired_ranks(taxid):
     """
     Get taxonomic lineage on taxid for desired ranks.
 
-    The function get_desired_ranks uses a taxid as input and returns a dict
-    of ranks (superkingdom, phylum, class, order, family, genus, species) as
-    keys and corresponding taxIDs as values.
+    The function get_desired_ranks uses a taxid as input and returns a dict of ranks (superkingdom,
+    phylum, class, order, family, genus, species) as keys and corresponding taxIDs as values.
 
-    Parameters:
+    Parameters
+    ----------
       taxid: TaxID (-1 represents unclassified)
 
-    Returns:
+    Returns
+    -------
       ranks2lineage: dict with ranks as keys and taxIDs as values
-    """
 
+    """
     if taxid == -1:
         return {"superkingdom": -1, "phylum": -1, "class": -1, "order": -1,
                 "family": -1, "genus": -1, "species": -1}
@@ -53,18 +54,20 @@ def get_desired_ranks(taxid):
 
 def get_taxid(input_file):
     """
-    The function `get_taxid` returns a list of tax IDs based on tax names.
+    Return a list of tax IDs based on tax names.
 
-    Each line of the input_file has a tax name on each line. The function
-    `get_taxid` returns a list with tax IDs with the same length.
+    Each line of the input_file has a tax name on each line. The function `get_taxid` returns a
+    list with tax IDs with the same length.
 
-    Parameters:
+    Parameters
+    ----------
       input_file: file with tax names on each line
 
-    Returns:
+    Returns
+    -------
       tax_list: unique list with tax IDs
-    """
 
+    """
     names_list = []
     tax_list = []
 
@@ -83,20 +86,22 @@ def get_taxid(input_file):
 
 def get_protein_sequences(tax_list, output_folder, reviewed=False):
     """
-    The function `get_protein_sequences` fetches the proteomes for all tax IDs.
+    Fetch the proteomes for all tax IDs.
 
-    The function takes a list of tax IDs and downloads the protein sequences
-    for the descending organisms.
+    The function takes a list of tax IDs and downloads the protein sequences for the descending
+    organisms.
 
-    Parameters:
+    Parameters
+    ----------
       tax_list: unique list with tax IDs
       output_folder: output folder for the downloaded protein sequences
       reviewed: use TrEMBL (False) or SwissProt (True)
 
-    Returns:
+    Returns
+    -------
       None
-    """
 
+    """
     for taxid in tax_list:
         # TODO: use os module to concatenate folder and filename
         filename = output_folder + "/" + str(taxid) + ".fasta"
@@ -131,19 +136,21 @@ def get_protein_sequences(tax_list, output_folder, reviewed=False):
 
 def remove_linebreaks_from_fasta(fasta_file, remove_backup=True):
     """
-    The function removes all line breaks within sequences.
+    Remove all line breaks within sequences.
 
-    The function `remove_linebreaks_from_fasta` reads a fasta file and removes
-    all linebreaks from the sequences. The resulting fasta file is saved as the
-    same name as the previous one (the old file gets backed up and deleted -
-    this can be adjusted with a parameter).
+    The function `remove_linebreaks_from_fasta` reads a fasta file and removes all linebreaks from
+    the sequences. The resulting fasta file is saved as the same name as the previous one (the old
+    file gets backed up and deleted - this can be adjusted with a parameter).
 
-    Parameters:
+    Parameter
+    ---------
       fasta_file: input fasta file (multiline sequence)
       remove_backup: remove backup of old file (True)
 
-    Returns:
+    Returns
+    -------
       None
+
     """
     try:
         with open(fasta_file, "r") as newFile:
