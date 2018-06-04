@@ -38,15 +38,13 @@ def get_desired_ranks(taxid):
 
     """
     if taxid == -1:
-        return {"superkingdom": -1, "phylum": -1, "class": -1, "order": -1,
-                "family": -1, "genus": -1, "species": -1}
+        return {"superkingdom": -1, "phylum": -1, "class": -1, "order": -1, "family": -1,
+                "genus": -1, "species": -1}
     lineage = ncbi.get_lineage(taxid)
     lineage2ranks = ncbi.get_rank(lineage)
-    ranks2lineage = dict((rank, taxid)
-                         for (taxid, rank) in lineage2ranks.items())
+    ranks2lineage = dict((rank, taxid) for (taxid, rank) in lineage2ranks.items())
     for item in list(ranks2lineage):
-        for taxrank in ["superkingdom", "phylum", "class", "order",
-                        "family", "genus", "species"]:
+        for taxrank in ["superkingdom", "phylum", "class", "order", "family", "genus", "species"]:
             if taxrank not in ranks2lineage:
                 ranks2lineage[taxrank] = -1
     return ranks2lineage
@@ -115,11 +113,9 @@ def get_protein_sequences(tax_list, output_folder, reviewed=False):
         params = {'query': query, 'force': 'yes', 'format': 'fasta'}
         data = urllib.parse.urlencode(params).encode("utf-8")
         print(taxid)
-        (fname, msg) = urllib.request.urlretrieve(url=url,
-                                                  filename=filename, data=data)
-        headers = {j[0]: j[1].strip()
-                   for j in [i.split(':', 1)
-                             for i in str(msg).strip().splitlines()]}
+        (fname, msg) = urllib.request.urlretrieve(url=url, filename=filename, data=data)
+        headers = {j[0]: j[1].strip() for j in [i.split(':', 1)
+                                                for i in str(msg).strip().splitlines()]}
 
         if 'Content-Length' in headers and headers['Content-Length'] == 0:
             os.remove(filename)
