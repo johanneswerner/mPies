@@ -10,16 +10,6 @@ from ete3 import NCBITaxa
 
 ncbi = NCBITaxa()
 
-# TODO: create tax dict
-# ncbi_tax_dict = {}
-# ncbi_tax_dict[-1] = -1
-# with open("names.dmp") as f:
-#     for line in f:
-#         curr_line = re.split(r"\t*\|\t*", line.rstrip())
-#         if curr_line[-2] == "scientific name":
-#             ncbi_tax_dict[int(curr_line[0])] = curr_line[1]
-#
-
 
 def get_desired_ranks(taxid):
     """
@@ -82,7 +72,168 @@ def get_taxid(input_file):
     return tax_list
 
 
-def get_protein_sequences(tax_list, output_folder, reviewed=False):
+def get_names_dmp(names_dmp=None):
+    """
+    Download names.dmp.
+
+    The function downloades the names.dmp file if not already existing or if the file size is zero.
+
+    Parameter
+    ---------
+      names_dmp: location of names.dmp (default: None)
+
+    Returns
+    -------
+      absolute path of file names.dmp
+
+    """
+    if names_dmp is not None:
+        if os.stat(names_dmp).st_size == 0:
+            os.remove(names_dmp)
+        else:
+            return os.path.abspath(names_dmp)
+
+    # TODO: @kerssema: currently it is not solved if the file names.dmp already exists in the
+    # current working directory and is not passed as argument. How to deal with that?
+
+    # TODO: @kerssema: Does this statement belong into a function? Or should I use the logging
+    # module to only print this when debug flag is set?
+    print("Downloading taxdump.tar.gz ...")
+    urllib.request.urlretrieve("ftp://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz",
+                               filename="taxdump.tar.gz")
+    tar = tarfile.open("taxdump.tar.gz")
+    tar.extract("names.dmp")
+    tar.close()
+    os.remove("taxdump.tar.gz")
+
+    return os.path.abspath("names.dmp")
+
+
+def create_tax_dict(abspath_names_dmp):
+    """
+    Create a taxonomy dictionary with taxID as keys and tax names as values.
+
+    The function uses names.dmp to create a tax dictionary to map taxIDs onto tax names.
+
+    Parameter
+    ---------
+      abspath_names_dmp: absolute path of of names.dmp
+
+    Returns
+    -------
+      ncbi_tax_dict: tax dictionary
+
+    """
+    ncbi_tax_dict = {}
+    ncbi_tax_dict[-1] = -1
+    # TODO: @kerssema: same as before? print statement inside function?
+    print("creating tax dictionary ...")
+    with open("names.dmp") as f:
+        for line in f:
+            curr_line = re.split(r"\t*\|\t*", line.rstrip())
+            if curr_line[-2] == "scientific name":
+                ncbi_tax_dict[int(curr_line[0])] = curr_line[1]
+
+    return ncbi_tax_dict
+
+
+def remove_linebreaks_from_fasta(fasta_file, remove_backup=True):
+    """
+    Remove all line breaks within sequences.
+
+    The function `remove_linebreaks_from_fasta` reads a fasta file and removes all linebreaks from
+    the sequences. The resulting fasta file is saved as the same name as the previous one (the old
+    file gets backed up and deleted - this can be adjusted with a parameter).
+
+    Parameter
+    ---------
+      fasta_file: input fasta file (multiline sequence)
+      remove_backup: remove backup of old file (True)
+
+    Returns
+    -------
+      None
+
+    """
+    try:
+        with open(fasta_file, "r") as newFile:
+            sequences = newFile.read()
+            sequences = re.split("^>", sequences, flags=re.MULTILINE)
+            del sequences[0]
+    except IOError:
+        print("Failed to open " + fasta_file)
+        # TODO: set correct error code
+        sys.exit(1)
+
+    # TODO: check permission
+    inFile_backup = fasta_file + ".multiline.bak"
+    os.rename(fasta_file, inFile_backup)
+
+    try:
+        with open(fasta_file, "w") as newFasta:
+            for fasta in sequences:
+                try:
+                    header, sequence = fasta.split("\n", 1)
+                except ValueError:
+                    print(fasta)
+                header = ">" + header + "\n"
+                sequence = sequence.replace("\n", "") + "\n"
+                newFasta.write(header + sequence)
+    except IOError:
+        print("Failed to open " + fasta_file)
+        sys.exit(2)
+
+    # TODO: set correct error code
+    if remove_backup:
+        os.remove(inFile_backup)
+
+    return
+
+
+def add_taxonomy_to_fasta(fasta_file, ncbi_tax_dict, remove_backup=True):
+    """
+    Add taxonomy to headers.
+
+    The function adds the complete taxonomic lineage to the fasta header (superkingdom, phylum,
+    class, order, family, genus). The resulting fasta file is saved as the same name as the
+    previous one (the old file gets backed up and deleted - this can be adjusted with a parameter).
+
+    Parameter
+    ---------
+      fasta_file: input fasta file
+      remove_backup: remove backup of old file (True)
+
+    Returns
+    -------
+      None
+
+    """
+    rx_match = re.search(r"(\d+)\.fasta$", fasta_file)
+    if rx_match:
+        taxid = rx_match.group(1)
+
+        res = []
+        for rank in ["superkingdom", "phylum", "class", "order", "family", "genus"]:
+            res.append(str(ncbi_tax_dict[get_desired_ranks(taxid)[rank]]))
+
+        header_extension = ", ".join(res)
+
+        inFile_backup = fasta_file + ".notax.bak"
+        os.rename(fasta_file, inFile_backup)
+
+        output_file = open(fasta_file, "w")
+        for line in open(inFile_backup, "r"):
+            if line.startswith(">"):
+                output_file.write(line.rstrip() + " TAX=" + header_extension + "\n")
+            else:
+                output_file.write(line)
+
+        if remove_backup:
+            os.remove(inFile_backup)
+
+
+def get_protein_sequences(tax_list, output_folder, ncbi_tax_dict, reviewed=False,
+                          taxonomy_switch=True, remove_backup=True):
     """
     Fetch the proteomes for all tax IDs.
 
@@ -125,115 +276,8 @@ def get_protein_sequences(tax_list, output_folder, reviewed=False):
         # directory?
         # transform multiline sequences into singelline sequences
 
-        remove_linebreaks_from_fasta(filename, remove_backup=True)
+        remove_linebreaks_from_fasta(filename, remove_backup)
+        if taxonomy_switch:
+            add_taxonomy_to_fasta(filename, ncbi_tax_dict, remove_backup)
 
     return
-
-
-def remove_linebreaks_from_fasta(fasta_file, remove_backup=True):
-    """
-    Remove all line breaks within sequences.
-
-    The function `remove_linebreaks_from_fasta` reads a fasta file and removes all linebreaks from
-    the sequences. The resulting fasta file is saved as the same name as the previous one (the old
-    file gets backed up and deleted - this can be adjusted with a parameter).
-
-    Parameter
-    ---------
-      fasta_file: input fasta file (multiline sequence)
-      remove_backup: remove backup of old file (True)
-
-    Returns
-    -------
-      None
-
-    """
-    try:
-        with open(fasta_file, "r") as newFile:
-            sequences = newFile.read()
-            sequences = re.split("^>", sequences, flags=re.MULTILINE)
-            del sequences[0]
-    except IOError:
-        print("Failed to open " + fasta_file)
-        # TODO: set correct error code
-        sys.exit(1)
-
-    # TODO: check permission
-    inFile_backup = fasta_file + ".bak"
-    os.rename(fasta_file, inFile_backup)
-
-    try:
-        with open(fasta_file, "w") as newFasta:
-            for fasta in sequences:
-                try:
-                    header, sequence = fasta.split("\n", 1)
-                except ValueError:
-                    print(fasta)
-                header = ">" + header + "\n"
-                sequence = sequence.replace("\n", "") + "\n"
-                newFasta.write(header + sequence)
-    except IOError:
-        print("Failed to open " + fasta_file)
-        sys.exit(2)
-
-    # TODO: set correct error code
-    if remove_backup:
-        os.remove(inFile_backup)
-
-    return
-
-
-def get_names_dmp(names_dmp=None):
-    """
-    Download names.dmp.
-
-    The function downloades the names.dmp file if not already existing or if the file size is zero.
-
-    Parameter
-    ---------
-      names_dmp: location of names.dmp (default: None)
-
-    Returns
-    -------
-      None
-
-
-    """
-    if names_dmp is not None:
-        if os.stat(names_dmp).st_size == 0:
-            os.remove(names_dmp)
-        else:
-            return
-
-    urllib.request.urlretrieve("ftp://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz",
-                               filename="taxdump.tar.gz")
-    tar = tarfile.open("taxdump.tar.gz")
-    tar.extract("names.dmp")
-    tar.close()
-    os.remove("taxdump.tar.gz")
-
-    return
-
-
-# TODO: add taxonomy
-# os.chdir("/data/projects/Stirling/Metaproteomics_Day_Night_Cycle/build_proteomic_database/proteome_data")
-# for fileold in os.listdir("."):
-#     rx_match = re.search(r"^(\d+)\.faa$", fileold)
-#     if rx_match:
-#         # print(file)
-#         taxid = rx_match.group(1)
-#
-#         res = []
-#         for rank in ["superkingdom", "phylum", "class", "order", "family", "genus"]:
-#             res.append(str(ncbi_tax_dict[get_desired_ranks(taxid)[rank]]))
-#
-#         print(fileold)
-#         header_extension = ", ".join(res)
-#         filenewname = fileold.replace(".faa", "_headerext.faa")
-#
-#         filenew = open(filenewname, "w")
-#         for line in open(fileold, "r"):
-#             if line.startswith(">"):
-#                 filenew.write(line.rstrip() + " TAX=" + header_extension + "\n")
-#             else:
-#                 filenew.write(line)
