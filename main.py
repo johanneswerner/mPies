@@ -22,8 +22,6 @@ parser.add_argument("-o", "--output_folder", action="store", dest="output_folder
                     help="output folder")
 args = parser.parse_args()
 
-# TODO: exclusive list of arguments for amplicon, assmbled, not-assembled
-
 # run amplicon analysis
 if args.mode == "amplicon":
     abspath_names_dmp = use_amplicon.get_names_dmp(names_dmp=args.names_dmp)
