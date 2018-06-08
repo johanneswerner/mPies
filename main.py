@@ -29,7 +29,7 @@ if args.mode == "amplicon":
     taxids = use_amplicon.get_taxid(input_file=args.genus_list)
     use_amplicon.get_protein_sequences(tax_list=taxids, output_folder=args.output_folder,
                                        ncbi_tax_dict=tax_dict, reviewed=args.reviewed,
-                                       taxonomy_switch=args.taxonomy,
+                                       add_taxonomy=args.taxonomy,
                                        remove_backup=args.remove_backup)
 
 # run assembled metagenome analysis

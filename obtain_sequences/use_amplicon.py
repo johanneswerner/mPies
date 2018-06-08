@@ -1,5 +1,14 @@
 #!/usr/bin/env python
 
+"""
+Get the protein sequences for a list of genera.
+
+The module uses a text file with a number of TaxIDs to download the protein sequences belonging to
+the respective genera. The file `names.dmp` will be downloaded if it does not exist yet from the
+NCBI FTP server. This file will be used to add the taxonomic lineage to the protein header.
+Eventually, all protein sequences will be combined into one file.
+"""
+
 import os
 import re
 import sys
@@ -8,7 +17,7 @@ import urllib.parse
 import urllib.request
 from ete3 import NCBITaxa
 
-ncbi = NCBITaxa()
+NCBI = NCBITaxa()
 
 
 def get_desired_ranks(taxid):
@@ -29,14 +38,13 @@ def get_desired_ranks(taxid):
     """
     if taxid == -1:
         return {"superkingdom": -1, "phylum": -1, "class": -1, "order": -1, "family": -1,
-                "genus": -1, "species": -1}
-    lineage = ncbi.get_lineage(taxid)
-    lineage2ranks = ncbi.get_rank(lineage)
+                "genus": -1}
+    lineage = NCBI.get_lineage(taxid)
+    lineage2ranks = NCBI.get_rank(lineage)
     ranks2lineage = dict((rank, taxid) for (taxid, rank) in lineage2ranks.items())
-    for item in list(ranks2lineage):
-        for taxrank in ["superkingdom", "phylum", "class", "order", "family", "genus", "species"]:
-            if taxrank not in ranks2lineage:
-                ranks2lineage[taxrank] = -1
+    for taxrank in ["superkingdom", "phylum", "class", "order", "family", "genus"]:
+        if taxrank not in ranks2lineage:
+            ranks2lineage[taxrank] = -1
     return ranks2lineage
 
 
@@ -59,11 +67,11 @@ def get_taxid(input_file):
     names_list = []
     tax_list = []
 
-    with open(input_file) as f:
-        for line in f:
+    with open(input_file) as input_file_open:
+        for line in input_file_open:
             names_list.append(line.rstrip())
 
-    tax_dict = ncbi.get_name_translator(names_list)
+    tax_dict = NCBI.get_name_translator(names_list)
     for key in tax_dict:
         tax_list.append(tax_dict[key][0])
 
@@ -92,9 +100,13 @@ def get_names_dmp(names_dmp=None):
             os.remove(names_dmp)
         else:
             return os.path.abspath(names_dmp)
-
-    # TODO: @kerssema: currently it is not solved if the file names.dmp already exists in the
-    # current working directory and is not passed as argument. How to deal with that?
+    else:
+        names_dmp = "names.dmp"
+        if os.path.isfile("names.dmp"):
+            if os.stat(names_dmp).st_size != 0:
+                return os.path.abspath(names_dmp)
+            else:
+                os.remove(names_dmp)
 
     # TODO: @kerssema: Does this statement belong into a function? Or should I use the logging
     # module to only print this when debug flag is set?
@@ -128,8 +140,8 @@ def create_tax_dict(abspath_names_dmp):
     ncbi_tax_dict[-1] = -1
     # TODO: @kerssema: same as before? print statement inside function?
     print("creating tax dictionary ...")
-    with open("names.dmp") as f:
-        for line in f:
+    with open(abspath_names_dmp) as names_dmp_open:
+        for line in names_dmp_open:
             curr_line = re.split(r"\t*\|\t*", line.rstrip())
             if curr_line[-2] == "scientific name":
                 ncbi_tax_dict[int(curr_line[0])] = curr_line[1]
@@ -156,8 +168,8 @@ def remove_linebreaks_from_fasta(fasta_file, remove_backup=True):
 
     """
     try:
-        with open(fasta_file, "r") as newFile:
-            sequences = newFile.read()
+        with open(fasta_file, "r") as fasta_file_open:
+            sequences = fasta_file_open.read()
             sequences = re.split("^>", sequences, flags=re.MULTILINE)
             del sequences[0]
     except IOError:
@@ -166,11 +178,11 @@ def remove_linebreaks_from_fasta(fasta_file, remove_backup=True):
         sys.exit(1)
 
     # TODO: check permission
-    inFile_backup = fasta_file + ".multiline.bak"
-    os.rename(fasta_file, inFile_backup)
+    fasta_file_backup = fasta_file + ".multiline.bak"
+    os.rename(fasta_file, fasta_file_backup)
 
     try:
-        with open(fasta_file, "w") as newFasta:
+        with open(fasta_file, "w") as fasta_file_sl:
             for fasta in sequences:
                 try:
                     header, sequence = fasta.split("\n", 1)
@@ -178,14 +190,14 @@ def remove_linebreaks_from_fasta(fasta_file, remove_backup=True):
                     print(fasta)
                 header = ">" + header + "\n"
                 sequence = sequence.replace("\n", "") + "\n"
-                newFasta.write(header + sequence)
+                fasta_file_sl.write(header + sequence)
     except IOError:
         print("Failed to open " + fasta_file)
         sys.exit(2)
 
     # TODO: set correct error code
     if remove_backup:
-        os.remove(inFile_backup)
+        os.remove(fasta_file_backup)
 
     return
 
@@ -218,22 +230,24 @@ def add_taxonomy_to_fasta(fasta_file, ncbi_tax_dict, remove_backup=True):
 
         header_extension = ", ".join(res)
 
-        inFile_backup = fasta_file + ".notax.bak"
-        os.rename(fasta_file, inFile_backup)
+        fasta_file_backup = fasta_file + ".notax.bak"
+        os.rename(fasta_file, fasta_file_backup)
 
         output_file = open(fasta_file, "w")
-        for line in open(inFile_backup, "r"):
+        for line in open(fasta_file_backup, "r"):
             if line.startswith(">"):
                 output_file.write(line.rstrip() + " TAX=" + header_extension + "\n")
             else:
                 output_file.write(line)
 
         if remove_backup:
-            os.remove(inFile_backup)
+            os.remove(fasta_file_backup)
+
+    return None
 
 
 def get_protein_sequences(tax_list, output_folder, ncbi_tax_dict, reviewed=False,
-                          taxonomy_switch=True, remove_backup=True):
+                          add_taxonomy=True, remove_backup=True):
     """
     Fetch the proteomes for all tax IDs.
 
@@ -252,8 +266,7 @@ def get_protein_sequences(tax_list, output_folder, ncbi_tax_dict, reviewed=False
 
     """
     for taxid in tax_list:
-        # TODO: use os module to concatenate folder and filename
-        filename = output_folder + "/" + str(taxid) + ".fasta"
+        filename = os.path.join(output_folder, str(taxid) + ".fasta")
 
         taxon_queries = ['taxonomy:"%s"' % tid for tid in [taxid]]
         taxon_query = ' OR '.join(taxon_queries)
@@ -264,7 +277,7 @@ def get_protein_sequences(tax_list, output_folder, ncbi_tax_dict, reviewed=False
         params = {'query': query, 'force': 'yes', 'format': 'fasta'}
         data = urllib.parse.urlencode(params).encode("utf-8")
         print(taxid)
-        (fname, msg) = urllib.request.urlretrieve(url=url, filename=filename, data=data)
+        msg = urllib.request.urlretrieve(url=url, filename=filename, data=data)[1]
         headers = {j[0]: j[1].strip() for j in [i.split(':', 1)
                                                 for i in str(msg).strip().splitlines()]}
 
@@ -277,7 +290,7 @@ def get_protein_sequences(tax_list, output_folder, ncbi_tax_dict, reviewed=False
         # transform multiline sequences into singelline sequences
 
         remove_linebreaks_from_fasta(filename, remove_backup)
-        if taxonomy_switch:
+        if add_taxonomy:
             add_taxonomy_to_fasta(filename, ncbi_tax_dict, remove_backup)
 
     return
