@@ -35,10 +35,7 @@ if args.mode == "amplicon":
                                        add_taxonomy=args.taxonomy,
                                        remove_backup=args.remove_backup)
 elif args.mode == "assembled":
-    use_assembled.is_fasta(args.metagenome_assembled)
-    print("successfully loaded assembled metagenome file")
-
-# run assembled metagenome analysis
+    fasta_file = use_assembled.is_fasta(args.metagenome_assembled)
 
 # run unassembled metagenome analysis
 

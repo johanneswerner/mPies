@@ -33,4 +33,4 @@ def is_fasta(input_file):
             print(input_file + " is not a valid protein fasta file. Exit code: 3. Exiting ... ")
             sys.exit(3)
         else:
-            return None
+            return fasta
