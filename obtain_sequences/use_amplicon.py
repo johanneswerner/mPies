@@ -294,3 +294,34 @@ def get_protein_sequences(tax_list, output_folder, ncbi_tax_dict, reviewed=False
             add_taxonomy_to_fasta(filename, ncbi_tax_dict, remove_backup)
 
     return
+
+
+def combine_fasta_files(fasta_folder, remove_single_files=True):
+    """
+    Combine all fasta files.
+
+    The function concatenates all fasta files and removes the single files (default, can be set
+    as parameter).
+
+    Parameters
+    ----------
+      fasta_path:
+
+    Returns
+    -------
+      absolute file path
+
+    """
+    print("combining fasta files ...")
+    filenames = os.listdir(fasta_folder)
+    complete_protein_file = os.path.join(fasta_folder, "proteins_amplicon.faa")
+    with open(complete_protein_file, 'w') as outfile:
+        for fname in filenames:
+            current_file = os.path.join(fasta_folder, fname)
+            with open(current_file) as infile:
+                for line in infile:
+                    outfile.write(line)
+            if remove_single_files:
+                os.remove(current_file)
+
+    return complete_protein_file

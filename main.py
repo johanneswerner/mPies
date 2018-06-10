@@ -31,6 +31,7 @@ if args.mode == "amplicon":
                                        ncbi_tax_dict=tax_dict, reviewed=args.reviewed,
                                        add_taxonomy=args.taxonomy,
                                        remove_backup=args.remove_backup)
+    fasta_file = use_amplicon.combine_fasta_files(fasta_folder=args.output_folder,
 
 # run assembled metagenome analysis
 
