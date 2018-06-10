@@ -30,7 +30,7 @@ def is_fasta(input_file):
     with open(input_file, "r") as handle:
         fasta = SeqIO.parse(handle, "fasta", Alphabet.generic_protein)
         if any(fasta) is False:
-            print(input_file + " is not a valid protein fasta file. Exit code: 3. Exiting ... ")
-            sys.exit(3)
+            print(input_file + " is not a valid protein fasta file. Exit code: 4. Exiting ... ")
+            sys.exit(4)
         else:
             return fasta
