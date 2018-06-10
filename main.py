@@ -45,6 +45,8 @@ if args.mode == "amplicon":
 elif args.mode == "assembled":
     fasta_file = use_assembled.is_fasta(args.metagenome_assembled)
 
+print(fasta_file)
+
 # run unassembled metagenome analysis
 
 # remove duplicates

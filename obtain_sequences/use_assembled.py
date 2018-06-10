@@ -6,6 +6,7 @@ Check the input assembled fasta file for valid protein fasta.
 The passed file will be validated if it is a correct protein fasta file.
 """
 
+import os
 import sys
 from Bio import Alphabet
 from Bio import SeqIO
@@ -33,4 +34,4 @@ def is_fasta(input_file):
             print(input_file + " is not a valid protein fasta file. Exit code: 4. Exiting ... ")
             sys.exit(4)
         else:
-            return fasta
+            return os.path.abspath(input_file)
