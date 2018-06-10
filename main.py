@@ -2,6 +2,7 @@
 
 import argparse
 from obtain_sequences import use_amplicon
+import sys
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-m", "--mode", choices=["amplicon", "assembled", "unassembled"], dest="mode",
@@ -22,6 +23,12 @@ parser.add_argument("-o", "--output_folder", action="store", dest="output_folder
                     help="output folder")
 args = parser.parse_args()
 
+
+if os.path.exists(args.output_folder):
+    print("Error. Output folder already exists. Exit code: 1. Exiting ...")
+    sys.exit(1)
+else:
+    os.makedirs(args.output_folder)
 # run amplicon analysis
 if args.mode == "amplicon":
     abspath_names_dmp = use_amplicon.get_names_dmp(names_dmp=args.names_dmp)
@@ -40,3 +47,6 @@ if args.mode == "amplicon":
 # remove duplicates
 
 # hash headers
+
+print("successfully finished script")
+sys.exit(0)

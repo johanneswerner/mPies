@@ -175,7 +175,7 @@ def remove_linebreaks_from_fasta(fasta_file, remove_backup=True):
     except IOError:
         print("Failed to open " + fasta_file)
         # TODO: set correct error code
-        sys.exit(1)
+        sys.exit(2)
 
     # TODO: check permission
     fasta_file_backup = fasta_file + ".multiline.bak"
@@ -193,7 +193,7 @@ def remove_linebreaks_from_fasta(fasta_file, remove_backup=True):
                 fasta_file_sl.write(header + sequence)
     except IOError:
         print("Failed to open " + fasta_file)
-        sys.exit(2)
+        sys.exit(3)
 
     # TODO: set correct error code
     if remove_backup:
@@ -265,6 +265,7 @@ def get_protein_sequences(tax_list, output_folder, ncbi_tax_dict, reviewed=False
       None
 
     """
+    print("fetching protein sequences ...")
     for taxid in tax_list:
         filename = os.path.join(output_folder, str(taxid) + ".fasta")
 
