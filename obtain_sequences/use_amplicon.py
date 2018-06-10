@@ -315,7 +315,7 @@ def combine_fasta_files(fasta_folder, remove_single_files=True):
     """
     print("combining fasta files ...")
     filenames = os.listdir(fasta_folder)
-    complete_protein_file = os.path.join(fasta_folder, "proteins_amplicon.faa")
+    complete_protein_file = os.path.join(os.path.abspath(fasta_folder), "proteins_amplicon.faa")
     with open(complete_protein_file, 'w') as outfile:
         for fname in filenames:
             current_file = os.path.join(fasta_folder, fname)

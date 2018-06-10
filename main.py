@@ -43,6 +43,8 @@ if args.mode == "amplicon":
 
 # run assembled metagenome analysis
 
+print(fasta_file)
+
 # run unassembled metagenome analysis
 
 # remove duplicates
