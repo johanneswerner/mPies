@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
+import os
 import sys
 from obtain_sequences import use_amplicon, use_assembled
 
