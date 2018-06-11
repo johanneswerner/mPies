@@ -306,7 +306,7 @@ def combine_fasta_files(fasta_folder, remove_single_files=True):
 
     Parameters
     ----------
-      fasta_path:
+      fasta_path: absolute path of fasta file
 
     Returns
     -------
