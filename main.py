@@ -10,8 +10,6 @@ parser.add_argument("-m", "--mode", choices=["amplicon", "assembled", "unassembl
                     required=True, help="mode for analysis (amplicon, assembled, unassembled)")
 args = parser.parse_known_args()[0]
 if args.mode == "amplicon":
-    parser.add_argument("-b", "--remove_backup", action="store_false", dest="remove_backup",
-                        required=False, help="remove backup files")
     parser.add_argument("-g", "--genus_list", action="store", dest="genus_list", required=True,
                         help="list of genera used for amplicon analysis")
     parser.add_argument("-n", "--names_dmp", action="store", dest="names_dmp", default=None,
@@ -25,6 +23,8 @@ elif args.mode == "assembled":
                         required=True, help="protein file of assembled metagenome")
 parser.add_argument("-o", "--output_folder", action="store", dest="output_folder", required=True,
                     help="output folder")
+parser.add_argument("-b", "--remove_backup", action="store_false", dest="remove_backup",
+                    required=False, help="remove backup files")
 args = parser.parse_args()
 
 
