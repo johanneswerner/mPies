@@ -3,7 +3,7 @@
 import argparse
 import os
 import sys
-from obtain_sequences import use_amplicon, use_assembled
+from pies import use_amplicon, use_assembled
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-m", "--mode", choices=["amplicon", "assembled", "unassembled"], dest="mode",
