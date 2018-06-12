@@ -25,7 +25,7 @@ args = parser.parse_args()
 # run amplicon analysis
 if args.mode == "amplicon":
     abspath_names_dmp = use_amplicon.get_names_dmp(names_dmp=args.names_dmp)
-    tax_dict = use_amplicon.create_tax_dict(abspath_names_dmp)
+    tax_dict = use_amplicon.create_tax_dict(abspath_names_dmp=abspath_names_dmp)
     taxids = use_amplicon.get_taxid(input_file=args.genus_list)
     use_amplicon.get_protein_sequences(tax_list=taxids, output_folder=args.output_folder,
                                        ncbi_tax_dict=tax_dict, reviewed=args.reviewed,
