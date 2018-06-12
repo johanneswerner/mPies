@@ -43,7 +43,8 @@ if args.mode == "amplicon":
                                        add_taxonomy=args.taxonomy,
                                        remove_backup=args.remove_backup)
 elif args.mode == "assembled":
-    fasta_file = use_assembled.is_fasta(args.metagenome_assembled)
+    fasta_file = use_assembled.is_fasta(input_file=args.metagenome_assembled,
+                                        output_folder=args.output_folder)
 
 print(fasta_file)
 
