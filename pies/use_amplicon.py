@@ -174,10 +174,8 @@ def remove_linebreaks_from_fasta(fasta_file, remove_backup=True):
             del sequences[0]
     except IOError:
         print("Failed to open " + fasta_file)
-        # TODO: set correct error code
         sys.exit(2)
 
-    # TODO: check permission
     fasta_file_backup = fasta_file + ".multiline.bak"
     os.rename(fasta_file, fasta_file_backup)
 
@@ -195,7 +193,6 @@ def remove_linebreaks_from_fasta(fasta_file, remove_backup=True):
         print("Failed to open " + fasta_file)
         sys.exit(3)
 
-    # TODO: set correct error code
     if remove_backup:
         os.remove(fasta_file_backup)
 
