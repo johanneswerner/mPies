@@ -130,6 +130,25 @@ def create_tax_dict(abspath_names_dmp):
 
     The function uses names.dmp to create a tax dictionary to map taxIDs onto tax names.
 
+    Below, the first 10 lines of the current version of names.dmp are shown. The first column
+    (`curr_line[0]`) represents the taxID, the second column (`curr_line[1]`) the name and the
+    fourth column (`curr_line[3]`) if the name is a valid scientific name.
+
+    ```
+    $ head names.dmp
+
+    1	|	all	|		|	synonym	|
+    1	|	root	|		|	scientific name	|
+    2	|	Bacteria	|	Bacteria <prokaryotes>	|	scientific name	|
+    2	|	Monera	|	Monera <Bacteria>	|	in-part	|
+    2	|	Procaryotae	|	Procaryotae <Bacteria>	|	in-part	|
+    2	|	Prokaryota	|	Prokaryota <Bacteria>	|	in-part	|
+    2	|	Prokaryotae	|	Prokaryotae <Bacteria>	|	in-part	|
+    2	|	bacteria	|	bacteria <blast2>	|	blast name	|
+    2	|	eubacteria	|		|	genbank common name	|
+    2	|	not Bacteria Haeckel 1894	|		|	authority	|
+    ```
+
     Parameter
     ---------
       abspath_names_dmp: absolute path of of names.dmp
@@ -142,12 +161,11 @@ def create_tax_dict(abspath_names_dmp):
     logger = logging.getLogger("pies.use_amplicon.create_tax_dict")
     ncbi_tax_dict = {}
     ncbi_tax_dict[-1] = -1
-    # TODO: @kerssema: same as before? print statement inside function?
     logger.info("creating tax dictionary ...")
     with open(abspath_names_dmp) as names_dmp_open:
         for line in names_dmp_open:
             curr_line = re.split(r"\t*\|\t*", line.rstrip())
-            if curr_line[-2] == "scientific name":
+            if curr_line[3] == "scientific name":
                 ncbi_tax_dict[int(curr_line[0])] = curr_line[1]
 
     return ncbi_tax_dict
@@ -190,7 +208,7 @@ def remove_linebreaks_from_fasta(fasta_file, remove_backup=True):
                 try:
                     header, sequence = fasta.split("\n", 1)
                 except ValueError:
-                    print(fasta)
+                    logger.error(fasta)
                 header = ">" + header + "\n"
                 sequence = sequence.replace("\n", "") + "\n"
                 fasta_file_sl.write(header + sequence)
