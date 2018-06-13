@@ -9,6 +9,7 @@ NCBI FTP server. This file will be used to add the taxonomic lineage to the prot
 Eventually, all protein sequences will be combined into one file.
 """
 
+import logging
 import os
 import re
 import sys
@@ -17,6 +18,7 @@ import urllib.parse
 import urllib.request
 from ete3 import NCBITaxa
 
+module_logger = logging.getLogger("pies.use_amplicon")
 NCBI = NCBITaxa()
 
 
@@ -36,6 +38,7 @@ def get_desired_ranks(taxid):
       ranks2lineage: dict with ranks as keys and taxIDs as values
 
     """
+    logger = logging.getLogger("pies.use_amplicon.get_desired_ranks")
     if taxid == -1:
         return {"superkingdom": -1, "phylum": -1, "class": -1, "order": -1, "family": -1,
                 "genus": -1}
@@ -64,6 +67,7 @@ def get_taxid(input_file):
       tax_list: unique list with tax IDs
 
     """
+    logger = logging.getLogger("pies.use_amplicon.get_taxid")
     names_list = []
     tax_list = []
 
@@ -92,9 +96,10 @@ def get_names_dmp(names_dmp=None):
 
     Returns
     -------
-      absolute path of file names.dmp
+      absolute path of file names.dmpexampleApp.otherMod2
 
     """
+    logger = logging.getLogger("pies.use_amplicon.get_names_dmp")
     if names_dmp is not None:
         if os.stat(names_dmp).st_size == 0:
             os.remove(names_dmp)
@@ -108,9 +113,7 @@ def get_names_dmp(names_dmp=None):
             else:
                 os.remove(names_dmp)
 
-    # TODO: @kerssema: Does this statement belong into a function? Or should I use the logging
-    # module to only print this when debug flag is set?
-    print("Downloading taxdump.tar.gz ...")
+    logger.info("Downloading taxdump.tar.gz ...")
     urllib.request.urlretrieve("ftp://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz",
                                filename="taxdump.tar.gz")
     tar = tarfile.open("taxdump.tar.gz")
@@ -136,10 +139,11 @@ def create_tax_dict(abspath_names_dmp):
       ncbi_tax_dict: tax dictionary
 
     """
+    logger = logging.getLogger("pies.use_amplicon.create_tax_dict")
     ncbi_tax_dict = {}
     ncbi_tax_dict[-1] = -1
     # TODO: @kerssema: same as before? print statement inside function?
-    print("creating tax dictionary ...")
+    logger.info("creating tax dictionary ...")
     with open(abspath_names_dmp) as names_dmp_open:
         for line in names_dmp_open:
             curr_line = re.split(r"\t*\|\t*", line.rstrip())
@@ -167,13 +171,14 @@ def remove_linebreaks_from_fasta(fasta_file, remove_backup=True):
       None
 
     """
+    logger = logging.getLogger("pies.use_amplicon.remove_linebreaks_from_fasta")
     try:
         with open(fasta_file, "r") as fasta_file_open:
             sequences = fasta_file_open.read()
             sequences = re.split("^>", sequences, flags=re.MULTILINE)
             del sequences[0]
     except IOError:
-        print("Failed to open " + fasta_file)
+        logger.error("Failed to open " + fasta_file)
         sys.exit(2)
 
     fasta_file_backup = fasta_file + ".multiline.bak"
@@ -190,7 +195,7 @@ def remove_linebreaks_from_fasta(fasta_file, remove_backup=True):
                 sequence = sequence.replace("\n", "") + "\n"
                 fasta_file_sl.write(header + sequence)
     except IOError:
-        print("Failed to open " + fasta_file)
+        logger.error("Failed to open " + fasta_file)
         sys.exit(3)
 
     if remove_backup:
@@ -217,6 +222,7 @@ def add_taxonomy_to_fasta(fasta_file, ncbi_tax_dict, remove_backup=True):
       None
 
     """
+    logger = logging.getLogger("pies.use_amplicon.add_taxonomy_to_fasta")
     rx_match = re.search(r"(\d+)\.fasta$", fasta_file)
     if rx_match:
         taxid = rx_match.group(1)
@@ -262,7 +268,8 @@ def get_protein_sequences(tax_list, output_folder, ncbi_tax_dict, reviewed=False
       None
 
     """
-    print("fetching protein sequences ...")
+    logger = logging.getLogger("pies.use_amplicon.get_protein_sequences")
+    logger.info("fetching protein sequences ...")
     for taxid in tax_list:
         filename = os.path.join(output_folder, str(taxid) + ".fasta")
 
@@ -274,7 +281,7 @@ def get_protein_sequences(tax_list, output_folder, ncbi_tax_dict, reviewed=False
         query = "%s%s" % (taxon_query, rev)
         params = {'query': query, 'force': 'yes', 'format': 'fasta'}
         data = urllib.parse.urlencode(params).encode("utf-8")
-        print(taxid)
+        logger.info(taxid)
         msg = urllib.request.urlretrieve(url=url, filename=filename, data=data)[1]
         headers = {j[0]: j[1].strip() for j in [i.split(':', 1)
                                                 for i in str(msg).strip().splitlines()]}
@@ -310,7 +317,8 @@ def combine_fasta_files(fasta_folder, remove_single_files=True):
       absolute file path
 
     """
-    print("combining fasta files ...")
+    logger = logging.getLogger("pies.use_amplicon.combine_fasta_files")
+    logger.info("combining fasta files ...")
     filenames = os.listdir(fasta_folder)
     complete_protein_file = os.path.join(os.path.abspath(fasta_folder), "proteins_amplicon.faa")
     with open(complete_protein_file, 'w') as outfile:
