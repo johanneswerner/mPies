@@ -189,23 +189,22 @@ def remove_linebreaks_from_fasta(fasta_file, remove_backup=True):
 
     """
     logger = logging.getLogger("pies.use_amplicon.remove_linebreaks_from_fasta")
-    with open(fasta_file, "r") as fasta_file_open:
-        sequences = fasta_file_open.read()
-        sequences = re.split("^>", sequences, flags=re.MULTILINE)
-        del sequences[0]
-
     fasta_file_backup = fasta_file + ".multiline.bak"
     os.rename(fasta_file, fasta_file_backup)
+    with open(fasta_file_backup, 'r') as f_input, open(fasta_file, 'w') as f_output:
+        block = []
 
-    with open(fasta_file, "w") as fasta_file_sl:
-        for fasta in sequences:
-            try:
-                header, sequence = fasta.split("\n", 1)
-            except ValueError:
-                logger.error(fasta)
-            header = ">" + header + "\n"
-            sequence = sequence.replace("\n", "") + "\n"
-            fasta_file_sl.write(header + sequence)
+        for line in f_input:
+            if line.startswith('>'):
+                if block:
+                    f_output.write(''.join(block) + '\n')
+                    block = []
+                f_output.write(line)
+            else:
+                block.append(line.strip())
+
+        if block:
+            f_output.write(''.join(block) + '\n')
 
     if remove_backup:
         os.remove(fasta_file_backup)
@@ -290,7 +289,7 @@ def get_protein_sequences(tax_list, output_folder, ncbi_tax_dict, reviewed=False
         query = "%s%s" % (taxon_query, rev)
         params = {'query': query, 'force': 'yes', 'format': 'fasta'}
         data = urllib.parse.urlencode(params).encode("utf-8")
-        logger.info(taxid)
+        logger.info("Taxid: " + str(taxid))
         msg = urllib.request.urlretrieve(url=url, filename=filename, data=data)[1]
         headers = {j[0]: j[1].strip() for j in [i.split(':', 1)
                                                 for i in str(msg).strip().splitlines()]}
