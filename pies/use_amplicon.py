@@ -12,7 +12,6 @@ Eventually, all protein sequences will be combined into one file.
 import logging
 import os
 import re
-import sys
 import tarfile
 import urllib.parse
 import urllib.request
@@ -190,31 +189,23 @@ def remove_linebreaks_from_fasta(fasta_file, remove_backup=True):
 
     """
     logger = logging.getLogger("pies.use_amplicon.remove_linebreaks_from_fasta")
-    try:
-        with open(fasta_file, "r") as fasta_file_open:
-            sequences = fasta_file_open.read()
-            sequences = re.split("^>", sequences, flags=re.MULTILINE)
-            del sequences[0]
-    except IOError:
-        logger.error("Failed to open " + fasta_file)
-        sys.exit(2)
+    with open(fasta_file, "r") as fasta_file_open:
+        sequences = fasta_file_open.read()
+        sequences = re.split("^>", sequences, flags=re.MULTILINE)
+        del sequences[0]
 
     fasta_file_backup = fasta_file + ".multiline.bak"
     os.rename(fasta_file, fasta_file_backup)
 
-    try:
-        with open(fasta_file, "w") as fasta_file_sl:
-            for fasta in sequences:
-                try:
-                    header, sequence = fasta.split("\n", 1)
-                except ValueError:
-                    logger.error(fasta)
-                header = ">" + header + "\n"
-                sequence = sequence.replace("\n", "") + "\n"
-                fasta_file_sl.write(header + sequence)
-    except IOError:
-        logger.error("Failed to open " + fasta_file)
-        sys.exit(3)
+    with open(fasta_file, "w") as fasta_file_sl:
+        for fasta in sequences:
+            try:
+                header, sequence = fasta.split("\n", 1)
+            except ValueError:
+                logger.error(fasta)
+            header = ">" + header + "\n"
+            sequence = sequence.replace("\n", "") + "\n"
+            fasta_file_sl.write(header + sequence)
 
     if remove_backup:
         os.remove(fasta_file_backup)

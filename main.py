@@ -90,7 +90,8 @@ def main():
 
     if os.path.exists(args.output_folder):
         logging.error("Output folder already exists. Exit code: 1. Exiting ...")
-        # TODO: are exit codes necessary if logging is done?
+        # TODO: Which error can I raise instead of sys.exit(1)? I think it is reasonable to run
+        # this program only on not existing output directories in order to avoid overriding.
         sys.exit(1)
     else:
         os.makedirs(args.output_folder)
