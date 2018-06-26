@@ -191,6 +191,7 @@ def remove_linebreaks_from_fasta(fasta_file, remove_backup=True):
     logger = logging.getLogger("pies.use_amplicon.remove_linebreaks_from_fasta")
     fasta_file_backup = fasta_file + ".multiline.bak"
     os.rename(fasta_file, fasta_file_backup)
+    # from https://stackoverflow.com/questions/50856538
     with open(fasta_file_backup, 'r') as f_input, open(fasta_file, 'w') as f_output:
         block = []
 
