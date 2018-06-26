@@ -28,7 +28,7 @@ def configure_logger(name, log_file, level="DEBUG"):
     logging.config.dictConfig({
         'version': 1,
         'formatters': {
-            'default': {'format': '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+            'default': {'format': '%(asctime)s - %(levelname)s - %(name)s - %(message)s',
                         'datefmt': '%Y-%m-%d %H:%M:%S'}
         },
         'handlers': {
@@ -109,7 +109,7 @@ def main():
         fasta_file = use_amplicon.combine_fasta_files(fasta_folder=args.output_folder,
                                                       remove_single_files=True)
 
-    logging.debug(fasta_file)
+    logger.debug(fasta_file)
 
     # hash headers
 
