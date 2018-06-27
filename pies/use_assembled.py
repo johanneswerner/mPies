@@ -6,11 +6,12 @@ Check the input assembled fasta file for valid protein fasta.
 The passed file will be validated if it is a correct protein fasta file.
 """
 
+import logging
 import os
-import re
-import sys
 from Bio import Alphabet
 from Bio import SeqIO
+
+module_logger = logging.getLogger("pies.use_amplicon")
 
 
 def is_fasta(input_file, output_folder):
@@ -30,14 +31,12 @@ def is_fasta(input_file, output_folder):
       absolute path of single line protein fasta
 
     """
-    # TODO: @jkerssemakers: There is a duplication of functionality in this funciton and in
-    # use_amplicon.remove_linebreaks_from_fasta. How to deal with that in the best way? Because
-    # both functions are in modules that are not called in the same way.
+    logger = logging.getLogger("pies.use_assembled.is_fasta")
     with open(input_file, "r") as handle:
         fasta = SeqIO.parse(handle, "fasta", Alphabet.generic_protein)
         if any(fasta) is False:
-            print(input_file + " is not a valid protein fasta file. Exit code: 4. Exiting ... ")
-            sys.exit(4)
+            logger.error("Not a valid protein fasta file. Exit code: 4. Exiting ... ")
+            raise TypeError
         else:
             output_fasta = os.path.join(output_folder, os.path.basename(input_file))
             with open(output_fasta, 'w') as output_fasta_open:
