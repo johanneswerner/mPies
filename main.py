@@ -43,7 +43,7 @@ def configure_logger(name, log_file, level="DEBUG"):
                 'class': 'logging.handlers.RotatingFileHandler',
                 'formatter': 'default',
                 'filename': log_file,
-                'maxBytes': 1024,
+                'maxBytes': 3145728,
                 'backupCount': 3
             }
         },
