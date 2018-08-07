@@ -4,7 +4,6 @@ import argparse
 import logging
 import logging.config
 import os
-import sys
 from pies import use_amplicon, use_assembled
 
 
@@ -89,10 +88,8 @@ def main():
     args = parser.parse_args()
 
     if os.path.exists(args.output_folder):
-        logging.error("Output folder already exists. Exit code: 1. Exiting ...")
-        # TODO: Which error can I raise instead of sys.exit(1)? I think it is reasonable to run
-        # this program only on not existing output directories in order to avoid overriding.
-        sys.exit(1)
+        logging.error("Output folder already exists. Exiting ...")
+        raise ValueError("Output folder '%s' already exists. Exiting ..." % args.output_folder)
     else:
         os.makedirs(args.output_folder)
 
