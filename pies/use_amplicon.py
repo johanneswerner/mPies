@@ -95,7 +95,7 @@ def get_names_dmp(names_dmp=None):
 
     Returns
     -------
-      absolute path of file names.dmpexampleApp.otherMod2
+      absolute path of file names.dmp
 
     """
     logger = logging.getLogger("pies.use_amplicon.get_names_dmp")
@@ -286,7 +286,7 @@ def get_protein_sequences(tax_list, output_folder, ncbi_tax_dict, reviewed=False
         taxon_query = ' OR '.join(taxon_queries)
         rev = " reviewed:%s" % reviewed if reviewed else ''
 
-        url = 'http://www.uniprot.org/uniprot/'
+        url = 'https://www.uniprot.org/uniprot/'
         query = "%s%s" % (taxon_query, rev)
         params = {'query': query, 'force': 'yes', 'format': 'fasta'}
         data = urllib.parse.urlencode(params).encode("utf-8")
