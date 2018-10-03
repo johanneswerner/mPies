@@ -37,7 +37,7 @@ def is_fasta(input_file, output_folder):
         if any(fasta) is False:
             msg = "Not a valid protein fasta file. Exiting ... "
             logger.error(msg)
-            raise TypeError(msg)
+            raise ValueError(msg)
         else:
             output_fasta = os.path.join(output_folder, os.path.basename(input_file))
             with open(output_fasta, 'w') as output_fasta_open:
