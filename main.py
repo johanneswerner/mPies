@@ -4,8 +4,7 @@ import argparse
 import logging
 import logging.config
 import os
-import sys
-from pies import use_amplicon
+from pies import use_amplicon, use_assembled
 
 
 def configure_logger(name, log_file, level="DEBUG"):
@@ -43,7 +42,7 @@ def configure_logger(name, log_file, level="DEBUG"):
                 'class': 'logging.handlers.RotatingFileHandler',
                 'formatter': 'default',
                 'filename': log_file,
-                'maxBytes': 1024,
+                'maxBytes': 3145728,
                 'backupCount': 3
             }
         },
@@ -89,16 +88,15 @@ def main():
     args = parser.parse_args()
 
     if os.path.exists(args.output_folder):
-        logging.error("Output folder already exists. Exit code: 1. Exiting ...")
-        # TODO: Which error can I raise instead of sys.exit(1)? I think it is reasonable to run
-        # this program only on not existing output directories in order to avoid overriding.
-        sys.exit(1)
+        msg = "Output folder already exists. Exiting ..."
+        logging.error(msg)
+        raise ValueError(msg)
     else:
         os.makedirs(args.output_folder)
 
     logger.info("pies (Proteomics in environmental science) started")
-    logger.info("started amplicon analysis")
     if args.mode == "amplicon":
+        logger.info("started amplicon analysis")
         abspath_names_dmp = use_amplicon.get_names_dmp(names_dmp=args.names_dmp)
         tax_dict = use_amplicon.create_tax_dict(abspath_names_dmp=abspath_names_dmp)
         taxids = use_amplicon.get_taxid(input_file=args.genus_list)
@@ -108,8 +106,15 @@ def main():
                                            remove_backup=args.remove_backup)
         fasta_file = use_amplicon.combine_fasta_files(fasta_folder=args.output_folder,
                                                       remove_single_files=True)
+    elif args.mode == "assembled":
+        fasta_file = use_assembled.is_fasta(input_file=args.metagenome_assembled,
+                                            output_folder=args.output_folder)
 
     logger.debug(fasta_file)
+
+    # run unassembled metagenome analysis
+
+    # remove duplicates
 
     # hash headers
 
