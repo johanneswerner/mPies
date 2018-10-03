@@ -88,8 +88,9 @@ def main():
     args = parser.parse_args()
 
     if os.path.exists(args.output_folder):
-        logging.error("Output folder already exists. Exiting ...")
-        raise ValueError("Output folder '%s' already exists. Exiting ..." % args.output_folder)
+        msg = "Output folder already exists. Exiting ..."
+        logging.error(msg)
+        raise ValueError(msg)
     else:
         os.makedirs(args.output_folder)
 

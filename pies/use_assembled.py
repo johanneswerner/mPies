@@ -35,8 +35,9 @@ def is_fasta(input_file, output_folder):
     with open(input_file, "r") as handle:
         fasta = SeqIO.parse(handle, "fasta", Alphabet.generic_protein)
         if any(fasta) is False:
-            logger.error("Not a valid protein fasta file. Exiting ... ")
-            raise TypeError("'%s' is not a valid protein fasta file." % input_file)
+            msg = "Not a valid protein fasta file. Exiting ... "
+            logger.error(msg)
+            raise TypeError(msg)
         else:
             output_fasta = os.path.join(output_folder, os.path.basename(input_file))
             with open(output_fasta, 'w') as output_fasta_open:
