@@ -1,3 +1,20 @@
-# Metaproteomics database creation
+# mPies: metaProteomics in environmental sciences
 
-This project describes the methodology that will focus on the three strategies (metagenome, non-assembled metagenome and taxonomy-based) that has been used for database creation and the quality of the analyses in terms of coverage, number of protein identified and structural and functional diversity (quantitatively only) obtained (e.g. how many different function we obtain with the three database).
+mPies is a tool to create suitable databases for metaproteomic analysis. 
+
+This workflow uses three different databases for a metagenome (i) OTU-table, (ii) assembled-derived, (iii) and unassembled-derived to build a consensus of these databases and increase the mapping sensitivity.
+
+## Installation
+
+The easiest way is to use bioconda and create a new environment. 
+
+```bash
+conda create -n mpies python=2.7.15 numpy=1.15.2
+source activate mpies
+pip install singlem==0.11.0
+```
+
+## Usage
+
+The entire workflow is coded for Snakemake.
+
