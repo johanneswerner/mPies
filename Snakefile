@@ -1,8 +1,11 @@
-rule all:
+include:
+    "rules/otu_table"
+
+inputs = []
+inputs.append("get_amplicon_proteome.done")
+
+rule ALL:
     input:
-        "input_data/{sample}_R1.fastq.gz",
-        "input_data/{sample}_R2.fastq.gz"
+        inputs
     output:
-        "output/{sample}_otu.tsv"
-    shell:
-        "singlem pipe --sequences {input} --otu_table {output}"
+        touch('checkpoints/mpies.done')
