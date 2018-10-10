@@ -1,8 +1,8 @@
 rule all:
     input:
-        "input_data/OSD14_R1_shotgun_raw.fastq.gz",
-        "input_data/OSD14_R2_shotgun_raw.fastq.gz"
+        "input_data/{sample}_R1.fastq.gz",
+        "input_data/{sample}_R2.fastq.gz"
     output:
-        "output/otu_table.tsv"
+        "output/{sample}_otu.tsv"
     shell:
         "singlem pipe --sequences {input} --otu_table {output}"
