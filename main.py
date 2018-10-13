@@ -61,14 +61,13 @@ def configure_logger(name, log_file, level="DEBUG"):
 def main():
     # TODO: where to put log file? and how to overwrite an old log file? filemode in the function
     # above did not work out.
-    logger = configure_logger(name='pies', log_file="pies.log", level="DEBUG")
-
     parser = argparse.ArgumentParser()
 
     parser.add_argument("-o", "--output_folder", action="store", dest="output_folder",
                         required=True, help="output folder")
     parser.add_argument("-b", "--remove_backup", action="store_false", dest="remove_backup",
                         required=False, help="remove backup files")
+    parser.add_argument("-v", "--verbose", action="store_true", dest="verbose", required=False, help="verbose output")
 
     subparsers = parser.add_subparsers(dest="mode",help="select the run mode (amplicon, assembled, unassembled)")
     subparser_amplicon = subparsers.add_parser("amplicon",
@@ -89,6 +88,11 @@ def main():
                                      help="protein file of assembled metagenome")
 
     args = parser.parse_args()
+
+    if args.verbose:
+        logger = configure_logger(name='pies', log_file="pies.log", level="DEBUG")
+    else:
+        logger = configure_logger(name='pies', log_file="pies.log", level="ERROR")
 
     if os.path.exists(args.output_folder):
         msg = "Output folder already exists. Exiting ..."
