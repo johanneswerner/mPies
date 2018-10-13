@@ -38,6 +38,7 @@ def get_desired_ranks(taxid):
 
     """
     logger = logging.getLogger("pies.use_amplicon.get_desired_ranks")
+
     if taxid == -1:
         return {"superkingdom": -1, "phylum": -1, "class": -1, "order": -1, "family": -1,
                 "genus": -1}
@@ -47,6 +48,7 @@ def get_desired_ranks(taxid):
     for taxrank in ["superkingdom", "phylum", "class", "order", "family", "genus"]:
         if taxrank not in ranks2lineage:
             ranks2lineage[taxrank] = -1
+
     return ranks2lineage
 
 
@@ -67,6 +69,7 @@ def get_taxid(input_file):
 
     """
     logger = logging.getLogger("pies.use_amplicon.get_taxid")
+
     names_list = []
     tax_list = []
 
@@ -99,6 +102,7 @@ def get_names_dmp(names_dmp=None):
 
     """
     logger = logging.getLogger("pies.use_amplicon.get_names_dmp")
+
     if names_dmp is not None:
         if os.stat(names_dmp).st_size == 0:
             os.remove(names_dmp)
@@ -109,6 +113,7 @@ def get_names_dmp(names_dmp=None):
         if os.path.isfile("names.dmp"):
             if os.stat(names_dmp).st_size != 0:
                 return os.path.abspath(names_dmp)
+
             else:
                 os.remove(names_dmp)
 
@@ -158,6 +163,7 @@ def create_tax_dict(abspath_names_dmp):
 
     """
     logger = logging.getLogger("pies.use_amplicon.create_tax_dict")
+
     ncbi_tax_dict = {}
     ncbi_tax_dict[-1] = -1
     logger.info("creating tax dictionary ...")
@@ -187,6 +193,7 @@ def add_taxonomy_to_fasta(fasta_file, ncbi_tax_dict):
 
     """
     logger = logging.getLogger("pies.use_amplicon.add_taxonomy_to_fasta")
+
     output_file = open(os.path.splitext(fasta_file)[0] + "_tax.fasta", "w")
     for line in open(fasta_file):
         if line.startswith(">"):
@@ -229,6 +236,7 @@ def get_protein_sequences(tax_list, output_folder, ncbi_tax_dict, reviewed=False
 
     """
     logger = logging.getLogger("pies.use_amplicon.get_protein_sequences")
+
     logger.info("fetching protein sequences ...")
     filename = os.path.join(output_folder, "proteomes.fasta")
 
@@ -247,11 +255,6 @@ def get_protein_sequences(tax_list, output_folder, ncbi_tax_dict, reviewed=False
 
     if 'Content-Length' in headers and headers['Content-Length'] == 0:
         os.remove(filename)
-
-        # TODO: @kerssema Can I call the function from here or would it be
-        # nicer to call this in the main loop with a for loop over the
-        # directory?
-        # transform multiline sequences into singelline sequences
 
     if add_taxonomy:
         add_taxonomy_to_fasta(filename, ncbi_tax_dict, remove_backup)
