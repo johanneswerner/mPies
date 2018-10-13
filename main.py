@@ -65,8 +65,6 @@ def main():
 
     parser.add_argument("-o", "--output_folder", action="store", dest="output_folder",
                         required=True, help="output folder")
-    parser.add_argument("-b", "--remove_backup", action="store_false", dest="remove_backup",
-                        required=False, help="remove backup files")
     parser.add_argument("-v", "--verbose", action="store_true", dest="verbose", required=False, help="verbose output")
 
     subparsers = parser.add_subparsers(dest="mode",help="select the run mode (amplicon, assembled, unassembled)")
@@ -109,8 +107,7 @@ def main():
         taxids = use_amplicon.get_taxid(input_file=args.genus_list)
         use_amplicon.get_protein_sequences(tax_list=taxids, output_folder=args.output_folder,
                                            ncbi_tax_dict=tax_dict, reviewed=args.reviewed,
-                                           add_taxonomy=args.taxonomy,
-                                           remove_backup=args.remove_backup)
+                                           add_taxonomy=args.taxonomy)
 
     logger.debug(fasta_file)
 

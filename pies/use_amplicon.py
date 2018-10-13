@@ -170,18 +170,16 @@ def create_tax_dict(abspath_names_dmp):
     return ncbi_tax_dict
 
 
-def add_taxonomy_to_fasta(fasta_file, ncbi_tax_dict, remove_backup=True):
+def add_taxonomy_to_fasta(fasta_file, ncbi_tax_dict):
     """
     Add taxonomy to headers.
 
     The function adds the complete taxonomic lineage to the fasta header (superkingdom, phylum,
-    class, order, family, genus). The resulting fasta file is saved as the same name as the
-    previous one (the old file gets backed up and deleted - this can be adjusted with a parameter).
+    class, order, family, genus).
 
     Parameter
     ---------
       fasta_file: input fasta file
-      remove_backup: remove backup of old file (True)
 
     Returns
     -------
@@ -189,29 +187,25 @@ def add_taxonomy_to_fasta(fasta_file, ncbi_tax_dict, remove_backup=True):
 
     """
     logger = logging.getLogger("pies.use_amplicon.add_taxonomy_to_fasta")
-    rx_match = re.search(r"(\d+)\.fasta$", fasta_file)
-    if rx_match:
-        taxid = rx_match.group(1)
-
-        res = []
-        for rank in ["superkingdom", "phylum", "class", "order", "family", "genus"]:
-            res.append(str(ncbi_tax_dict[get_desired_ranks(taxid)[rank]]))
-
-        header_extension = ", ".join(res)
-
-        fasta_file_backup = fasta_file + ".notax.bak"
-        os.rename(fasta_file, fasta_file_backup)
-
-        output_file = open(fasta_file, "w")
-        for line in open(fasta_file_backup, "r"):
-            if line.startswith(">"):
-                output_file.write(line.rstrip() + " TAX=" + header_extension + "\n")
+    output_file = open(os.path.splitext(fasta_file)[0] + "_tax.fasta", "w")
+    for line in open(fasta_file):
+        if line.startswith(">"):
+            rx_match = re.search(r"OS=(\w+)\s", line)
+            if rx_match:
+                taxid = rx_match.group(1)
+        
+                res = []
+                for rank in ["superkingdom", "phylum", "class", "order", "family", "genus"]:
+                    res.append(str(ncbi_tax_dict[get_desired_ranks(taxid)[rank]]))
+        
+                header_extension = ", ".join(res)
             else:
-                output_file.write(line)
-
-        if remove_backup:
-            os.remove(fasta_file_backup)
-
+                header_extension = "not_found"
+            output_file.write(line.rstrip() + " TAX=" + header_extension + "\n")
+        else:
+            output_file.write(line)
+    output_file.close()
+        
     return None
 
 
