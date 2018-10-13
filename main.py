@@ -112,17 +112,7 @@ def main():
                                            add_taxonomy=args.taxonomy,
                                            remove_backup=args.remove_backup)
 
-    elif args.mode == "assembled":
-        fasta_file = use_assembled.is_fasta(input_file=args.metagenome_assembled,
-                                            output_folder=args.output_folder)
-
     logger.debug(fasta_file)
-
-    # run unassembled metagenome analysis
-
-    # remove duplicates
-
-    # hash headers
 
     logger.info("Done and finished!")
 
