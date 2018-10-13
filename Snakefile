@@ -2,7 +2,7 @@ include:
     "rules/otu_table.smk"
 
 inputs = []
-inputs.append("get_amplicon_proteome.done")
+inputs.append("checkpoints/get_amplicon_proteome.done")
 
 rule ALL:
     input:
