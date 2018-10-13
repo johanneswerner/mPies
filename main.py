@@ -67,11 +67,10 @@ def main():
                         required=True, help="output folder")
     parser.add_argument("-v", "--verbose", action="store_true", dest="verbose", required=False, help="verbose output")
 
-    subparsers = parser.add_subparsers(dest="mode",help="select the run mode (amplicon, assembled, unassembled)")
+    subparsers = parser.add_subparsers(dest="mode",help="select the run mode (parse_singlem, amplicon)")
+    subparser_singlem = subparsers.add_parser("parse_singlem", help="build genus list from singlem OTU table")
     subparser_amplicon = subparsers.add_parser("amplicon",
                                                help="use genus list (amplicons) or singlem (metagenome reads)")
-    subparser_assembled = subparsers.add_parser("assembled", help="use genes predicted from assembly")
-    subparser_unassembled = subparsers.add_parser("unassembled", help="use fragmented genes from raw reads")
 
     subparser_amplicon.add_argument("-g", "--genus_list", action="store", dest="genus_list", required=True,
                                     help="list of genera used for amplicon analysis")
