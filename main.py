@@ -4,6 +4,7 @@ import argparse
 import logging
 import logging.config
 import os
+import sys
 from pies import parse_singlem, use_amplicon
 
 
@@ -91,29 +92,35 @@ def main():
     else:
         logger = configure_logger(name='pies', log_file="pies.log", level="ERROR")
 
-    if os.path.exists(args.output_folder):
-        msg = "Output folder already exists. Exiting ..."
-        logging.error(msg)
-        raise ValueError(msg)
-    else:
-        os.makedirs(args.output_folder)
-
     logger.info("pies (Proteomics in environmental science) started")
-    if args.mode == "parse_singlem":
-        logger.info("parsing OTU table")
-        df = parse_singlem.read_table(input_file=args.otu_table)
-        print(df)
-    elif args.mode == "amplicon":
-        logger.info("started amplicon analysis")
-        abspath_names_dmp = use_amplicon.get_names_dmp(names_dmp=args.names_dmp)
-        tax_dict = use_amplicon.create_tax_dict(abspath_names_dmp=abspath_names_dmp)
-        taxids = use_amplicon.get_taxid(input_file=args.genus_list)
-        use_amplicon.get_protein_sequences(tax_list=taxids, output_folder=args.output_folder,
-                                           ncbi_tax_dict=tax_dict, reviewed=args.reviewed,
-                                           add_taxonomy=args.taxonomy)
 
+    if len(sys.argv)==1:
+        msg = "No parameter passed. Exiting..."
+        logging.error(msg)
+        parser.print_help(sys.stderr)
+        raise ValueError(msg)
+    elif args.mode in ["parse_singlem, amplicon"]:
+        if os.path.exists(args.output_folder):
+            msg = "Output folder already exists. Exiting ..."
+            logging.error(msg)
+            raise ValueError(msg)
+        else:
+            os.makedirs(args.output_folder)
 
-    logger.info("Done and finished!")
+        if args.mode == "parse_singlem":
+            logger.info("parsing OTU table")
+            data_frame = parse_singlem.read_table(input_file=args.otu_table)
+            print(data_frame)
+        elif args.mode == "amplicon":
+            logger.info("started amplicon analysis")
+            abspath_names_dmp = use_amplicon.get_names_dmp(names_dmp=args.names_dmp)
+            tax_dict = use_amplicon.create_tax_dict(abspath_names_dmp=abspath_names_dmp)
+            taxids = use_amplicon.get_taxid(input_file=args.genus_list)
+            use_amplicon.get_protein_sequences(tax_list=taxids, output_folder=args.output_folder, ncbi_tax_dict=tax_dict,
+                                               reviewed=args.reviewed, add_taxonomy=args.taxonomy)
+    
+    
+        logger.info("Done and finished!")
 
 
 if __name__ == "__main__":
