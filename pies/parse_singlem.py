@@ -47,3 +47,31 @@ def read_table(input_file):
 
     return df
 
+
+def calculate_abundant_otus(df, level="genus", cutoff=5):
+    """
+    Calculate the abundant OTUs of the data frame for a specific taxonomic level.
+
+    The function `calculate_abundant_otus` uses the taxonomic level (default: genus) and returns the taxonomic groups,
+    that occur with larger or equal abundance to the chosen cutoff value (default: 5). The function returns a list of
+    unvalidated taxon names.
+
+    Parameters
+    ----------
+      df: OTU table (as data frame)
+      level: taxonomic rank (default: genus)
+      cutoff: cutoff value to report taxonomic group (default: 5)
+
+    Returns
+    -------
+      taxon_names: list of unvalidated taxon names
+
+    """
+    logger = logging.getLogger("pies.parse_singlem.calculate_abundant_otus")
+
+    df_subset = df.groupby([level])["num_hits"].sum().reset_index()
+    df_subset = df_subset[df_subset["num_hits"] >= cutoff][level]
+    taxon_names = list(df_subset)
+
+    return taxon_names
+
