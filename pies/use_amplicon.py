@@ -12,9 +12,11 @@ import os
 import re
 import urllib.parse
 import urllib.request
+from ete3 import NCBITaxa
 from pies import general_functions
 
 module_logger = logging.getLogger("pies.use_amplicon")
+NCBI = NCBITaxa()
 
 
 def get_taxid(input_file):
@@ -79,7 +81,7 @@ def add_taxonomy_to_fasta(fasta_file, ncbi_tax_dict):
         
                 res = []
                 for rank in ["superkingdom", "phylum", "class", "order", "family", "genus"]:
-                    res.append(str(ncbi_tax_dict[get_desired_ranks(taxid)[rank]]))
+                    res.append(str(ncbi_tax_dict[general_functions.get_desired_ranks(taxid)[rank]]))
         
                 header_extension = ", ".join(res)
             else:
@@ -133,7 +135,7 @@ def get_protein_sequences(tax_list, output_folder, ncbi_tax_dict, reviewed=False
         os.remove(filename)
 
     if add_taxonomy:
-        add_taxonomy_to_fasta(filename, ncbi_tax_dict, remove_backup)
+        add_taxonomy_to_fasta(filename, ncbi_tax_dict)
 
     return
 

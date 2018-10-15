@@ -90,7 +90,7 @@ def main():
                                     help="location of names.dmp")
     subparser_amplicon.add_argument("-r", "--reviewed", action="store_true", dest="reviewed", required=False,
                                     help="use unreviewed TrEMBL hits (default) or only reviewed SwissProt")
-    subparser_amplicon.add_argument("-t", "--taxonomy", action="store_false", dest="taxonomy", required=False,
+    subparser_amplicon.add_argument("-t", "--taxonomy", action="store_true", dest="taxonomy", required=False,
                                     help="add taxonomic lineage to fasta header")
 
     args = parser.parse_args()
