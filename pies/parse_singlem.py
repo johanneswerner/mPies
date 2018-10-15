@@ -106,5 +106,25 @@ def validate_taxon_names(taxon_names, ncbi_tax_dict):
 
     return validated_taxon_names
 
-# TODO: export in file is still missing
+
+def write_taxon_list(validated_taxon_names, taxon_file):
+    """
+    Write the validated taxon names list to a file.
+
+    Parameters
+    ----------
+      validated_taxon_names: list of validated taxon names
+
+    Returns
+    -------
+      None
+
+    """
+    logger = logging.getLogger("pies.parse_singlem.write_taxon_list")
+
+    with open(taxon_file, 'w') as f:
+        for item in validated_taxon_names:
+            f.write("%s\n" % item)
+
+    return
 

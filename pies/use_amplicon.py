@@ -12,7 +12,7 @@ import os
 import re
 import urllib.parse
 import urllib.request
-import general_functions # from pies
+from pies import general_functions
 
 module_logger = logging.getLogger("pies.use_amplicon")
 
