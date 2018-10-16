@@ -2,10 +2,10 @@ SAMPLES = ["OSD14"]
 
 rule generate_otu_table:
     input:
-        "input_data/{sample}_R1.fastq.gz",
-        "input_data/{sample}_R2.fastq.gz"
+        "{sample}/input_data/{sample}_R1.fastq.gz",
+        "{sample}/input_data/{sample}_R2.fastq.gz"
     output:
-        "output/{sample}_singlem_otu.tsv"
+        "{sample}/output/singlem_otu.tsv"
     threads:
         28
     message:
@@ -13,8 +13,16 @@ rule generate_otu_table:
     shell:
         "./appimages/singlem.AppImage pipe --sequences {input} --otu_table {output} --threads {threads}"
 
+rule obtain_tax_list:
+    input:
+        expand("{sample}/output/singlem_otu.tsv", sample=SAMPLES)
+    output:
+        "{sample}/output/taxlist.txt",
+    shell:
+        "./main.py -v parse_singlem -t {input} -u {output}"
+
 rule get_amplicon_proteome:
     input:
-        expand("output/{sample}_singlem_otu.tsv", sample=SAMPLES)
+        expand("{sample}/output/taxlist.txt", sample=SAMPLES)
     output:
         touch("checkpoints/get_amplicon_proteome.done")

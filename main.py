@@ -69,8 +69,6 @@ def main():
     subparser_amplicon = subparsers.add_parser("amplicon",
                                                help="use genus list (amplicons) or singlem (metagenome reads)")
 
-    subparser_singlem.add_argument("-o", "--output_folder", action="store", dest="output_folder", required=True,
-                                   help="output folder")
     subparser_singlem.add_argument("-n", "--names_dmp", action="store", dest="names_dmp", default=None,required=False,
                                    help="location of names.dmp")
     subparser_singlem.add_argument("-t", "--otu_table", action="store", dest="otu_table", required=True,
@@ -107,34 +105,34 @@ def main():
         logging.error(msg)
         parser.print_help(sys.stderr)
         raise ValueError(msg)
-    elif args.mode in ["parse_singlem", "amplicon"]:
-        if os.path.exists(args.output_folder):
-            msg = "Output folder already exists. Exiting ..."
-            logging.error(msg)
-            raise ValueError(msg)
-        else:
-            os.makedirs(args.output_folder)
+    # elif args.mode in ["parse_singlem", "amplicon"]:
+    #     if os.path.exists(args.output_folder):
+    #         msg = "Output folder already exists. Exiting ..."
+    #         logging.error(msg)
+    #         raise ValueError(msg)
+    #     else:
+    #         os.makedirs(args.output_folder)
 
-        if args.mode == "parse_singlem":
-            logger.info("parsing OTU table")
-            abspath_names_dmp = general_functions.get_names_dmp(names_dmp=args.names_dmp)
-            tax_dict = general_functions.create_tax_dict(abspath_names_dmp=abspath_names_dmp)
-            data_frame = parse_singlem.read_table(input_file=args.otu_table)
-            tax_list = parse_singlem.calculate_abundant_otus(df=data_frame, level=args.level, cutoff=args.cutoff)
-            validated_tax_list = parse_singlem.validate_taxon_names(taxon_names=tax_list, ncbi_tax_dict=tax_dict)
-            parse_singlem.write_taxon_list(validated_taxon_names=validated_tax_list,
-                                           taxon_file=os.path.join(args.output_folder, args.taxon_file))
+    if args.mode == "parse_singlem":
+        logger.info("parsing OTU table")
+        abspath_names_dmp = general_functions.get_names_dmp(names_dmp=args.names_dmp)
+        tax_dict = general_functions.create_tax_dict(abspath_names_dmp=abspath_names_dmp)
+        data_frame = parse_singlem.read_table(input_file=args.otu_table)
+        tax_list = parse_singlem.calculate_abundant_otus(df=data_frame, level=args.level, cutoff=args.cutoff)
+        validated_tax_list = parse_singlem.validate_taxon_names(taxon_names=tax_list, ncbi_tax_dict=tax_dict)
+        parse_singlem.write_taxon_list(validated_taxon_names=validated_tax_list,
+                                       taxon_file=args.taxon_file)
 
-        elif args.mode == "amplicon":
-            logger.info("started amplicon analysis")
-            abspath_names_dmp = general_functions.get_names_dmp(names_dmp=args.names_dmp)
-            tax_dict = general_functions.create_tax_dict(abspath_names_dmp=abspath_names_dmp)
-            taxids = use_amplicon.get_taxid(input_file=args.genus_list)
-            use_amplicon.get_protein_sequences(tax_list=taxids, output_folder=args.output_folder, ncbi_tax_dict=tax_dict,
-                                               reviewed=args.reviewed, add_taxonomy=args.taxonomy)
+    elif args.mode == "amplicon":
+        logger.info("started amplicon analysis")
+        abspath_names_dmp = general_functions.get_names_dmp(names_dmp=args.names_dmp)
+        tax_dict = general_functions.create_tax_dict(abspath_names_dmp=abspath_names_dmp)
+        taxids = use_amplicon.get_taxid(input_file=args.genus_list)
+        use_amplicon.get_protein_sequences(tax_list=taxids, output_folder=args.output_folder, ncbi_tax_dict=tax_dict,
+                                           reviewed=args.reviewed, add_taxonomy=args.taxonomy)
 
 
-        logger.info("Done and finished!")
+    logger.info("Done and finished!")
 
 
 if __name__ == "__main__":
