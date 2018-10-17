@@ -80,10 +80,10 @@ def main():
     subparser_singlem.add_argument("-c", "--cutoff", action="store", dest="cutoff", required=False, default=5,
                                    help="cutoff for reporting a taxonomic rank")
 
-    subparser_amplicon.add_argument("-o", "--output_folder", action="store", dest="output_folder", required=True,
-                                    help="output folder")
     subparser_amplicon.add_argument("-g", "--genus_list", action="store", dest="genus_list", required=True,
                                     help="list of genera used for amplicon analysis")
+    subparser_amplicon.add_argument("-p", "--proteome_file", action="store", dest="proteome_file", required=True,
+                                    help="proteome file")
     subparser_amplicon.add_argument("-n", "--names_dmp", action="store", dest="names_dmp", default=None,required=False,
                                     help="location of names.dmp")
     subparser_amplicon.add_argument("-r", "--reviewed", action="store_true", dest="reviewed", required=False,
@@ -105,13 +105,6 @@ def main():
         logging.error(msg)
         parser.print_help(sys.stderr)
         raise ValueError(msg)
-    # elif args.mode in ["parse_singlem", "amplicon"]:
-    #     if os.path.exists(args.output_folder):
-    #         msg = "Output folder already exists. Exiting ..."
-    #         logging.error(msg)
-    #         raise ValueError(msg)
-    #     else:
-    #         os.makedirs(args.output_folder)
 
     if args.mode == "parse_singlem":
         logger.info("parsing OTU table")
@@ -128,7 +121,7 @@ def main():
         abspath_names_dmp = general_functions.get_names_dmp(names_dmp=args.names_dmp)
         tax_dict = general_functions.create_tax_dict(abspath_names_dmp=abspath_names_dmp)
         taxids = use_amplicon.get_taxid(input_file=args.genus_list)
-        use_amplicon.get_protein_sequences(tax_list=taxids, output_folder=args.output_folder, ncbi_tax_dict=tax_dict,
+        use_amplicon.get_protein_sequences(tax_list=taxids, output_file=args.proteome_file, ncbi_tax_dict=tax_dict,
                                            reviewed=args.reviewed, add_taxonomy=args.taxonomy)
 
 

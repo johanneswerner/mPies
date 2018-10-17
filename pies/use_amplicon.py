@@ -94,7 +94,7 @@ def add_taxonomy_to_fasta(fasta_file, ncbi_tax_dict):
     return None
 
 
-def get_protein_sequences(tax_list, output_folder, ncbi_tax_dict, reviewed=False,
+def get_protein_sequences(tax_list, output_file, ncbi_tax_dict, reviewed=False,
                           add_taxonomy=True, remove_backup=True):
     """
     Fetch the proteomes for all tax IDs.
@@ -105,7 +105,7 @@ def get_protein_sequences(tax_list, output_folder, ncbi_tax_dict, reviewed=False
     Parameters
     ----------
       tax_list: unique list with tax IDs
-      output_folder: output folder for the downloaded protein sequences
+      output_file: output file for the downloaded protein sequences
       reviewed: use TrEMBL (False) or SwissProt (True)
 
     Returns
@@ -116,7 +116,7 @@ def get_protein_sequences(tax_list, output_folder, ncbi_tax_dict, reviewed=False
     logger = logging.getLogger("pies.use_amplicon.get_protein_sequences")
 
     logger.info("fetching protein sequences ...")
-    filename = os.path.join(output_folder, "proteomes.fasta")
+    filename = output_file
 
     taxon_queries = ['taxonomy:"%s"' % tid for tid in tax_list]
     taxon_query = ' OR '.join(taxon_queries)
