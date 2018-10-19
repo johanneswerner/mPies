@@ -1,5 +1,5 @@
 SAMPLES = ["OSD14"]
-ASSEMBLER = ["METASPADES"]
+ASSEMBLER = ["NONE"]
 
 if "MEGAHIT" in ASSEMBLER:
     rule run_megahit:
