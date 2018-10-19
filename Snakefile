@@ -1,10 +1,12 @@
-include:
-#    "rules/otu_table.smk",
-    "rules/assembled.smk"
-
 inputs = []
-# inputs.append("checkpoints/get_amplicon_proteome.done")
-inputs.append("checkpoints/get_assembled_proteome.done")
+
+include:
+    "rules/otu_table.smk"
+inputs.append("checkpoints/amplicon_proteome.done")
+
+include:
+    "rules/assembled.smk"
+inputs.append("checkpoints/assembled_proteome.done")
 
 rule ALL:
     input:

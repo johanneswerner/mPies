@@ -19,20 +19,29 @@ if RUN_SINGLEM:
         input:
             expand("{sample}/singlem/singlem_otu.tsv", sample=SAMPLES)
         output:
-            "{sample}/amplicon/taxlist.txt",
+            "{sample}/amplicon/taxlist.txt"
         shell:
             "./main.py -v parse_singlem -t {input} -u {output}"
 
-rule obtain_proteome:
-    input:
-        expand("{sample}/amplicon/taxlist.txt", sample=SAMPLES)
-    output:
-        "{sample}/amplicon/proteomes.faa",
-    shell:
-        "./main.py -v amplicon -g {input} -p {output}"
+    rule obtain_proteome:
+        input:
+            expand("{sample}/amplicon/taxlist.txt", sample=SAMPLES)
+        output:
+            "{sample}/proteome/{sample}_amplicon.faa"
+        shell:
+            "./main.py -v amplicon -g {input} -p {output}"
+
+else:
+    rule obtain_proteome:
+        input:
+            expand("{sample}/amplicon/genuslist_test.txt", sample=SAMPLES)
+        output:
+            "{sample}/proteome/{sample}_amplicon.faa"
+        shell:
+            "./main.py -v amplicon -g {input} -p {output}"
 
 rule get_amplicon_proteome_done:
     input:
-        expand("{sample}/amplicon/proteomes.faa", sample=SAMPLES)
+        expand("{sample}/proteome/{sample}_amplicon.faa", sample=SAMPLES)
     output:
-        touch("checkpoints/get_amplicon_proteome.done")
+        touch("checkpoints/amplicon_proteome.done")

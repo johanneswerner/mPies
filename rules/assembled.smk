@@ -18,6 +18,7 @@ if "MEGAHIT" in ASSEMBLER:
             mv {wildcards.sample}/megahit/{wildcards.sample}_megahit.contigs.fa {output}
             rm -rf {wildcards.sample}/megahit
             """
+
 elif "METASPADES" in ASSEMBLER:
     rule run_metaspades:
         input:
@@ -36,9 +37,19 @@ elif "METASPADES" in ASSEMBLER:
             rm -rf {wildcards.sample}/metaspades
             """
 
+rule run_prodigal:
+    input:
+        "{sample}/assembly/{sample}_contigs.fa"
+    output:
+        "{sample}/proteome/{sample}_assembled.faa"
+    shell:
+        """
+        prodigal -p meta -i {input} -o {output}.gbk -a {output} -q
+        rm {output}.gbk
+        """
+
 rule get_assembled_proteome_done:
     input:
-        # expand("{sample}/output/proteomes.faa", sample=SAMPLES)
-        expand("{sample}/assembly/{sample}_contigs.fa", sample=SAMPLES)
+        expand("{sample}/proteome/{sample}_assembled.faa", sample=SAMPLES)
     output:
-        touch("checkpoints/get_assembled_proteome.done")
+        touch("checkpoints/assembled_proteome.done")
