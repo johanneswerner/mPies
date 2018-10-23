@@ -1,5 +1,5 @@
 SAMPLES = ["OSD14"]
-ASSEMBLER = ["NONE"]
+ASSEMBLER = ["MEGAHIT"]
 
 if "MEGAHIT" in ASSEMBLER:
     rule run_megahit:

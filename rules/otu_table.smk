@@ -1,5 +1,5 @@
 SAMPLES = ["OSD14"]
-RUN_SINGLEM = False
+RUN_SINGLEM = True
 
 if RUN_SINGLEM:
     rule generate_otu_table:
