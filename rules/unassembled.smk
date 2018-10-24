@@ -34,13 +34,17 @@ rule run_fraggenescan:
         "{sample}/reads_fasta/{sample}_R1_trimmed_pe_fgs.faa",
         "{sample}/reads_fasta/{sample}_R2_trimmed_pe_fgs.faa",
         "{sample}/reads_fasta/{sample}_trimmed_se_fgs.faa"
+    log:
+        log_r1="{sample}/log/{sample}_fgs_r1.log",
+        log_r2="{sample}/log/{sample}_fgs_r2.log",
+        log_se="{sample}/log/{sample}_fgs_se.log"
     threads:
         28
     shell:
         """
-        run_FragGeneScan.pl -genome={input[0]} -out={wildcards.sample}/reads_fasta/fgs_{wildcards.sample}_R1_trimmed_pe -complete=0 -train=illumina_1 -thread={threads}
-        run_FragGeneScan.pl -genome={input[1]} -out={wildcards.sample}/reads_fasta/fgs_{wildcards.sample}_R2_trimmed_pe -complete=0 -train=illumina_1 -thread={threads}
-        run_FragGeneScan.pl -genome={input[2]} -out={wildcards.sample}/reads_fasta/fgs_{wildcards.sample}_trimmed_se -complete=0 -train=illumina_1 -thread={threads}
+        run_FragGeneScan.pl -genome={input[0]} -out={wildcards.sample}/reads_fasta/fgs_{wildcards.sample}_R1_trimmed_pe -complete=0 -train=illumina_1 -thread={threads} > {log.log_r1} 2>&1
+        run_FragGeneScan.pl -genome={input[1]} -out={wildcards.sample}/reads_fasta/fgs_{wildcards.sample}_R2_trimmed_pe -complete=0 -train=illumina_1 -thread={threads} > {log.log_r2} 2>&1
+        run_FragGeneScan.pl -genome={input[2]} -out={wildcards.sample}/reads_fasta/fgs_{wildcards.sample}_trimmed_se -complete=0 -train=illumina_1 -thread={threads} > {log.log_se} 2>&1
         mv {wildcards.sample}/reads_fasta/fgs_{wildcards.sample}_R1_trimmed_pe.faa {output[0]}
         mv {wildcards.sample}/reads_fasta/fgs_{wildcards.sample}_R2_trimmed_pe.faa {output[1]}
         mv {wildcards.sample}/reads_fasta/fgs_{wildcards.sample}_trimmed_se.faa {output[2]}

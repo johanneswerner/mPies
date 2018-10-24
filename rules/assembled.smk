@@ -9,6 +9,8 @@ if "MEGAHIT" in ASSEMBLER:
             "{sample}/trimmed/{sample}_trimmed_se.fastq.gz"
         output:
             "{sample}/assembly/{sample}_contigs.fa"
+        log:
+            "{sample}/log/{sample}_megahit.log"
         threads:
             28  
         message:
@@ -17,7 +19,7 @@ if "MEGAHIT" in ASSEMBLER:
             """
             megahit -1 {input[0]} -2 {input[1]} -r {input[2]} \
               --k-list 21,33,55,77,99,127 --memory 0.9 -t {threads} \
-              -o {wildcards.sample}/megahit --out-prefix {wildcards.sample}_megahit
+              -o {wildcards.sample}/megahit --out-prefix {wildcards.sample}_megahit > {log} 2>&1
             mv {wildcards.sample}/megahit/{wildcards.sample}_megahit.contigs.fa {output}
             rm -rf {wildcards.sample}/megahit
             """
@@ -30,6 +32,8 @@ elif "METASPADES" in ASSEMBLER:
             "{sample}/trimmed/{sample}_trimmed_se.fastq.gz"
         output:
             "{sample}/assembly/{sample}_contigs.fa"
+        log:
+            "{sample}/log/{sample}_metaspades.log"
         threads:
             28
         message:
@@ -37,7 +41,7 @@ elif "METASPADES" in ASSEMBLER:
         shell:
             """
             spades.py -1 {input[0]} -2 {input[1]} -s {input[2]} -t {threads} \
-              -m 230 -o {wildcards.sample}/metaspades
+              -m 230 -o {wildcards.sample}/metaspades > {log} 2>&1
             mv {wildcards.sample}/metaspades/contigs.fasta {output}
             rm -rf {wildcards.sample}/metaspades
             """

@@ -9,12 +9,14 @@ if RUN_SINGLEM:
             expand("{sample}/trimmed/{sample}_trimmed_se.fastq.gz", sample=SAMPLES)
         output:
             "{sample}/singlem/singlem_otu.tsv"
+        log:
+            "{sample}/log/{sample}_singlem.log"
         threads:
             28
         message:
             "Executing singlem with {threads} threads on the following input files: {input}, producing {output}."
         shell:
-            "./appimages/singlem.AppImage pipe --sequences {input} --otu_table {output} --threads {threads}"
+            "./appimages/singlem.AppImage pipe --sequences {input} --otu_table {output} --threads {threads} > {log} 2>&1"
 
     rule obtain_tax_list:
         input:
