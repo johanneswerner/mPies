@@ -10,13 +10,15 @@ rule run_trimmomatic:
         "{sample}/trimmed/{sample}_R1_trimmed_se.fastq.gz",
         "{sample}/trimmed/{sample}_R2_trimmed_pe.fastq.gz",
         "{sample}/trimmed/{sample}_R2_trimmed_se.fastq.gz"
+    params:
+        mode="PE"
     log:
         "{sample}/log/{sample}_trimmomatic.log"
     threads:
         28  
     shell:
         """
-        trimmomatic PE -threads {threads} -phred33 {input[0]} {input[1]} \
+        trimmomatic {params.mode} -threads {threads} -phred33 {input[0]} {input[1]} \
           {output[0]} {output[1]} {output[2]} {output[3]} \
           ILLUMINACLIP:/data/miniconda3/envs/mpies/share/trimmomatic-0.38-1/adapters/TruSeq3-PE.fa:2:30:10 \
           LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36 2> {log}

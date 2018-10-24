@@ -11,28 +11,32 @@ if RUN_SINGLEM:
             "{sample}/singlem/singlem_otu.tsv"
         log:
             "{sample}/log/{sample}_singlem.log"
+        params:
+            mode="pipe"
         threads:
             28
-        message:
-            "Executing singlem with {threads} threads on the following input files: {input}, producing {output}."
         shell:
-            "./appimages/singlem.AppImage pipe --sequences {input} --otu_table {output} --threads {threads} > {log} 2>&1"
+            "./appimages/singlem.AppImage {params.mode} --sequences {input} --otu_table {output} --threads {threads} > {log} 2>&1"
 
     rule obtain_tax_list:
         input:
             expand("{sample}/singlem/singlem_otu.tsv", sample=SAMPLES)
         output:
             "{sample}/amplicon/taxlist.txt"
+        params:
+            mode="parse_singlem"
         shell:
-            "./main.py -v parse_singlem -t {input} -u {output}"
+            "./main.py -v {params.mode} -t {input} -u {output}"
 
     rule obtain_proteome:
         input:
             expand("{sample}/amplicon/taxlist.txt", sample=SAMPLES)
         output:
             "{sample}/proteome/{sample}_amplicon.faa"
+        params:
+            mode="amplicon"
         shell:
-            "./main.py -v amplicon -g {input} -p {output}"
+            "./main.py -v {params.mode} -g {input} -p {output}"
 
 else:
     rule obtain_proteome:
@@ -40,8 +44,10 @@ else:
             expand("{sample}/amplicon/genuslist_test.txt", sample=SAMPLES)
         output:
             "{sample}/proteome/{sample}_amplicon.faa"
+        params:
+            mode="amplicon"
         shell:
-            "./main.py -v amplicon -g {input} -p {output}"
+            "./main.py -v {params.mode} -g {input} -p {output}"
 
 rule get_amplicon_proteome_done:
     input:

@@ -15,8 +15,10 @@ rule remove_short_sequences:
         expand("{sample}/proteome/{sample}_combined.faa", sample=SAMPLES)
     output:
         expand("{sample}/proteome/{sample}_combined_min30.faa", sample=SAMPLES)
+    params:
+        min_length=30
     shell:
-        "perl helper_scripts/remove_short_sequences.pl 30 {input} > {output}"
+        "perl helper_scripts/remove_short_sequences.pl {params.min_length} {input} > {output}"
 
 rule remove_duplicates:
     input:
@@ -26,7 +28,7 @@ rule remove_duplicates:
     log:
         expand("{sample}/log/{sample}_cdhit.log", sample=SAMPLES)
     shell:
-        "cd-hit-dup -i {input} -o {output} 2> {log}"
+        "cd-hit-dup -i {input} -o {output} > {log} 2>&1"
 
 rule postprocessing_done:
     input:

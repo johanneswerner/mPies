@@ -1,5 +1,5 @@
 SAMPLES = ["OSD14"]
-ASSEMBLER = ["METASPADES"]
+ASSEMBLER = ["MEGAHIT"]
 
 if "MEGAHIT" in ASSEMBLER:
     rule run_megahit:
@@ -9,16 +9,17 @@ if "MEGAHIT" in ASSEMBLER:
             "{sample}/trimmed/{sample}_trimmed_se.fastq.gz"
         output:
             "{sample}/assembly/{sample}_contigs.fa"
+        params:
+            klist="21,33,55,77,99,127",
+            memory=0.9
         log:
             "{sample}/log/{sample}_megahit.log"
         threads:
             28  
-        message:
-            "Executing MEGAHIT assembly with {threads} threads on the following input files: {input}, producing {output}."
         shell:
             """
             megahit -1 {input[0]} -2 {input[1]} -r {input[2]} \
-              --k-list 21,33,55,77,99,127 --memory 0.9 -t {threads} \
+              --k-list {params.klist} --memory {params.memory} -t {threads} \
               -o {wildcards.sample}/megahit --out-prefix {wildcards.sample}_megahit > {log} 2>&1
             mv {wildcards.sample}/megahit/{wildcards.sample}_megahit.contigs.fa {output}
             rm -rf {wildcards.sample}/megahit
@@ -32,16 +33,16 @@ elif "METASPADES" in ASSEMBLER:
             "{sample}/trimmed/{sample}_trimmed_se.fastq.gz"
         output:
             "{sample}/assembly/{sample}_contigs.fa"
+        params:
+            memory=230
         log:
             "{sample}/log/{sample}_metaspades.log"
         threads:
             28
-        message:
-            "Executing metaSPAdes assembly with {threads} threads on the following input files: {input}, producing {output}."
         shell:
             """
             spades.py -1 {input[0]} -2 {input[1]} -s {input[2]} -t {threads} \
-              -m 230 -o {wildcards.sample}/metaspades > {log} 2>&1
+              -m {params.memory} -o {wildcards.sample}/metaspades > {log} 2>&1
             mv {wildcards.sample}/metaspades/contigs.fasta {output}
             rm -rf {wildcards.sample}/metaspades
             """
@@ -51,9 +52,11 @@ rule run_prodigal:
         "{sample}/assembly/{sample}_contigs.fa"
     output:
         "{sample}/proteome/{sample}_assembled.faa"
+    params:
+        mode="meta"
     shell:
         """
-        prodigal -p meta -i {input} -o {output}.gbk -a {output} -q
+        prodigal -p {params.mode} -i {input} -o {output}.gbk -a {output} -q
         rm {output}.gbk
         """
 
