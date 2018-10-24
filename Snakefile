@@ -16,6 +16,10 @@ include:
     "rules/unassembled.smk"
 inputs.append("checkpoints/unassembled_proteome.done")
 
+include:
+    "rules/postprocessing.smk"
+inputs.append("checkpoints/postprocessing.done")
+
 rule ALL:
     input:
         inputs
