@@ -4,8 +4,9 @@ RUN_SINGLEM = True
 if RUN_SINGLEM:
     rule generate_otu_table:
         input:
-            "{sample}/reads/{sample}_R1.fastq.gz",
-            "{sample}/reads/{sample}_R2.fastq.gz"
+            expand("{sample}/trimmed/{sample}_R1_trimmed_pe.fastq.gz", sample=SAMPLES),
+            expand("{sample}/trimmed/{sample}_R2_trimmed_pe.fastq.gz", sample=SAMPLES),
+            expand("{sample}/trimmed/{sample}_trimmed_se.fastq.gz", sample=SAMPLES)
         output:
             "{sample}/singlem/singlem_otu.tsv"
         threads:

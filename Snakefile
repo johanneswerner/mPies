@@ -1,6 +1,10 @@
 inputs = []
 
 include:
+    "rules/preprocessing.smk"
+inputs.append("checkpoints/preprocessing.done")
+
+include:
     "rules/otu_table.smk"
 inputs.append("checkpoints/amplicon_proteome.done")
 

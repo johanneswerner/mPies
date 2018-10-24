@@ -1,11 +1,12 @@
 SAMPLES = ["OSD14"]
-ASSEMBLER = ["MEGAHIT"]
+ASSEMBLER = ["METASPADES"]
 
 if "MEGAHIT" in ASSEMBLER:
     rule run_megahit:
         input:
-            "{sample}/reads/{sample}_R1.fastq.gz",
-            "{sample}/reads/{sample}_R2.fastq.gz"
+            "{sample}/trimmed/{sample}_R1_trimmed_pe.fastq.gz",
+            "{sample}/trimmed/{sample}_R2_trimmed_pe.fastq.gz",
+            "{sample}/trimmed/{sample}_trimmed_se.fastq.gz"
         output:
             "{sample}/assembly/{sample}_contigs.fa"
         threads:
@@ -14,7 +15,9 @@ if "MEGAHIT" in ASSEMBLER:
             "Executing MEGAHIT assembly with {threads} threads on the following input files: {input}, producing {output}."
         shell:
             """
-            megahit -1 {input[0]} -2 {input[1]} --k-list 21,33,55,77,99,127 --memory 0.9 -t {threads} -o {wildcards.sample}/megahit --out-prefix {wildcards.sample}_megahit
+            megahit -1 {input[0]} -2 {input[1]} -r {input[2]} \
+              --k-list 21,33,55,77,99,127 --memory 0.9 -t {threads} \
+              -o {wildcards.sample}/megahit --out-prefix {wildcards.sample}_megahit
             mv {wildcards.sample}/megahit/{wildcards.sample}_megahit.contigs.fa {output}
             rm -rf {wildcards.sample}/megahit
             """
@@ -22,8 +25,9 @@ if "MEGAHIT" in ASSEMBLER:
 elif "METASPADES" in ASSEMBLER:
     rule run_metaspades:
         input:
-            "{sample}/reads/{sample}_R1.fastq.gz",
-            "{sample}/reads/{sample}_R2.fastq.gz"
+            "{sample}/trimmed/{sample}_R1_trimmed_pe.fastq.gz",
+            "{sample}/trimmed/{sample}_R2_trimmed_pe.fastq.gz",
+            "{sample}/trimmed/{sample}_trimmed_se.fastq.gz"
         output:
             "{sample}/assembly/{sample}_contigs.fa"
         threads:
@@ -32,7 +36,8 @@ elif "METASPADES" in ASSEMBLER:
             "Executing metaSPAdes assembly with {threads} threads on the following input files: {input}, producing {output}."
         shell:
             """
-            spades.py -1 {input[0]} -2 {input[1]}  -t {threads} -m 230 -o {wildcards.sample}/metaspades
+            spades.py -1 {input[0]} -2 {input[1]} -s {input[2]} -t {threads} \
+              -m 230 -o {wildcards.sample}/metaspades
             mv {wildcards.sample}/metaspades/contigs.fasta {output}
             rm -rf {wildcards.sample}/metaspades
             """
