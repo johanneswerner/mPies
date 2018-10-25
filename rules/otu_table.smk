@@ -8,7 +8,7 @@ if RUN_SINGLEM:
             expand("{sample}/trimmed/{sample}_R2_trimmed_pe.fastq.gz", sample=SAMPLES),
             expand("{sample}/trimmed/{sample}_trimmed_se.fastq.gz", sample=SAMPLES)
         output:
-            "{sample}/singlem/singlem_otu.tsv"
+            temp("{sample}/singlem/singlem_otu.tsv")
         log:
             "{sample}/log/{sample}_singlem.log"
         params:
@@ -32,7 +32,7 @@ if RUN_SINGLEM:
         input:
             expand("{sample}/amplicon/taxlist.txt", sample=SAMPLES)
         output:
-            "{sample}/proteome/{sample}_amplicon.faa"
+            temp("{sample}/proteome/{sample}_amplicon.faa")
         params:
             mode="amplicon"
         shell:
@@ -43,7 +43,7 @@ else:
         input:
             expand("{sample}/amplicon/genuslist_test.txt", sample=SAMPLES)
         output:
-            "{sample}/proteome/{sample}_amplicon.faa"
+            temp("{sample}/proteome/{sample}_amplicon.faa")
         params:
             mode="amplicon"
         shell:

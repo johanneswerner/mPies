@@ -51,13 +51,13 @@ rule run_prodigal:
     input:
         "{sample}/assembly/{sample}_contigs.fa"
     output:
-        "{sample}/proteome/{sample}_assembled.faa"
+        temp("{sample}/proteome/{sample}_assembled.faa"),
+        temp("{sample}/proteome/{sample}_assembled.gbk")
     params:
         mode="meta"
     shell:
         """
-        prodigal -p {params.mode} -i {input} -o {output}.gbk -a {output} -q
-        rm {output}.gbk
+        prodigal -p {params.mode} -i {input} -o {output[1]} -a {output[0]} -q
         """
 
 rule get_assembled_proteome_done:

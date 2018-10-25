@@ -7,9 +7,9 @@ rule run_trimmomatic:
         "{sample}/reads/{sample}_R2.fastq.gz"
     output:
         "{sample}/trimmed/{sample}_R1_trimmed_pe.fastq.gz",
-        "{sample}/trimmed/{sample}_R1_trimmed_se.fastq.gz",
+        temp("{sample}/trimmed/{sample}_R1_trimmed_se.fastq.gz"),
         "{sample}/trimmed/{sample}_R2_trimmed_pe.fastq.gz",
-        "{sample}/trimmed/{sample}_R2_trimmed_se.fastq.gz"
+        temp("{sample}/trimmed/{sample}_R2_trimmed_se.fastq.gz")
     params:
         mode="PE"
     log:
