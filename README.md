@@ -31,6 +31,6 @@ snakemake -j N # set N to desired number of cores, omit N to use available numbe
 
 TODO: snakemake config
 
-## Data
+## Test data
 
-The data used for making functional tests is from the OSD
+The test data set is a subset from the Ocean Sampling Day (first 100,000 lines for each read file), Accession number ERR770958 obtained from https://www.ebi.ac.uk/ena/data/view/ERR770958). The data is deposited in the test_data directory of this repository.
