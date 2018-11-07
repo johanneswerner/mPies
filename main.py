@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
+import hashlib
 import logging
 import logging.config
 import os
@@ -98,6 +99,8 @@ def main():
                                    help="proteome output file with hashed headers")
     subparser_hashing.add_argument("-t", "--tsv_file", action="store", dest="tsv_file", required=True,
                                    help="proteome output file with hashed headers")
+    subparser_hashing.add_argument("-x", "--hash_type", choices=hashlib.algorithms_guaranteed, dest="hash_type",
+                                   default="md5", help="hash algorithm to use")
 
     args = parser.parse_args()
 
@@ -135,7 +138,7 @@ def main():
     elif args.mode == "hashing":
         logger.info("hashing protein headers")
         hash_headers.write_hashed_protein_header_fasta_file(input_file=args.proteome_file, output_file=args.hashed_file,
-                                               tsv_file=args.tsv_file)
+                                                            tsv_file=args.tsv_file, hash_type=args.hash_type)
 
     logger.info("Done and finished!")
 

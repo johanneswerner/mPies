@@ -46,7 +46,8 @@
             min_length: 30
         },
         "hash_headers": {
-            "mode": "hashing"
+            "mode": "hashing",
+            "hash_type": "md5"
         }
     }
 }
