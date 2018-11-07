@@ -1,6 +1,4 @@
-ASSEMBLER = ["METASPADES"]
-
-if "MEGAHIT" in ASSEMBLER:
+if config["assembled"]["assembler"] == "MEGAHIT":
     rule run_megahit:
         input:
             expand("{sample}/trimmed/{sample}_R1_trimmed_pe.fastq.gz", sample=config["sample"]),
@@ -9,8 +7,8 @@ if "MEGAHIT" in ASSEMBLER:
         output:
             expand("{sample}/assembly/{sample}_contigs.fa", sample=config["sample"])
         params:
-            klist="21,33,55,77,99,127",
-            memory=0.9
+            klist=config["assembled"]["run_megahit"]["klist"],
+            memory=config["ressources"]["megahit_memory"]
         log:
             expand("{sample}/log/{sample}_megahit.log", sample=config["sample"])
         threads:
@@ -23,7 +21,7 @@ if "MEGAHIT" in ASSEMBLER:
             rm -rf {config[sample]}/megahit/
             """
 
-elif "METASPADES" in ASSEMBLER:
+elif config["assembled"]["assembler"] == "METASPADES":
     rule run_metaspades:
         input:
             expand("{sample}/trimmed/{sample}_R1_trimmed_pe.fastq.gz", sample=config["sample"]),
@@ -32,7 +30,7 @@ elif "METASPADES" in ASSEMBLER:
         output:
             expand("{sample}/assembly/{sample}_contigs.fa", sample=config["sample"])
         params:
-            memory=230
+            memory=config["ressources"]["metaspades_memory"]
         log:
             expand("{sample}/log/{sample}_metaspades.log", sample=config["sample"])
         threads:
@@ -52,7 +50,7 @@ rule run_prodigal:
         temp(expand("{sample}/proteome/{sample}_assembled.faa", sample=config["sample"])),
         temp(expand("{sample}/proteome/{sample}_assembled.gbk", sample=config["sample"]))
     params:
-        mode="meta"
+        mode=config["assembled"]["prodigal"]["mode"]
     shell:
         """
         prodigal -p {params.mode} -i {input} -o {output[1]} -a {output[0]} -q
@@ -63,3 +61,4 @@ rule get_assembled_proteome_done:
         expand("{sample}/proteome/{sample}_assembled.faa", sample=config["sample"])
     output:
         touch("checkpoints/assembled_proteome.done")
+

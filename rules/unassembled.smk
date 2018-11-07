@@ -43,7 +43,7 @@ rule run_fraggenescan:
         temp(expand("{sample}/fasta_files/fgs_{sample}_R2_trimmed_pe.out", sample=config["sample"])),
         temp(expand("{sample}/fasta_files/fgs_{sample}_trimmed_se.out", sample=config["sample"]))
     params:
-        train_file="illumina_1"
+        train_file=config["unassembled"]["run_fraggenescan"]["train_file"]
     log:
         log_r1=expand("{sample}/log/{sample}_fgs_r1.log", sample=config["sample"]),
         log_r2=expand("{sample}/log/{sample}_fgs_r2.log", sample=config["sample"]),
@@ -52,9 +52,12 @@ rule run_fraggenescan:
         config["ressources"]["threads"]
     shell:
         """
-        run_FragGeneScan.pl -genome={input[0]} -out={config[sample]}/fasta_files/fgs_{config[sample]}_R1_trimmed_pe -complete=0 -train={params.train_file} -thread={threads} > {log.log_r1} 2>&1
-        run_FragGeneScan.pl -genome={input[1]} -out={config[sample]}/fasta_files/fgs_{config[sample]}_R2_trimmed_pe -complete=0 -train={params.train_file} -thread={threads} > {log.log_r2} 2>&1
-        run_FragGeneScan.pl -genome={input[2]} -out={config[sample]}/fasta_files/fgs_{config[sample]}_trimmed_se -complete=0 -train={params.train_file} -thread={threads} > {log.log_se} 2>&1
+        run_FragGeneScan.pl -genome={input[0]} -out={config[sample]}/fasta_files/fgs_{config[sample]}_R1_trimmed_pe \
+          -complete=0 -train={params.train_file} -thread={threads} > {log.log_r1} 2>&1
+        run_FragGeneScan.pl -genome={input[1]} -out={config[sample]}/fasta_files/fgs_{config[sample]}_R2_trimmed_pe \
+          -complete=0 -train={params.train_file} -thread={threads} > {log.log_r2} 2>&1
+        run_FragGeneScan.pl -genome={input[2]} -out={config[sample]}/fasta_files/fgs_{config[sample]}_trimmed_se \
+          -complete=0 -train={params.train_file} -thread={threads} > {log.log_se} 2>&1
         mv {config[sample]}/fasta_files/fgs_{config[sample]}_R1_trimmed_pe.faa {output[0]}
         mv {config[sample]}/fasta_files/fgs_{config[sample]}_R2_trimmed_pe.faa {output[1]}
         mv {config[sample]}/fasta_files/fgs_{config[sample]}_trimmed_se.faa {output[2]}
@@ -76,3 +79,4 @@ rule get_unassembled_proteome_done:
         expand("{sample}/proteome/{sample}_unassembled.faa", sample=config["sample"])
     output:
         touch("checkpoints/unassembled_proteome.done")
+

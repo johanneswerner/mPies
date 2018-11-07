@@ -14,7 +14,7 @@ rule remove_short_sequences:
     output:
         temp(expand("{sample}/proteome/{sample}_combined_min30.faa", sample=config["sample"]))
     params:
-        min_length=30
+        min_length=config["postprocessing"]["remove_short_sequences"]["min_length"]
     shell:
         "perl helper_scripts/remove_short_sequences.pl {params.min_length} {input} > {output}"
 
@@ -37,7 +37,7 @@ rule hash_headers:
         expand("{sample}/proteome/{sample}_combined_min30_nodup_hashed.faa", sample=config["sample"]),
         expand("{sample}/proteome/{sample}_combined_min30_nodup_hashed.tsv", sample=config["sample"])
     params:
-        mode="hashing"
+        mode=config["postprocessing"]["hash_headers"]["mode"]
     shell:
         "./main.py -v {params.mode} -p {input} -s {output[0]} -t {output[1]}"
 
@@ -47,3 +47,4 @@ rule postprocessing_done:
         expand("{sample}/proteome/{sample}_combined_min30_nodup_hashed.tsv", sample=config["sample"])
     output:
         touch("checkpoints/postprocessing.done")
+

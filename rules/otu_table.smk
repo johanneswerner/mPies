@@ -11,11 +11,14 @@ if RUN_SINGLEM:
         log:
             expand("{sample}/log/{sample}_singlem.log", sample=config["sample"])
         params:
-            mode="pipe"
+            mode=config["otu_table"]["generate_otu_table"]["mode"]
         threads:
             config["ressources"]["threads"]
         shell:
-            "./appimages/singlem.AppImage {params.mode} --sequences {input} --otu_table {output} --threads {threads} > {log} 2>&1"
+            """
+            ./appimages/singlem.AppImage {params.mode} --sequences {input} --otu_table {output} --threads {threads} \
+              > {log} 2>&1
+            """
 
     rule obtain_tax_list:
         input:
@@ -23,8 +26,8 @@ if RUN_SINGLEM:
         output:
             expand("{sample}/amplicon/taxlist.txt", sample=config["sample"])
         params:
-            mode="parse_singlem",
-            cutoff=2
+            mode=config["otu_table"]["obtain_tax_list"]["mode"],
+            cutoff=config["otu_table"]["obtain_tax_list"]["cutoff"]
         shell:
             "./main.py -v {params.mode} -t {input} -u {output} -c {params.cutoff}"
 
@@ -34,7 +37,7 @@ if RUN_SINGLEM:
         output:
             temp(expand("{sample}/proteome/{sample}_amplicon.faa", sample=config["sample"]))
         params:
-            mode="amplicon"
+            mode=config["otu_table"]["obtain_proteome"]["mode"]
         shell:
             "./main.py -v {params.mode} -g {input} -p {output}"
 
@@ -45,7 +48,7 @@ else:
         output:
             temp(expand("{sample}/proteome/{sample}_amplicon.faa", sample=config["sample"]))
         params:
-            mode="amplicon"
+            mode=config["otu_table"]["obtain_proteome"]["mode"]
         shell:
             "./main.py -v {params.mode} -g {input} -p {output}"
 
@@ -54,3 +57,4 @@ rule get_amplicon_proteome_done:
         expand("{sample}/proteome/{sample}_amplicon.faa", sample=config["sample"])
     output:
         touch("checkpoints/amplicon_proteome.done")
+
