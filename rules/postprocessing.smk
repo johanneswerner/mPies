@@ -1,20 +1,18 @@
-SAMPLES = ["OSD14subset"]
-
 rule combine_proteomes:
     input:
-        expand("{sample}/proteome/{sample}_amplicon.faa", sample=SAMPLES),
-        expand("{sample}/proteome/{sample}_assembled.faa", sample=SAMPLES),
-        expand("{sample}/proteome/{sample}_unassembled.faa", sample=SAMPLES)
+        expand("{sample}/proteome/{sample}_amplicon.faa", sample=config["samples"]),
+        expand("{sample}/proteome/{sample}_assembled.faa", sample=config["samples"]),
+        expand("{sample}/proteome/{sample}_unassembled.faa", sample=config["samples"])
     output:
-        expand("{sample}/proteome/{sample}_combined.faa", sample=SAMPLES)
+        expand("{sample}/proteome/{sample}_combined.faa", sample=config["samples"])
     shell:
         "cat {input} > {output}"
 
 rule remove_short_sequences:
     input:
-        expand("{sample}/proteome/{sample}_combined.faa", sample=SAMPLES)
+        expand("{sample}/proteome/{sample}_combined.faa", sample=config["samples"])
     output:
-        temp(expand("{sample}/proteome/{sample}_combined_min30.faa", sample=SAMPLES))
+        temp(expand("{sample}/proteome/{sample}_combined_min30.faa", sample=config["samples"]))
     params:
         min_length=30
     shell:
@@ -22,22 +20,22 @@ rule remove_short_sequences:
 
 rule remove_duplicates:
     input:
-        expand("{sample}/proteome/{sample}_combined_min30.faa", sample=SAMPLES)
+        expand("{sample}/proteome/{sample}_combined_min30.faa", sample=config["samples"])
     output:
-        expand("{sample}/proteome/{sample}_combined_min30_nodup.faa", sample=SAMPLES),
-        temp(expand("{sample}/proteome/{sample}_combined_min30_nodup.faa.clstr", sample=SAMPLES)),
-        temp(expand("{sample}/proteome/{sample}_combined_min30_nodup.faa2.clstr", sample=SAMPLES))
+        expand("{sample}/proteome/{sample}_combined_min30_nodup.faa", sample=config["samples"]),
+        temp(expand("{sample}/proteome/{sample}_combined_min30_nodup.faa.clstr", sample=config["samples"])),
+        temp(expand("{sample}/proteome/{sample}_combined_min30_nodup.faa2.clstr", sample=config["samples"]))
     log:
-        expand("{sample}/log/{sample}_cdhit.log", sample=SAMPLES)
+        expand("{sample}/log/{sample}_cdhit.log", sample=config["samples"])
     shell:
         "cd-hit-dup -i {input} -o {output[0]} > {log} 2>&1"
 
 rule hash_headers:
     input:
-        expand("{sample}/proteome/{sample}_combined_min30_nodup.faa", sample=SAMPLES)
+        expand("{sample}/proteome/{sample}_combined_min30_nodup.faa", sample=config["samples"])
     output:
-        expand("{sample}/proteome/{sample}_combined_min30_nodup_hashed.faa", sample=SAMPLES),
-        expand("{sample}/proteome/{sample}_combined_min30_nodup_hashed.tsv", sample=SAMPLES)
+        expand("{sample}/proteome/{sample}_combined_min30_nodup_hashed.faa", sample=config["samples"]),
+        expand("{sample}/proteome/{sample}_combined_min30_nodup_hashed.tsv", sample=config["samples"])
     params:
         mode="hashing"
     shell:
@@ -45,7 +43,7 @@ rule hash_headers:
 
 rule postprocessing_done:
     input:
-        expand("{sample}/proteome/{sample}_combined_min30_nodup_hashed.faa", sample=SAMPLES),
-        expand("{sample}/proteome/{sample}_combined_min30_nodup_hashed.tsv", sample=SAMPLES)
+        expand("{sample}/proteome/{sample}_combined_min30_nodup_hashed.faa", sample=config["samples"]),
+        expand("{sample}/proteome/{sample}_combined_min30_nodup_hashed.tsv", sample=config["samples"])
     output:
         touch("checkpoints/postprocessing.done")

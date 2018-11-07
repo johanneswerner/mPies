@@ -1,3 +1,5 @@
+configfile: "snake.json"
+
 inputs = []
 
 include:

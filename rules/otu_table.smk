@@ -1,16 +1,15 @@
-SAMPLES = ["OSD14subset"]
 RUN_SINGLEM = True
 
 if RUN_SINGLEM:
     rule generate_otu_table:
         input:
-            expand("{sample}/trimmed/{sample}_R1_trimmed_pe.fastq.gz", sample=SAMPLES),
-            expand("{sample}/trimmed/{sample}_R2_trimmed_pe.fastq.gz", sample=SAMPLES),
-            expand("{sample}/trimmed/{sample}_trimmed_se.fastq.gz", sample=SAMPLES)
+            expand("{sample}/trimmed/{sample}_R1_trimmed_pe.fastq.gz", sample=config["samples"]),
+            expand("{sample}/trimmed/{sample}_R2_trimmed_pe.fastq.gz", sample=config["samples"]),
+            expand("{sample}/trimmed/{sample}_trimmed_se.fastq.gz", sample=config["samples"])
         output:
-            temp("{sample}/singlem/singlem_otu.tsv")
+            temp(expand("{sample}/singlem/singlem_otu.tsv", sample=config["samples"]))
         log:
-            "{sample}/log/{sample}_singlem.log"
+            expand("{sample}/log/{sample}_singlem.log", sample=config["samples"])
         params:
             mode="pipe"
         threads:
@@ -20,9 +19,9 @@ if RUN_SINGLEM:
 
     rule obtain_tax_list:
         input:
-            expand("{sample}/singlem/singlem_otu.tsv", sample=SAMPLES)
+            expand("{sample}/singlem/singlem_otu.tsv", sample=config["samples"])
         output:
-            "{sample}/amplicon/taxlist.txt"
+            expand("{sample}/amplicon/taxlist.txt", sample=config["samples"])
         params:
             mode="parse_singlem",
             cutoff=2
@@ -31,9 +30,9 @@ if RUN_SINGLEM:
 
     rule obtain_proteome:
         input:
-            expand("{sample}/amplicon/taxlist.txt", sample=SAMPLES)
+            expand("{sample}/amplicon/taxlist.txt", sample=config["samples"])
         output:
-            temp("{sample}/proteome/{sample}_amplicon.faa")
+            temp(expand("{sample}/proteome/{sample}_amplicon.faa", sample=config["samples"]))
         params:
             mode="amplicon"
         shell:
@@ -42,9 +41,9 @@ if RUN_SINGLEM:
 else:
     rule obtain_proteome:
         input:
-            expand("{sample}/amplicon/genuslist_test.txt", sample=SAMPLES)
+            expand("{sample}/amplicon/genuslist_test.txt", sample=config["samples"])
         output:
-            temp("{sample}/proteome/{sample}_amplicon.faa")
+            temp(expand("{sample}/proteome/{sample}_amplicon.faa", sample=config["samples"]))
         params:
             mode="amplicon"
         shell:
@@ -52,6 +51,6 @@ else:
 
 rule get_amplicon_proteome_done:
     input:
-        expand("{sample}/proteome/{sample}_amplicon.faa", sample=SAMPLES)
+        expand("{sample}/proteome/{sample}_amplicon.faa", sample=config["samples"])
     output:
         touch("checkpoints/amplicon_proteome.done")
