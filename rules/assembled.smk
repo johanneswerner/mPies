@@ -7,20 +7,20 @@ if "MEGAHIT" in ASSEMBLER:
             expand("{sample}/trimmed/{sample}_R2_trimmed_pe.fastq.gz", sample=config["sample"]),
             expand("{sample}/trimmed/{sample}_trimmed_se.fastq.gz", sample=config["sample"])
         output:
-            expand("{sample}/assembly/{sample}_contigs.fa", sample=config["sample"]),
-            temp(directory(expand("{sample}/megahit/", sample=config["sample"])))
+            expand("{sample}/assembly/{sample}_contigs.fa", sample=config["sample"])
         params:
             klist="21,33,55,77,99,127",
             memory=0.9
         log:
             expand("{sample}/log/{sample}_megahit.log", sample=config["sample"])
         threads:
-            28  
+            config["ressources"]["threads"]
         shell:
             """
             megahit -1 {input[0]} -2 {input[1]} -r {input[2]} --k-list {params.klist} --memory {params.memory} \
-            -t {threads} -o output[1] --out-prefix {config[sample]}_megahit > {log} 2>&1
-            mv {config[sample]}/megahit/{config[sample]}_megahit.contigs.fa {output[0]}
+              -t {threads} -o {config[sample]}/megahit/ --out-prefix {config[sample]}_megahit > {log} 2>&1
+            mv {config[sample]}/megahit/{config[sample]}_megahit.contigs.fa {output}
+            rm -rf {config[sample]}/megahit/
             """
 
 elif "METASPADES" in ASSEMBLER:
@@ -30,19 +30,19 @@ elif "METASPADES" in ASSEMBLER:
             expand("{sample}/trimmed/{sample}_R2_trimmed_pe.fastq.gz", sample=config["sample"]),
             expand("{sample}/trimmed/{sample}_trimmed_se.fastq.gz", sample=config["sample"])
         output:
-            expand("{sample}/assembly/{sample}_contigs.fa", sample=config["sample"]),
-            temp(directory(expand("{sample}/metaspades/", sample=config["sample"])))
+            expand("{sample}/assembly/{sample}_contigs.fa", sample=config["sample"])
         params:
             memory=230
         log:
             expand("{sample}/log/{sample}_metaspades.log", sample=config["sample"])
         threads:
-            28
+            config["ressources"]["threads"]
         shell:
             """
-            spades.py -1 {input[0]} -2 {input[1]} -s {input[2]} -t {threads} -m {params.memory} -o {output[1]} \
-              > {log} 2>&1
-            mv {config[sample]}/metaspades/contigs.fasta {output[0]}
+            spades.py -1 {input[0]} -2 {input[1]} -s {input[2]} -t {threads} -m {params.memory} \
+              -o {config[sample]}/metaspades/ > {log} 2>&1
+            mv {config[sample]}/metaspades/contigs.fasta {output}
+            rm -rf {config[sample]}/metaspades/
             """
 
 rule run_prodigal:

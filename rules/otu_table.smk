@@ -13,7 +13,7 @@ if RUN_SINGLEM:
         params:
             mode="pipe"
         threads:
-            28
+            config["ressources"]["threads"]
         shell:
             "./appimages/singlem.AppImage {params.mode} --sequences {input} --otu_table {output} --threads {threads} > {log} 2>&1"
 

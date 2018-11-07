@@ -1,3 +1,6 @@
 {
-    "sample": "OSD14subset"
+    "sample": "OSD14subset",
+    "ressources": {
+        "threads": 28
+    }
 }

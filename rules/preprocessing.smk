@@ -12,7 +12,7 @@ rule run_trimmomatic:
     log:
         expand("{sample}/log/{sample}_trimmomatic.log", sample=config["sample"])
     threads:
-        28  
+        config["ressources"]["threads"]
     shell:
         """
         trimmomatic {params.mode} -threads {threads} -phred33 {input[0]} {input[1]} \

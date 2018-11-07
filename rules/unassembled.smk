@@ -49,7 +49,7 @@ rule run_fraggenescan:
         log_r2=expand("{sample}/log/{sample}_fgs_r2.log", sample=config["sample"]),
         log_se=expand("{sample}/log/{sample}_fgs_se.log", sample=config["sample"])
     threads:
-        28
+        config["ressources"]["threads"]
     shell:
         """
         run_FragGeneScan.pl -genome={input[0]} -out={config[sample]}/fasta_files/fgs_{config[sample]}_R1_trimmed_pe -complete=0 -train={params.train_file} -thread={threads} > {log.log_r1} 2>&1
