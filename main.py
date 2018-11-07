@@ -5,7 +5,7 @@ import logging
 import logging.config
 import os
 import sys
-from pies import general_functions, parse_singlem, use_amplicon
+from pies import general_functions, hash_headers, parse_singlem, use_amplicon
 
 
 def configure_logger(name, log_file, level="DEBUG"):
@@ -64,10 +64,11 @@ def main():
 
     parser.add_argument("-v", "--verbose", action="store_true", dest="verbose", required=False, help="verbose output")
 
-    subparsers = parser.add_subparsers(dest="mode",help="select the run mode (parse_singlem, amplicon)")
+    subparsers = parser.add_subparsers(dest="mode",help="select the run mode (parse_singlem, amplicon, hashing)")
     subparser_singlem = subparsers.add_parser("parse_singlem", help="build genus list from singlem OTU table")
     subparser_amplicon = subparsers.add_parser("amplicon",
                                                help="use genus list (amplicons) or singlem (metagenome reads)")
+    subparser_hashing = subparsers.add_parser("hashing", help="hash fasta headers")
 
     subparser_singlem.add_argument("-n", "--names_dmp", action="store", dest="names_dmp", default=None,required=False,
                                    help="location of names.dmp")
@@ -90,6 +91,13 @@ def main():
                                     help="use unreviewed TrEMBL hits (default) or only reviewed SwissProt")
     subparser_amplicon.add_argument("-t", "--taxonomy", action="store_true", dest="taxonomy", required=False,
                                     help="add taxonomic lineage to fasta header")
+
+    subparser_hashing.add_argument("-p", "--proteome_file", action="store", dest="proteome_file", required=True,
+                                   help="proteome input file")
+    subparser_hashing.add_argument("-s", "--hashed_proteome_file", action="store", dest="hashed_file", required=True,
+                                   help="proteome output file with hashed headers")
+    subparser_hashing.add_argument("-t", "--tsv_file", action="store", dest="tsv_file", required=True,
+                                   help="proteome output file with hashed headers")
 
     args = parser.parse_args()
 
@@ -124,6 +132,10 @@ def main():
         use_amplicon.get_protein_sequences(tax_list=taxids, output_file=args.proteome_file, ncbi_tax_dict=tax_dict,
                                            reviewed=args.reviewed, add_taxonomy=args.taxonomy)
 
+    elif args.mode == "hashing":
+        logger.info("hashing protein headers")
+        hash_headers.write_hashed_protein_header_fasta_file(input_file=args.proteome_file, output_file=args.hashed_file,
+                                               tsv_file=args.tsv_file)
 
     logger.info("Done and finished!")
 

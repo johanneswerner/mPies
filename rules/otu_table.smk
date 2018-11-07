@@ -1,4 +1,4 @@
-SAMPLES = ["OSD14"]
+SAMPLES = ["OSD14subset"]
 RUN_SINGLEM = True
 
 if RUN_SINGLEM:

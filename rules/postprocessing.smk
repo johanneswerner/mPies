@@ -1,4 +1,4 @@
-SAMPLES = ["OSD14"]
+SAMPLES = ["OSD14subset"]
 
 rule combine_proteomes:
     input:

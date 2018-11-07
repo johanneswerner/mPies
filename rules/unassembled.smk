@@ -1,4 +1,4 @@
-SAMPLES = ["OSD14"]
+SAMPLES = ["OSD14subset"]
 READS = ["R1", "R2"]
 
 # rule create_train_dir:
