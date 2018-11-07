@@ -24,9 +24,10 @@ if RUN_SINGLEM:
         output:
             "{sample}/amplicon/taxlist.txt"
         params:
-            mode="parse_singlem"
+            mode="parse_singlem",
+            cutoff=2
         shell:
-            "./main.py -v {params.mode} -t {input} -u {output}"
+            "./main.py -v {params.mode} -t {input} -u {output} -c {params.cutoff}"
 
     rule obtain_proteome:
         input:
