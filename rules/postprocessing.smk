@@ -32,8 +32,20 @@ rule remove_duplicates:
     shell:
         "cd-hit-dup -i {input} -o {output[0]} > {log} 2>&1"
 
-rule postprocessing_done:
+rule hash_headers:
     input:
         expand("{sample}/proteome/{sample}_combined_min30_nodup.faa", sample=SAMPLES)
+    output:
+        expand("{sample}/proteome/{sample}_combined_min30_nodup_hashed.faa", sample=SAMPLES),
+        expand("{sample}/proteome/{sample}_combined_min30_nodup_hashed.tsv", sample=SAMPLES)
+    params:
+        mode="hashing"
+    shell:
+        "./main.py -v {params.mode} -p {input} -s {output[0]} -t {output[1]}"
+
+rule postprocessing_done:
+    input:
+        expand("{sample}/proteome/{sample}_combined_min30_nodup_hashed.faa", sample=SAMPLES),
+        expand("{sample}/proteome/{sample}_combined_min30_nodup_hashed.tsv", sample=SAMPLES)
     output:
         touch("checkpoints/postprocessing.done")
