@@ -37,7 +37,7 @@ rule hash_headers:
         expand("{sample}/proteome/{sample}_combined_min30_nodup_hashed.faa", sample=config["sample"]),
         expand("{sample}/proteome/{sample}_combined_min30_nodup_hashed.tsv", sample=config["sample"])
     params:
-        mode=config["postprocessing"]["hash_headers"]["mode"]
+        mode=config["postprocessing"]["hash_headers"]["mode"],
         hash_type=config["postprocessing"]["hash_headers"]["hash_type"]
     shell:
         "./main.py -v {params.mode} -p {input} -s {output[0]} -t {output[1]} -x {params.hash_type}"
