@@ -30,6 +30,7 @@
         }
     },
     "otu_table": {
+        "run_singlem": true,
         "generate_otu_table": {
             "mode": "pipe"
         },

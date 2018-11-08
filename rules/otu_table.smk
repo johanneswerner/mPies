@@ -1,6 +1,4 @@
-RUN_SINGLEM = True
-
-if RUN_SINGLEM:
+if config["otu_table"]["run_singlem"]:
     rule generate_otu_table:
         input:
             expand("{sample}/trimmed/{sample}_R1_trimmed_pe.fastq.gz", sample=config["sample"]),
