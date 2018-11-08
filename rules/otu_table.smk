@@ -7,7 +7,7 @@ if config["otu_table"]["run_singlem"]:
         output:
             temp(expand("{sample}/singlem/singlem_otu.tsv", sample=config["sample"]))
         log:
-            expand("{sample}/log/{sample}_singlem.log", sample=config["sample"])
+            expand("{sample}/log/singlem.log", sample=config["sample"])
         params:
             mode=config["otu_table"]["generate_otu_table"]["mode"]
         threads:
@@ -33,7 +33,7 @@ if config["otu_table"]["run_singlem"]:
         input:
             expand("{sample}/amplicon/taxlist.txt", sample=config["sample"])
         output:
-            temp(expand("{sample}/proteome/{sample}_amplicon.faa", sample=config["sample"]))
+            temp(expand("{sample}/proteome/amplicon.faa", sample=config["sample"]))
         params:
             mode=config["otu_table"]["obtain_proteome"]["mode"]
         shell:
@@ -44,7 +44,7 @@ else:
         input:
             expand("{sample}/amplicon/genuslist_test.txt", sample=config["sample"])
         output:
-            temp(expand("{sample}/proteome/{sample}_amplicon.faa", sample=config["sample"]))
+            temp(expand("{sample}/proteome/amplicon.faa", sample=config["sample"]))
         params:
             mode=config["otu_table"]["obtain_proteome"]["mode"]
         shell:
@@ -52,7 +52,7 @@ else:
 
 rule get_amplicon_proteome_done:
     input:
-        expand("{sample}/proteome/{sample}_amplicon.faa", sample=config["sample"])
+        expand("{sample}/proteome/amplicon.faa", sample=config["sample"])
     output:
         touch("checkpoints/amplicon_proteome.done")
 

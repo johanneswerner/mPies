@@ -68,7 +68,7 @@ rule combine_results:
         expand("{sample}/fasta_files/{sample}_{read}_trimmed_pe_fgs.faa", read=READS, sample=config["sample"]),
         expand("{sample}/fasta_files/{sample}_trimmed_se_fgs.faa", sample=config["sample"]),
     output:
-        temp(expand("{sample}/proteome/{sample}_unassembled.faa", sample=config["sample"]))
+        temp(expand("{sample}/proteome/unassembled.faa", sample=config["sample"]))
     shell:
         """
         cat {input} > {output}
@@ -76,7 +76,7 @@ rule combine_results:
 
 rule get_unassembled_proteome_done:
     input:
-        expand("{sample}/proteome/{sample}_unassembled.faa", sample=config["sample"])
+        expand("{sample}/proteome/unassembled.faa", sample=config["sample"])
     output:
         touch("checkpoints/unassembled_proteome.done")
 

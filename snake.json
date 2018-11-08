@@ -16,11 +16,12 @@
         }
     },
     "assembled": {
-    "run_assembly": "true",
-        "assembler": "MEGAHIT",
+        "run_assembly": true,
+        "assembler": "megahit",
         "run_megahit": {
             "klist": "21,33,55,77,99,127"
         },
+        "run_genecalling": true,
         "prodigal": {
             "mode": "meta"
         }
@@ -37,7 +38,7 @@
         },
         "obtain_tax_list": {
             "mode": "parse_singlem",
-            "cutoff": 2
+            "cutoff": 1
         },
         "obtain_proteome": {
             "mode": "amplicon"
@@ -50,6 +51,24 @@
         "hash_headers": {
             "mode": "hashing",
             "hash_type": "md5"
+        }
+    },
+    "taxonomy": {
+        "run_taxonomy": true,
+        "run_diamond": {
+            "mode": "blastp",
+            "output_format": 100,
+            "diamond_database": "/data/mpies/taxonomy/nr.dmnd",
+            "max_target_seqs": 20,
+            "score": 80,
+            "compress": 0, 
+            "sensitive": "--sensitive"
+        },
+        "run_blast2lca": {
+            "binary": "/data/megan/tools/blast2lca",
+            "input_format": "DAA",
+            "blast_mode": "BlastP",
+            "acc2tax_file": "/data/megan/data/prot_acc2tax-Jun2018X1.abin"
         }
     }
 }

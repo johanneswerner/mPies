@@ -22,6 +22,11 @@ include:
     "rules/postprocessing.smk"
 inputs.append("checkpoints/postprocessing.done")
 
+if config["taxonomy"]["run_taxonomy"]:
+    include:
+        "rules/taxonomy.smk"
+    inputs.append("checkpoints/taxonomy.done")
+
 rule ALL:
     input:
         inputs
