@@ -16,6 +16,7 @@
         }
     },
     "assembled": {
+    "run_assembly": "true",
         "assembler": "MEGAHIT",
         "run_megahit": {
             "klist": "21,33,55,77,99,127"
