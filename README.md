@@ -33,4 +33,4 @@ TODO: snakemake config
 
 ## Data
 
-The data used for making functional tests is from the OSD
+The data used for making functional tests is from the OSD (Ocean Sampling Day)
