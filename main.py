@@ -6,7 +6,7 @@ import logging
 import logging.config
 import os
 import sys
-from mptk import general_functions, hash_headers, parse_singlem, use_amplicon
+from mptk import general_functions, hash_headers, parse_singlem, use_amplicon, parse_taxonomy
 
 
 def configure_logger(name, log_file, level="DEBUG"):
@@ -70,6 +70,7 @@ def main():
     subparser_amplicon = subparsers.add_parser("amplicon",
                                                help="use genus list (amplicons) or singlem (metagenome reads)")
     subparser_hashing = subparsers.add_parser("hashing", help="hash fasta headers")
+    subparser_taxonomy = subparsers.add_parser("taxonomy", help="parse taxonomy results")
 
     subparser_singlem.add_argument("-n", "--names_dmp", action="store", dest="names_dmp", default=None,required=False,
                                    help="location of names.dmp")
@@ -102,6 +103,11 @@ def main():
     subparser_hashing.add_argument("-x", "--hash_type", choices=hashlib.algorithms_guaranteed, dest="hash_type",
                                    default="md5", help="hash algorithm to use")
 
+    subparser_taxonomy.add_argument("-m", "--megan_table", action="store", dest="megan_results", required=True,
+                                   help="megan results file")
+    subparser_taxonomy.add_argument("-t", "--output_table", action="store", dest="taxonomy_table", required=True,
+                                   help="output table with parsed taxonomy")
+
     args = parser.parse_args()
 
     if args.verbose:
@@ -109,7 +115,7 @@ def main():
     else:
         logger = configure_logger(name='mptk', log_file="mptk.log", level="ERROR")
 
-    logger.info("mptk (Proteomics in environmental science) started")
+    logger.info("(metaproteomics toolkit) started")
 
     if len(sys.argv) == 1:
         msg = "No parameter passed. Exiting..."
@@ -139,6 +145,10 @@ def main():
         logger.info("hashing protein headers")
         hash_headers.write_hashed_protein_header_fasta_file(input_file=args.proteome_file, output_file=args.hashed_file,
                                                             tsv_file=args.tsv_file, hash_type=args.hash_type)
+
+    elif args.mode == "taxonomy":
+        logger.info("parsing megan taxonomy file")
+        parse_taxonomy.parse_table(input_file=args.megan_results, output_file=args.taxonomy_table)
 
     logger.info("Done and finished!")
 

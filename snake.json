@@ -46,7 +46,7 @@
     },
     "postprocessing": {
         "remove_short_sequences": {
-            min_length: 30
+            min_length: 2000
         },
         "hash_headers": {
             "mode": "hashing",
@@ -69,6 +69,9 @@
             "input_format": "DAA",
             "blast_mode": "BlastP",
             "acc2tax_file": "/data/megan/data/prot_acc2tax-Jun2018X1.abin"
+        },
+        "parse_taxonomy": {
+            "mode": "taxonomy"
         }
     }
 }

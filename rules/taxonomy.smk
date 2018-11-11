@@ -26,7 +26,7 @@ rule run_blast2lca:
     input:
         expand("{sample}/taxonomy/combined.tax.daa", sample=config["sample"])
     output:
-        expand("{sample}/taxonomy/combined.tax.txt", sample=config["sample"])
+        temp(expand("{sample}/taxonomy/combined.megan.txt", sample=config["sample"]))
     params:
         blast2lca_bin=config["taxonomy"]["run_blast2lca"]["binary"],
         input_format=config["taxonomy"]["run_blast2lca"]["input_format"],
@@ -39,6 +39,16 @@ rule run_blast2lca:
         {params.blast2lca_bin} -i {input} -f {params.input_format} -m {params.blast_mode} -o {output} \
           -a2t {params.acc2tax_file} > {log} 2>&1
         """
+
+rule parse_taxonomy:
+    input:
+        expand("{sample}/taxonomy/combined.megan.txt", sample=config["sample"])
+    output:
+        expand("{sample}/taxonomy/combined.tax.txt", sample=config["sample"])
+    params:
+        mode=config["taxonomy"]["parse_taxonomy"]["mode"],
+    shell:
+        "./main.py -v {params.mode} -m {input} -t {output}"
 
 rule get_taxonomy_done:
     input:
