@@ -31,11 +31,9 @@ def parse_table(input_file, output_file):
     """
     logger = logging.getLogger("mptk.parse_taxonomy.parse_table")
 
-    df = pd.read_csv(input_file, sep=";", engine="python", header=None,
-                     names=["id", "_blank", "d_name", "d_score", "p_name", "p_score", "c_name", "c_score", "o_name",
-                            "o_score", "f_name", "f_score", "g_name", "g_score", "s_name", "s_score", "__blank"],
-                     usecols=["id", "_blank", "d_name", "d_score", "p_name", "p_score", "c_name", "c_score", "o_name",
-                              "o_score", "f_name", "f_score", "g_name", "g_score", "s_name", "s_score", "__blank"])
+    column_names = ["id", "_blank", "d_name", "d_score", "p_name", "p_score", "c_name", "c_score", "o_name", "o_score",
+                    "f_name", "f_score", "g_name", "g_score", "s_name", "s_score", "__blank"],
+    df = pd.read_csv(input_file, sep=";", engine="python", header=None, names=column_names, usecols=column_names)
     df.drop(df.columns[[1, -1]], axis=1, inplace=True)
 
     df.to_csv(output_file, sep="\t", encoding="utf-8", index=False)
