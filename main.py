@@ -87,10 +87,10 @@ def main():
 
     args = parser.parse_args()
 
+    lvl = "ERROR"
     if args.verbose:
-        logger = configure_logger(name='pies', log_file="pies.log", level="DEBUG")
-    else:
-        logger = configure_logger(name='pies', log_file="pies.log", level="ERROR")
+        lvl = "DEBUG"
+    logger = configure_logger(name='pies', log_file="pies.log", level=lvl)
 
     if os.path.exists(args.output_folder):
         msg = "Output folder already exists. Exiting ..."
