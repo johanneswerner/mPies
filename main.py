@@ -6,7 +6,7 @@ import logging
 import logging.config
 import os
 import sys
-from pies import general_functions, hash_headers, parse_singlem, use_amplicon
+from mptk import general_functions, hash_headers, parse_singlem, use_amplicon
 
 
 def configure_logger(name, log_file, level="DEBUG"):
@@ -49,7 +49,7 @@ def configure_logger(name, log_file, level="DEBUG"):
             }
         },
         'loggers': {
-            'pies': {
+            'mptk': {
                 'level': level,
                 'handlers': ['console', 'file'],
             }
@@ -105,11 +105,11 @@ def main():
     args = parser.parse_args()
 
     if args.verbose:
-        logger = configure_logger(name='pies', log_file="pies.log", level="DEBUG")
+        logger = configure_logger(name='mptk', log_file="mptk.log", level="DEBUG")
     else:
-        logger = configure_logger(name='pies', log_file="pies.log", level="ERROR")
+        logger = configure_logger(name='mptk', log_file="mptk.log", level="ERROR")
 
-    logger.info("pies (Proteomics in environmental science) started")
+    logger.info("mptk (Proteomics in environmental science) started")
 
     if len(sys.argv) == 1:
         msg = "No parameter passed. Exiting..."

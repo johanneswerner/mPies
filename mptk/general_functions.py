@@ -15,7 +15,7 @@ import urllib.parse
 import urllib.request
 from ete3 import NCBITaxa
 
-module_logger = logging.getLogger("pies.general_functions")
+module_logger = logging.getLogger("mptk.general_functions")
 NCBI = NCBITaxa()
 
 
@@ -35,7 +35,7 @@ def get_desired_ranks(taxid):
       ranks2lineage: dict with ranks as keys and taxIDs as values
 
     """
-    logger = logging.getLogger("pies.general_functions.get_desired_ranks")
+    logger = logging.getLogger("mptk.general_functions.get_desired_ranks")
 
     if taxid == -1:
         return {"superkingdom": -1, "phylum": -1, "class": -1, "order": -1, "family": -1,
@@ -65,7 +65,7 @@ def get_names_dmp(names_dmp=None):
       absolute path of file names.dmp
 
     """
-    logger = logging.getLogger("pies.general_functions.get_names_dmp")
+    logger = logging.getLogger("mptk.general_functions.get_names_dmp")
 
     if names_dmp is not None:
         if os.stat(names_dmp).st_size == 0:
@@ -126,7 +126,7 @@ def create_tax_dict(abspath_names_dmp):
       ncbi_tax_dict: tax dictionary
 
     """
-    logger = logging.getLogger("pies.general_functions.create_tax_dict")
+    logger = logging.getLogger("mptk.general_functions.create_tax_dict")
 
     ncbi_tax_dict = {}
     ncbi_tax_dict[-1] = -1
