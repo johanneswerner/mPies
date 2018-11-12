@@ -74,11 +74,18 @@
             "mode": "taxonomy"
         }
     },
-    "funtions": {
-        "run_functions": false,
+    "functions": {
+        "run_functions_cog": true,
         "run_cog": {
-            "run_functions_cog": true,
-            "cog_database": "/data/mpies/functions/cog/cog.dmnd",
+            "run_diamond": {
+                "mode": "blastp",
+                "output_format": 6,
+                "diamond_database": "/data/mpies/functions/cog/cog.dmnd",
+                "max_target_seqs": 20,
+                "score": 80,
+                "compress": 0,
+                "sensitive": "--sensitive"
+            },
             "cog_table": "/data/mpies/functions/cog/cog2003-2014.csv",
             "cog_names": "/data/mpies/functions/cog/cognames2003-2014.tab",
             "cog_functions": "/data/mpies/functions/cog/fun2003-2014.tab"

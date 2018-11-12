@@ -1,4 +1,4 @@
-rule run_diamond:
+rule run_diamond_tax:
     input:
         expand("{sample}/proteome/combined.mincutoff.nodup.hashed.faa", sample=config["sample"])
     output:
