@@ -6,7 +6,7 @@ import logging
 import logging.config
 import os
 import sys
-from mptk import general_functions, hash_headers, parse_singlem, use_amplicon, parse_taxonomy
+from mptk import general_functions, hash_headers, parse_singlem, use_amplicon, parse_taxonomy, parse_functions_cog
 
 
 def configure_logger(name, log_file, level="DEBUG"):
@@ -71,6 +71,7 @@ def main():
                                                help="use genus list (amplicons) or singlem (metagenome reads)")
     subparser_hashing = subparsers.add_parser("hashing", help="hash fasta headers")
     subparser_taxonomy = subparsers.add_parser("taxonomy", help="parse taxonomy results")
+    subparser_functions_cog = subparsers.add_parser("functions_cog", help="parse diamond results against COG database")
 
     subparser_singlem.add_argument("-n", "--names_dmp", action="store", dest="names_dmp", default=None,required=False,
                                    help="location of names.dmp")
@@ -107,6 +108,17 @@ def main():
                                    help="megan results file")
     subparser_taxonomy.add_argument("-t", "--output_table", action="store", dest="taxonomy_table", required=True,
                                    help="output table with parsed taxonomy")
+
+    subparser_functions_cog.add_argument("-d", "--diamond_file", action="store", dest="diamond_file", required=True,
+                                         help="diamond results file")
+    subparser_functions_cog.add_argument("-t", "--cog_table", action="store", dest="cog_table", required=True,
+                                         help="COG csv table")
+    subparser_functions_cog.add_argument("-n", "--cog_names", action="store", dest="cog_names", required=True,
+                                         help="COG names table")
+    subparser_functions_cog.add_argument("-f", "--cog_functions", action="store", dest="cog_functions", required=True,
+                                         help="COG functions table")
+    subparser_functions_cog.add_argument("-e", "--export_table", action="store", dest="export_table", required=True,
+                                         help="path for output table")
 
     args = parser.parse_args()
 
@@ -149,6 +161,13 @@ def main():
     elif args.mode == "taxonomy":
         logger.info("parsing megan taxonomy file")
         parse_taxonomy.parse_table(input_file=args.megan_results, output_file=args.taxonomy_table)
+
+    elif args.mode == "functions_cog":
+        logger.info("running COG analysis")
+        cog_df = parse_functions_cog.parse_diamond_output(diamond_file=args.diamond_file)
+        cog_df_merged = parse_functions_cog.join_tables(df=cog_df, cog_table=args.cog_table, cog_names=args.cog_names)
+        cog_df_grouped = parse_functions_cog.group_table(df=cog_df_merged, cog_functions=args.cog_functions)
+        parse_functions_cog.export_table(df=cog_df_grouped, output_file=args.export_table)
 
     logger.info("Done and finished!")
 
