@@ -18,7 +18,7 @@ rule run_diamond_tax:
     shell:
         """
         diamond {params.mode} -f {params.output_format} -p {threads} -d {params.diamond_database} \
-          -k {params.maxtargetseqs} -e {params.score} --compress {params.compress} {params.sensitive} \
+          -k {params.maxtargetseqs} --bit-score {params.score} --compress {params.compress} {params.sensitive} \
           -q {input} -o {output} > {log} 2>&1
         """
 

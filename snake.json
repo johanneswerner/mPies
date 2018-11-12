@@ -86,6 +86,9 @@
                 "compress": 0,
                 "sensitive": "--sensitive"
             },
+            "parse_functions_cog": {
+                "mode": "functions_cog"
+            },
             "cog_table": "/data/mpies/functions/cog/cog2003-2014.csv",
             "cog_names": "/data/mpies/functions/cog/cognames2003-2014.tab",
             "cog_functions": "/data/mpies/functions/cog/fun2003-2014.tab"

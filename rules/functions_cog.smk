@@ -2,7 +2,7 @@ rule run_diamond_cog:
     input:
         expand("{sample}/proteome/combined.mincutoff.nodup.hashed.faa", sample=config["sample"])
     output:
-        expand("{sample}/functions/cog/combined.cog.diamond.tsv", sample=config["sample"])
+        temp(expand("{sample}/functions/cog/combined.cog.diamond.tsv", sample=config["sample"]))
     params:
         mode=config["functions"]["run_cog"]["run_diamond"]["mode"],
         output_format=config["functions"]["run_cog"]["run_diamond"]["output_format"],
@@ -18,23 +18,29 @@ rule run_diamond_cog:
     shell:
         """
         diamond {params.mode} -f {params.output_format} -p {threads} -d {params.diamond_database} \
-          -k {params.maxtargetseqs} -e {params.score} --compress {params.compress} {params.sensitive} \
+          -k {params.maxtargetseqs} --min-score {params.score} --compress {params.compress} {params.sensitive} \
           -q {input} -o {output} > {log} 2>&1
         """
 
-# rule parse_taxonomy:
-#     input:
-#         expand("{sample}/taxonomy/combined.megan.txt", sample=config["sample"])
-#     output:
-#         expand("{sample}/taxonomy/combined.tax.txt", sample=config["sample"])
-#     params:
-#         mode=config["taxonomy"]["parse_taxonomy"]["mode"],
-#     shell:
-#         "./main.py -v {params.mode} -m {input} -t {output}"
+rule parse_functions_cog:
+    input:
+        expand("{sample}/functions/cog/combined.cog.diamond.tsv", sample=config["sample"])
+    output:
+        expand("{sample}/functions/cog/combined.functions.cog.txt", sample=config["sample"])
+    params:
+        mode=config["functions"]["run_cog"]["parse_functions_cog"]["mode"],
+        cog_tables=config["functions"]["run_cog"]["cog_table"],
+        cog_names=config["functions"]["run_cog"]["cog_names"],
+        cog_functions=config["functions"]["run_cog"]["cog_functions"]
+    shell:
+        """
+        ./main.py -v {params.mode} -d {input} -t {params.cog_tables} -n {params.cog_names} -f {params.cog_functions} \
+          -e {output}
+        """
 
 rule get_functions_cog_done:
     input:
-        expand("{sample}/functions/cog/combined.cog.diamond.tsv", sample=config["sample"])
+        expand("{sample}/functions/cog/combined.functions.cog.txt", sample=config["sample"])
     output:
         touch("checkpoints/functions_cog.done")
 
