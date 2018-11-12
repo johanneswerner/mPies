@@ -92,6 +92,22 @@
             "cog_table": "/data/mpies/functions/cog/cog2003-2014.csv",
             "cog_names": "/data/mpies/functions/cog/cognames2003-2014.tab",
             "cog_functions": "/data/mpies/functions/cog/fun2003-2014.tab"
+        },
+        "run_functions_uniprot": true,
+        "run_uniprot": {
+            "run_diamond": {
+                "mode": "blastp",
+                "output_format": 6,
+                "diamond_database": "/data/mpies/functions/uniprot/sprot.dmnd",
+                "max_target_seqs": 20,
+                "score": 80,
+                "compress": 0,
+                "sensitive": "--sensitive"
+            },
+            "parse_functions_uniprot": {
+                "mode": "functions_uniprot"
+            },
+            "uniprot_table": "/data/mpies/functions/uniprot/sprot.table.gz"
         }
     }
 }
