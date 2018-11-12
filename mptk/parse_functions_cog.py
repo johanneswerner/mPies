@@ -15,32 +15,6 @@ import re
 module_logger = logging.getLogger("mptk.parse_functions_cog")
 
 
-def parse_diamond_output(diamond_file):
-    """
-    Read the diamond table and create a pandas data frame from it.
-
-    The function `parse_diamond_output` reads the diamond table that was run against the COG database. The function
-    returns a pandas data frame.
-
-    Parameters
-    ----------
-      diamond_file: diamond output file
-
-    Returns
-    -------
-      df: a pandas data frame of the diamond output
-
-    """
-    logger = logging.getLogger("mptk.parse_taxonomy.parse_table")
-
-    column_names = ["qseqid", "sseqid", "pident", "length", "mismatch", "gapopen", "qstart", "qend", "sstart", "send", "evalue", "bitscore"]
-    df = pd.read_csv(diamond_file, sep="\t", header=None, names=column_names)
-    df.sseqid = df.sseqid.str.extract("^gi\|(.+)\|ref\|", expand = True)
-    df.sseqid = df.sseqid.astype(np.int64)
-
-    return df
-
-
 def join_tables(df, cog_table, cog_names):
     """
     Joins the data frame with the COG tables.
@@ -69,6 +43,8 @@ def join_tables(df, cog_table, cog_names):
     cog_names_df = pd.read_csv(cog_names, sep="\t", header=None, names=column_names_cog_names, comment="#", encoding="latin1")
     cog_names_df = cog_names_df[["COG_id", "functional_class"]]
 
+    df.sseqid = df.sseqid.str.extract("^gi\|(.+)\|ref\|", expand = True)
+    df.sseqid = df.sseqid.astype(np.int64)
     df = df[["qseqid", "sseqid"]]
     df = df.merge(cog_table_df, how="left", left_on="sseqid", right_on="domain_id").drop("domain_id", 1)
     df = df.merge(cog_names_df, how="left", on="COG_id")
