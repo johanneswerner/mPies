@@ -73,6 +73,16 @@
         "parse_taxonomy": {
             "mode": "taxonomy"
         }
+    },
+    "funtions": {
+        "run_functions": false,
+        "run_cog": {
+            "run_functions_cog": true,
+            "cog_database": "/data/mpies/functions/cog/cog.dmnd",
+            "cog_table": "/data/mpies/functions/cog/cog2003-2014.csv",
+            "cog_names": "/data/mpies/functions/cog/cognames2003-2014.tab",
+            "cog_functions": "/data/mpies/functions/cog/fun2003-2014.tab"
+        }
     }
 }
 

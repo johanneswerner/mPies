@@ -100,7 +100,29 @@ diamond database, the binary of blast2lca and the path to the file `prot_acc2tax
 
 #### Functional analysis
 
-TODO
+Different databases can be used to add functional annotation. Per default, the funtional annotation is set to `false`.
+
+##### COG
+
+In order to use the COG database, some prerequisites have to be fulfilled before.
+
+1. Download the necessary files from the FTP server.
+
+```bash
+wget ftp://ftp.ncbi.nih.gov/pub/COG/COG2014/data/prot2003-2014.fa.gz
+wget ftp://ftp.ncbi.nih.gov/pub/COG/COG2014/data/cog2003-2014.csv
+wget ftp://ftp.ncbi.nih.gov/pub/COG/COG2014/data/cognames2003-2014.tab
+wget ftp://ftp.ncbi.nih.gov/pub/COG/COG2014/data/fun2003-2014.tab
+```
+
+2. Create a diamond database of the file `prot2003-2014.fa.gz`.
+
+```bash
+diamond makedb --threads <number_of_threads> --in prot2003-2014.fa.gz --db cog.dmnd
+```
+
+3. Now you can set config["functions"]["run_cog"]["run_functions_cog"] to `true` and run `snakemake`. Remember to set
+the paths for the diamond database and the files `cog_table`, `cog_names`, and `cog_functions`.
 
 ## Test data
 
