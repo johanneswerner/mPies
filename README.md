@@ -124,6 +124,41 @@ diamond makedb --threads <number_of_threads> --in prot2003-2014.fa.gz --db cog.d
 3. Now you can set config["functions"]["run_cog"]["run_functions_cog"] to `true` and run `snakemake`. Remember to set
 the paths for the diamond database and the files `cog_table`, `cog_names`, and `cog_functions`.
 
+##### UniProt/GO
+
+In order to use the GO ontologies included in the UniProt database (SwissProt or TrEMBL), some prerequisites have to
+be fulfilled before.
+
+1. Download the necessary files from the FTP server.
+
+```bash
+# SwissProt
+wget ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.fasta.gz
+wget ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_sprot.dat.gz
+
+# TrEMBL
+wget ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_trembl.fasta.gz
+wget ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/uniprot_trembl.dat.gz
+```
+
+Please note that TrEMBL is quite large (29 GB for `uniprot_trembl.fasta.gz` and 78 GB for `uniprot_trembl.dat.gz`).
+
+2. Create a diamond database of the fasta file (here the SwissProt database will be used)
+
+```bash
+diamond makedb --threads <number_of_threads> --in uniprot_sprot.fasta.gz --db sprot.dmnd
+```
+
+3. Use the dat file downloaded from UniProt to create a table with protein accessions and GO annotations.
+
+```bash
+./main.py prepare_uniprot_files -u .../uniprot_sprot.dat.gz -t .../sprot.table.gz
+```
+
+Please note that input and output files must be/are compressed with gzip.
+
+4. Now you can set config["functions"]["run_uniprot"]["run_functions_uniprot"] to `true` and run `snakemake`.
+
 ## Test data
 
 The test data set is a subset from the Ocean Sampling Day (first 18,000 lines for each read file), Accession number
