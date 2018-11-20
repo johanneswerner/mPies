@@ -27,12 +27,12 @@ rule obtain_proteome:
     input:
         expand("{sample}/amplicon/taxlist.txt", sample=SAMPLES)
     output:
-        "{sample}/output/proteomes.faa",
+        "{sample}/amplicon/proteomes.faa",
     shell:
         "./main.py -v amplicon -g {input} -p {output}"
 
 rule get_amplicon_proteome_done:
     input:
-        expand("{sample}/output/proteomes.faa", sample=SAMPLES)
+        expand("{sample}/amplicon/proteomes.faa", sample=SAMPLES)
     output:
         touch("checkpoints/get_amplicon_proteome.done")
