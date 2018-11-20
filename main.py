@@ -93,10 +93,10 @@ def main():
 
     args = parser.parse_args()
 
-    lvl = "ERROR"
+    lvl = "INFO"
     if args.verbose:
         lvl = "DEBUG"
-    logger = configure_logger(name='pies', log_file="pies.log", level=lvl)
+    logger = configure_logger(name='mpies', log_file="mpies.log", level=lvl)
 
     logger.info("pies (Proteomics in environmental science) started")
 
