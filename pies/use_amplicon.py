@@ -170,61 +170,16 @@ def create_tax_dict(abspath_names_dmp):
     return ncbi_tax_dict
 
 
-def remove_linebreaks_from_fasta(fasta_file, remove_backup=True):
-    """
-    Remove all line breaks within sequences.
-
-    The function `remove_linebreaks_from_fasta` reads a fasta file and removes all linebreaks from
-    the sequences. The resulting fasta file is saved as the same name as the previous one (the old
-    file gets backed up and deleted - this can be adjusted with a parameter).
-
-    Parameter
-    ---------
-      fasta_file: input fasta file (multiline sequence)
-      remove_backup: remove backup of old file (True)
-
-    Returns
-    -------
-      None
-
-    """
-    logger = logging.getLogger("pies.use_amplicon.remove_linebreaks_from_fasta")
-    fasta_file_backup = fasta_file + ".multiline.bak"
-    os.rename(fasta_file, fasta_file_backup)
-    # from https://stackoverflow.com/questions/50856538
-    with open(fasta_file_backup, 'r') as f_input, open(fasta_file, 'w') as f_output:
-        block = []
-
-        for line in f_input:
-            if line.startswith('>'):
-                if block:
-                    f_output.write(''.join(block) + '\n')
-                    block = []
-                f_output.write(line)
-            else:
-                block.append(line.strip())
-
-        if block:
-            f_output.write(''.join(block) + '\n')
-
-    if remove_backup:
-        os.remove(fasta_file_backup)
-
-    return
-
-
-def add_taxonomy_to_fasta(fasta_file, ncbi_tax_dict, remove_backup=True):
+def add_taxonomy_to_fasta(fasta_file, ncbi_tax_dict):
     """
     Add taxonomy to headers.
 
     The function adds the complete taxonomic lineage to the fasta header (superkingdom, phylum,
-    class, order, family, genus). The resulting fasta file is saved as the same name as the
-    previous one (the old file gets backed up and deleted - this can be adjusted with a parameter).
+    class, order, family, genus).
 
     Parameter
     ---------
       fasta_file: input fasta file
-      remove_backup: remove backup of old file (True)
 
     Returns
     -------
@@ -232,29 +187,25 @@ def add_taxonomy_to_fasta(fasta_file, ncbi_tax_dict, remove_backup=True):
 
     """
     logger = logging.getLogger("pies.use_amplicon.add_taxonomy_to_fasta")
-    rx_match = re.search(r"(\d+)\.fasta$", fasta_file)
-    if rx_match:
-        taxid = rx_match.group(1)
-
-        res = []
-        for rank in ["superkingdom", "phylum", "class", "order", "family", "genus"]:
-            res.append(str(ncbi_tax_dict[get_desired_ranks(taxid)[rank]]))
-
-        header_extension = ", ".join(res)
-
-        fasta_file_backup = fasta_file + ".notax.bak"
-        os.rename(fasta_file, fasta_file_backup)
-
-        output_file = open(fasta_file, "w")
-        for line in open(fasta_file_backup, "r"):
+    output_filename = os.path.splitext(fasta_file)[0] + "_tax.fasta"
+    with open(fasta_file) as fasta_file_open, open(output_filename, "w") as output_file_open:
+        for line in fasta_file_open:
             if line.startswith(">"):
-                output_file.write(line.rstrip() + " TAX=" + header_extension + "\n")
+                rx_match = re.search(r"OS=(\w+)\s", line)
+                if rx_match:
+                    taxid = rx_match.group(1)
+
+                    res = []
+                    for rank in ["superkingdom", "phylum", "class", "order", "family", "genus"]:
+                        res.append(str(ncbi_tax_dict[get_desired_ranks(taxid)[rank]]))
+
+                    header_extension = ", ".join(res)
+                else:
+                    header_extension = "not_found"
+                output_file_open.write(line.rstrip() + " TAX=" + header_extension + "\n")
             else:
-                output_file.write(line)
-
-        if remove_backup:
-            os.remove(fasta_file_backup)
-
+                output_file_open.write(line)
+        
     return None
 
 
@@ -279,65 +230,31 @@ def get_protein_sequences(tax_list, output_folder, ncbi_tax_dict, reviewed=False
     """
     logger = logging.getLogger("pies.use_amplicon.get_protein_sequences")
     logger.info("fetching protein sequences ...")
-    for taxid in tax_list:
-        filename = os.path.join(output_folder, str(taxid) + ".fasta")
+    filename = os.path.join(output_folder, "proteomes.fasta")
 
-        taxon_queries = ['taxonomy:"%s"' % tid for tid in [taxid]]
-        taxon_query = ' OR '.join(taxon_queries)
-        rev = " reviewed:%s" % reviewed if reviewed else ''
+    taxon_queries = ['taxonomy:"%s"' % tid for tid in tax_list]
+    taxon_query = ' OR '.join(taxon_queries)
+    rev = " reviewed:%s" % reviewed if reviewed else ''
 
-        url = 'https://www.uniprot.org/uniprot/'
-        query = "%s%s" % (taxon_query, rev)
-        params = {'query': query, 'force': 'yes', 'format': 'fasta'}
-        data = urllib.parse.urlencode(params).encode("utf-8")
-        logger.info("Taxid: " + str(taxid))
-        msg = urllib.request.urlretrieve(url=url, filename=filename, data=data)[1]
-        headers = {j[0]: j[1].strip() for j in [i.split(':', 1)
+    url = 'https://www.uniprot.org/uniprot/'
+    query = "%s%s" % (taxon_query, rev)
+    params = {'query': query, 'force': 'yes', 'format': 'fasta'}
+    data = urllib.parse.urlencode(params).encode("utf-8")
+    logger.info("Taxid: " + str(tax_list))
+    msg = urllib.request.urlretrieve(url=url, filename=filename, data=data)[1]
+    headers = {j[0]: j[1].strip() for j in [i.split(':', 1)
                                                 for i in str(msg).strip().splitlines()]}
 
-        if 'Content-Length' in headers and headers['Content-Length'] == 0:
-            os.remove(filename)
+    if 'Content-Length' in headers and headers['Content-Length'] == 0:
+        os.remove(filename)
 
         # TODO: @kerssema Can I call the function from here or would it be
         # nicer to call this in the main loop with a for loop over the
         # directory?
         # transform multiline sequences into singelline sequences
 
-        remove_linebreaks_from_fasta(filename, remove_backup)
-        if add_taxonomy:
-            add_taxonomy_to_fasta(filename, ncbi_tax_dict, remove_backup)
+    if add_taxonomy:
+        add_taxonomy_to_fasta(filename, ncbi_tax_dict, remove_backup)
 
     return
 
-
-def combine_fasta_files(fasta_folder, remove_single_files=True):
-    """
-    Combine all fasta files.
-
-    The function concatenates all fasta files and removes the single files (default, can be set
-    as parameter).
-
-    Parameters
-    ----------
-      fasta_path: absolute path of fasta file
-      remove_single_files: removes the single fasta files after concatenating (default: True)
-
-    Returns
-    -------
-      absolute file path
-
-    """
-    logger = logging.getLogger("pies.use_amplicon.combine_fasta_files")
-    logger.info("combining fasta files ...")
-    filenames = os.listdir(fasta_folder)
-    complete_protein_file = os.path.join(os.path.abspath(fasta_folder), "proteins_amplicon.faa")
-    with open(complete_protein_file, 'w') as outfile:
-        for fname in filenames:
-            current_file = os.path.join(fasta_folder, fname)
-            with open(current_file) as infile:
-                for line in infile:
-                    outfile.write(line)
-            if remove_single_files:
-                os.remove(current_file)
-
-    return complete_protein_file
