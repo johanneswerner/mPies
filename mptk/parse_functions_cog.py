@@ -49,7 +49,7 @@ def join_tables(df, cog_table, cog_names):
     df = df.merge(cog_table_df, how="left", left_on="sseqid", right_on="domain_id").drop("domain_id", 1)
     df = df.merge(cog_names_df, how="left", on="COG_id")
 
-    # https://stackoverflow.com/questions/53261409
+    # https://stackoverflow.com/a/53261482/5013084
     df = pd.DataFrame([(*x[0:-1], y) for x in df.values.tolist() for y in list(x[-1])], columns=df.columns)
 
     return df
