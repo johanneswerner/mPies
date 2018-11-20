@@ -15,7 +15,7 @@ import urllib.request
 from ete3 import NCBITaxa
 from pies import general_functions
 
-module_logger = logging.getLogger("pies.use_amplicon")
+logger = logging.getLogger("pies.use_amplicon")
 NCBI = NCBITaxa()
 
 
@@ -35,8 +35,6 @@ def get_taxid(input_file):
       tax_list: unique list with tax IDs
 
     """
-    logger = logging.getLogger("pies.general_functions.get_taxid")
-
     names_list = []
     tax_list = []
 
@@ -70,8 +68,6 @@ def add_taxonomy_to_fasta(fasta_file, ncbi_tax_dict):
       None
 
     """
-    logger = logging.getLogger("pies.use_amplicon.add_taxonomy_to_fasta")
-
     output_filename = os.path.splitext(fasta_file)[0] + "_tax.fasta"
     with open(fasta_file) as fasta_file_open, open(output_filename, "w") as output_file_open:
         for line in fasta_file_open:
@@ -113,8 +109,6 @@ def get_protein_sequences(tax_list, output_file, ncbi_tax_dict, reviewed=False,
       None
 
     """
-    logger = logging.getLogger("pies.use_amplicon.get_protein_sequences")
-
     logger.info("fetching protein sequences ...")
     filename = output_file
 
