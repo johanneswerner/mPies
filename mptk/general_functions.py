@@ -17,7 +17,7 @@ import urllib.parse
 import urllib.request
 from ete3 import NCBITaxa
 
-module_logger = logging.getLogger("mptk.general_functions")
+logger = logging.getLogger("pies.general_functions")
 NCBI = NCBITaxa()
 
 
@@ -37,8 +37,6 @@ def get_desired_ranks(taxid):
       ranks2lineage: dict with ranks as keys and taxIDs as values
 
     """
-    logger = logging.getLogger("mptk.general_functions.get_desired_ranks")
-
     if taxid == -1:
         return {"superkingdom": -1, "phylum": -1, "class": -1, "order": -1, "family": -1,
                 "genus": -1}
@@ -67,8 +65,6 @@ def get_names_dmp(names_dmp=None):
       absolute path of file names.dmp
 
     """
-    logger = logging.getLogger("mptk.general_functions.get_names_dmp")
-
     if names_dmp is not None:
         if os.stat(names_dmp).st_size == 0:
             os.remove(names_dmp)
@@ -128,8 +124,6 @@ def create_tax_dict(abspath_names_dmp):
       ncbi_tax_dict: tax dictionary
 
     """
-    logger = logging.getLogger("mptk.general_functions.create_tax_dict")
-
     ncbi_tax_dict = {}
     ncbi_tax_dict[-1] = -1
     logger.info("creating tax dictionary ...")
@@ -158,8 +152,6 @@ def parse_uniprot_file(uniprot_file, uniprot_table):
       None
 
     """
-    logger = logging.getLogger("mptk.general_functions.parse_uniprot_file")
-    
     uniprot_table_open = gzip.open(uniprot_table, "wb")
     with gzip.open(uniprot_file, "rt") as f:
         for line in f:
@@ -190,8 +182,6 @@ def parse_diamond_output(diamond_file):
       df: a pandas data frame of the diamond output
 
     """
-    logger = logging.getLogger("mptk.general_functions.parse_diamond_output")
-
     column_names = ["qseqid", "sseqid", "pident", "length", "mismatch", "gapopen", "qstart", "qend", "sstart", "send", "evalue", "bitscore"]
     df = pd.read_csv(diamond_file, sep="\t", header=None, names=column_names)
 

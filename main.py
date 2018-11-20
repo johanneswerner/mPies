@@ -139,10 +139,10 @@ def main():
 
     args = parser.parse_args()
 
+    lvl = "INFO"
     if args.verbose:
-        logger = configure_logger(name='mptk', log_file="mptk.log", level="DEBUG")
-    else:
-        logger = configure_logger(name='mptk', log_file="mptk.log", level="ERROR")
+        lvl = "DEBUG"
+    logger = configure_logger(name='mpies', log_file="mpies.log", level=lvl)
 
     logger.info("(metaproteomics toolkit) started")
 

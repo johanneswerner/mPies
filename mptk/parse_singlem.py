@@ -13,7 +13,7 @@ import numpy as np
 import pandas as pd
 import re
 
-module_logger = logging.getLogger("mptk.parse_singlem")
+logger = logging.getLogger("pies.parse_singlem")
 
 
 def read_table(input_file):
@@ -32,8 +32,6 @@ def read_table(input_file):
       df: OTU table as pandas data frame object
 
     """
-    logger = logging.getLogger("mptk.parse_singlem.func")
-
     df = pd.read_table(input_file)
     df = df[["sample", "num_hits", "taxonomy"]]
     df = pd.concat([df[["sample", "num_hits"]],
@@ -68,8 +66,6 @@ def calculate_abundant_otus(df, level="genus", cutoff=5):
       taxon_names: list of unvalidated taxon names
 
     """
-    logger = logging.getLogger("mptk.parse_singlem.calculate_abundant_otus")
-
     df_subset = df.groupby([level])["num_hits"].sum().reset_index()
     df_subset = df_subset[df_subset["num_hits"] >= int(cutoff)][level]
     taxon_names = list(df_subset)
@@ -95,8 +91,6 @@ def validate_taxon_names(taxon_names, ncbi_tax_dict):
       validated_taxon_names: list of validated taxon names
 
     """
-    logger = logging.getLogger("mptk.parse_singlem.validate_taxon_names")
-
     present_taxon_names = []
     for item in taxon_names:
         rx_match = re.search(r"^g__(.+)", item)
@@ -120,8 +114,6 @@ def write_taxon_list(validated_taxon_names, taxon_file):
       None
 
     """
-    logger = logging.getLogger("mptk.parse_singlem.write_taxon_list")
-
     with open(taxon_file, 'w') as f:
         for item in validated_taxon_names:
             f.write("%s\n" % item)
