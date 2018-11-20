@@ -187,8 +187,8 @@ def add_taxonomy_to_fasta(fasta_file, ncbi_tax_dict):
 
     """
     logger = logging.getLogger("pies.use_amplicon.add_taxonomy_to_fasta")
-    output_file = open(os.path.splitext(fasta_file)[0] + "_tax.fasta", "w")
-    with open(fasta_file) as fasta_file_open:
+    output_filename = os.path.splitext(fasta_file)[0] + "_tax.fasta"
+    with open(fasta_file) as fasta_file_open, open(output_filename, "w") as output_file_open:
         for line in fasta_file_open:
             if line.startswith(">"):
                 rx_match = re.search(r"OS=(\w+)\s", line)
@@ -202,10 +202,9 @@ def add_taxonomy_to_fasta(fasta_file, ncbi_tax_dict):
                     header_extension = ", ".join(res)
                 else:
                     header_extension = "not_found"
-                output_file.write(line.rstrip() + " TAX=" + header_extension + "\n")
+                output_file_open.write(line.rstrip() + " TAX=" + header_extension + "\n")
             else:
-                output_file.write(line)
-    output_file.close()
+                output_file_open.write(line)
         
     return None
 
