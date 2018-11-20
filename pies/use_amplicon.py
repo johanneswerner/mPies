@@ -72,24 +72,24 @@ def add_taxonomy_to_fasta(fasta_file, ncbi_tax_dict):
     """
     logger = logging.getLogger("pies.use_amplicon.add_taxonomy_to_fasta")
 
-    output_file = open(os.path.splitext(fasta_file)[0] + "_tax.fasta", "w")
-    for line in open(fasta_file):
-        if line.startswith(">"):
-            rx_match = re.search(r"OS=(\w+)\s", line)
-            if rx_match:
-                taxid = rx_match.group(1)
-        
-                res = []
-                for rank in ["superkingdom", "phylum", "class", "order", "family", "genus"]:
-                    res.append(str(ncbi_tax_dict[general_functions.get_desired_ranks(taxid)[rank]]))
-        
-                header_extension = ", ".join(res)
+    output_filename = os.path.splitext(fasta_file)[0] + "_tax.fasta"
+    with open(fasta_file) as fasta_file_open, open(output_filename, "w") as output_file_open:
+        for line in fasta_file_open:
+            if line.startswith(">"):
+                rx_match = re.search(r"OS=(\w+)\s", line)
+                if rx_match:
+                    taxid = rx_match.group(1)
+
+                    res = []
+                    for rank in ["superkingdom", "phylum", "class", "order", "family", "genus"]:
+                        res.append(str(ncbi_tax_dict[get_desired_ranks(taxid)[rank]]))
+
+                    header_extension = ", ".join(res)
+                else:
+                    header_extension = "not_found"
+                output_file_open.write(line.rstrip() + " TAX=" + header_extension + "\n")
             else:
-                header_extension = "not_found"
-            output_file.write(line.rstrip() + " TAX=" + header_extension + "\n")
-        else:
-            output_file.write(line)
-    output_file.close()
+                output_file_open.write(line)
         
     return None
 
