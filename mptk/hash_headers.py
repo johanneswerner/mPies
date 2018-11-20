@@ -34,11 +34,9 @@ def write_hashed_protein_header_fasta_file(input_file, output_file, tsv_file, ha
     logger = logging.getLogger("mptk.hashing.write_hashed_protein_header_fasta_file")
 
     h = hashlib.new(hash_type)
-    output_file_open = open(output_file, "w")
-    tsv_file_open = open(tsv_file, "w")
 
-    with open(input_file) as f:
-        for line in f:
+    with open(input_file) as input_file_open, open(output_file, "w") as output_file_open, open(tsv_file, "w") as tsv_file_open:
+        for line in input_file_open:
             if line.startswith(">"):
                 header_substring = line.rstrip()[1:]
                 h.update(header_substring.encode("utf-8")) # .hexdigest()
@@ -48,9 +46,6 @@ def write_hashed_protein_header_fasta_file(input_file, output_file, tsv_file, ha
                 tsv_file_open.write(quoted_hashed_header + "\t" + header_substring + "\n")
             else:
                 output_file_open.write(line)
-
-    output_file_open.close()
-    tsv_file_open.close()
 
     return
 
