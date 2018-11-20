@@ -29,14 +29,13 @@ if config["taxonomy"]["run_taxonomy"]:
 
 
 if config["functions"]["run_functions_cog"]:
-    if config["functions"]["run_functions_cog"]:
-        include:
-            "rules/functions_cog.smk"
-        inputs.append("checkpoints/functions_cog.done")
-    if config["functions"]["run_functions_uniprot"]:
-        include:
-            "rules/functions_uniprot.smk"
-        inputs.append("checkpoints/functions_uniprot.done")
+    include:
+        "rules/functions_cog.smk"
+    inputs.append("checkpoints/functions_cog.done")
+if config["functions"]["run_functions_uniprot"]:
+    include:
+        "rules/functions_uniprot.smk"
+    inputs.append("checkpoints/functions_uniprot.done")
 
 rule ALL:
     input:
