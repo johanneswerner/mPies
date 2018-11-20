@@ -12,7 +12,7 @@ import numpy as np
 import pandas as pd
 import re
 
-module_logger = logging.getLogger("mptk.parse_functions_cog")
+logger = logging.getLogger("mptk.parse_functions_cog")
 
 
 def join_tables(df, cog_table, cog_names):
@@ -32,8 +32,6 @@ def join_tables(df, cog_table, cog_names):
       df_cog: the joined table
 
     """
-    logger = logging.getLogger("mptk.parse_taxonomy.join_tables")
-
     column_names_cog_table = ["domain_id", "genome_name", "protein_id", "protein_length", "domain_start", "domain_end",
                               "COG_id", "membership_class"]
     cog_table_df = pd.read_csv(cog_table, sep=",", header=None, names=column_names_cog_table, index_col=False)
@@ -71,8 +69,6 @@ def group_table(df, cog_functions):
       df_cog: the joined table
 
     """
-    logger = logging.getLogger("mptk.parse_taxonomy.group_table")
-
     column_names_cog_functions = ["functional_class", "functional_name"]
     cog_functions_df = pd.read_csv(cog_functions, sep="\t", header=None, names=column_names_cog_functions, comment="#")
 
@@ -102,8 +98,6 @@ def export_table(df, output_file):
       None
 
     """
-    logger = logging.getLogger("mptk.parse_taxonomy.export_table")
-
     df.to_csv(output_file, sep="\t", encoding="utf-8", index=False)
 
     return None

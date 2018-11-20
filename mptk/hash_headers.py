@@ -9,7 +9,7 @@ This module hashes the headers of the proteome file.
 import hashlib
 import logging
 
-module_logger = logging.getLogger("mptk.hashing")
+logger = logging.getLogger("mptk.hashing")
 
 
 def write_hashed_protein_header_fasta_file(input_file, output_file, tsv_file, hash_type):
@@ -31,8 +31,6 @@ def write_hashed_protein_header_fasta_file(input_file, output_file, tsv_file, ha
     -------
       None
     """
-    logger = logging.getLogger("mptk.hashing.write_hashed_protein_header_fasta_file")
-
     h = hashlib.new(hash_type)
 
     with open(input_file) as input_file_open, open(output_file, "w") as output_file_open, open(tsv_file, "w") as tsv_file_open:

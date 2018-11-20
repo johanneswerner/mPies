@@ -11,7 +11,7 @@ import logging
 import pandas as pd
 import re
 
-module_logger = logging.getLogger("mptk.parse_functions_uniprot")
+logger = logging.getLogger("mptk.parse_functions_uniprot")
 
 
 def join_tables(df, uniprot_table):
@@ -30,9 +30,6 @@ def join_tables(df, uniprot_table):
       df_uniprot: the joined table
 
     """
-    logger = logging.getLogger("mptk.parse_functions_uniprot.join_tables")
-
-    
     column_names_uniprot_table = ["uniprot_id", "GO_id", "GO_category"]
     uniprot_table_df = pd.read_csv(uniprot_table, compression="gzip", sep="\t", header=None,
                                    names=column_names_uniprot_table, index_col=False)
@@ -60,8 +57,6 @@ def group_table(df):
       df_uniprot: the joined table
 
     """
-    logger = logging.getLogger("mptk.parse_functions_uniprot.group_table")
-
     df = df[["qseqid", "GO_category"]]
     df_uniprot = df.groupby(["qseqid", "GO_category"]).size().reset_index(name='counts')
     df_uniprot.sort_values(["qseqid", "counts"], ascending=[True, False], inplace=True)
@@ -85,8 +80,6 @@ def export_table(df, output_file):
       None
 
     """
-    logger = logging.getLogger("mptk.parse_functions_uniprot.export_table")
-
     df.to_csv(output_file, sep="\t", encoding="utf-8", index=False)
 
     return None

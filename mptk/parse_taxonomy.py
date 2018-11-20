@@ -9,7 +9,7 @@ This module parses the MEGAN taxonomy table and creates a tab-separated table.
 import logging
 import pandas as pd
 
-module_logger = logging.getLogger("mptk.parse_taxonomy")
+logger = logging.getLogger("mptk.parse_taxonomy")
 
 
 def parse_table(input_file, output_file):
@@ -29,8 +29,6 @@ def parse_table(input_file, output_file):
       None
 
     """
-    logger = logging.getLogger("mptk.parse_taxonomy.parse_table")
-
     column_names = ["id", "_blank", "d_name", "d_score", "p_name", "p_score", "c_name", "c_score", "o_name", "o_score",
                     "f_name", "f_score", "g_name", "g_score", "s_name", "s_score", "__blank"],
     df = pd.read_csv(input_file, sep=";", engine="python", header=None, names=column_names, usecols=column_names)
