@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
 """
-Hash protein headers
-
 This module hashes the headers of the proteome file.
 """
 
