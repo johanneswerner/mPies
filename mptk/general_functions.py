@@ -152,8 +152,7 @@ def parse_uniprot_file(uniprot_file, uniprot_table):
       None
 
     """
-    uniprot_table_open = gzip.open(uniprot_table, "wb")
-    with gzip.open(uniprot_file, "rt") as f:
+    with gzip.open(uniprot_file, "rt") as f, gzip.open(uniprot_table, "wb") as uniprot_table_open:
         for line in f:
             if re.match(r"ID", line):
                 id_field = line.split()[1]
@@ -161,7 +160,6 @@ def parse_uniprot_file(uniprot_file, uniprot_table):
                 go_field = line.split(maxsplit=1)[1:]
                 go_field = go_field[0].split("; ")[1:3]
                 uniprot_table_open.write(bytes(id_field + "\t" + go_field[0] + "\t" + go_field[1] + "\n", encoding="utf-8"))
-    uniprot_table_open.close()
 
     return None
 
