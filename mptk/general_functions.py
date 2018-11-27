@@ -166,7 +166,7 @@ def parse_uniprot_file(uniprot_file, uniprot_table):
 
 def parse_diamond_output(diamond_file):
     """
-    Read the diamond table and create a pandas data frame from it.
+    Read the output table created by diamond and return a corresponding pandas data frame from it.
 
     The function `parse_diamond_output` reads the diamond table that was run against the COG database. The function
     returns a pandas data frame.
