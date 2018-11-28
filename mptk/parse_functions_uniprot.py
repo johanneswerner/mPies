@@ -23,7 +23,8 @@ def join_tables(df, uniprot_table):
     Parameters
     ----------
       df: the data frame
-      uniprot_table: the compressed and modified Uniprot table
+      uniprot_table: the compressed Uniprot table *.dat.gz
+                     (ftp://ftp.uniprot.org/pub/databases/uniprot/current_release/knowledgebase/complete/)
 
     Returns
     -------
