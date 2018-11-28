@@ -111,8 +111,8 @@ def main():
                                    help="proteome output file with hashed headers")
     subparser_hashing.add_argument("-t", "--tsv_file", action="store", dest="tsv_file", required=True,
                                    help="proteome output file with hashed headers")
-    subparser_hashing.add_argument("-x", "--hash_type", choices=hashlib.algorithms_guaranteed, dest="hash_type",
-                                   default="md5", help="hash algorithm to use")
+    subparser_hashing.add_argument("-x", "--hash_type", choices=["md5", "sha1"], dest="hash_type", default="md5",
+                                   help="hash algorithm to use")
 
     subparser_taxonomy.add_argument("-m", "--megan_table", action="store", dest="megan_results", required=True,
                                    help="megan results file")
