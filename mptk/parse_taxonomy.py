@@ -14,7 +14,7 @@ logger = logging.getLogger("mptk.parse_taxonomy")
 
 def parse_table(input_file, output_file):
     """
-    Read the MEGAN results table and creates an tab-separated output table with the taxonomy results.
+    Read the MEGAN results table and creates a tab-separated output table with the taxonomy results.
 
     The function `parse_table` reads the MEGAN taxonomy table produced by `blast2lca` from the MEGAN package.
     Unnecessary columns are removed and an output table is created
