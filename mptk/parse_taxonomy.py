@@ -22,7 +22,8 @@ def parse_table(input_file, output_file):
     Parameters
     ----------
       input_file: MEGAN taxonomy table
-      output_file: a tab-separated table with accession number, taxonomic ranks, and score values
+      output_file: path where to create output, a tab-separated table with accession number, taxonomic ranks, and
+                   score values
 
     Returns
     -------
