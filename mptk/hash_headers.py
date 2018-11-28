@@ -15,7 +15,11 @@ def write_hashed_protein_header_fasta_file(input_file, output_file, tsv_file, ha
     Hash headers of proteome file.
 
     The function write_hashed_protein_header_fasta_file calculates the hash value for each proteome header and creates
-    a fasta file with hashed headers. Additionally, a tsv file with two column is created that maps the hashed header
+    a fasta file with hashed headers. Hashing the protein headers is performed because several downstream software
+    tools (e.g. ProteinPilot) are keeping not only the sequence but also the headers in-memory. Therefore, shorter
+    fasta headers allow processing more reference protein sequences in one run.
+
+    Additionally, a tsv file with two column is created that maps the hashed header
     to the original headers. The function returns None.
 
     Parameters
