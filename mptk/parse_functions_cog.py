@@ -24,7 +24,7 @@ def join_tables(df, cog_table, cog_names):
     Parameters
     ----------
       df: the data frame
-      cog_table: the COG csv table downloaded from COG FTP
+      cog_table: the COG csv table downloaded from COG FTP (ftp://ftp.ncbi.nih.gov/pub/COG/COG2014/data/)
       cog_names: the COG names table
 
     Returns
