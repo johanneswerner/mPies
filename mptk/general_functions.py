@@ -168,8 +168,7 @@ def parse_diamond_output(diamond_file):
     """
     Read the output table created by diamond and return a corresponding pandas data frame from it.
 
-    The function `parse_diamond_output` reads the diamond table that was run against the COG database. The function
-    returns a pandas data frame.
+    The function `parse_diamond_output` reads the diamond table and returns a pandas data frame.
 
     Parameters
     ----------
