@@ -13,7 +13,7 @@ import re
 import urllib.parse
 import urllib.request
 from ete3 import NCBITaxa
-from pies import general_functions
+from mptk import general_functions
 
 logger = logging.getLogger("pies.use_amplicon")
 NCBI = NCBITaxa()

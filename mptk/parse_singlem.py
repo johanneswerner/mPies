@@ -67,7 +67,7 @@ def calculate_abundant_otus(df, level="genus", cutoff=5):
 
     """
     df_subset = df.groupby([level])["num_hits"].sum().reset_index()
-    df_subset = df_subset[df_subset["num_hits"] >= cutoff][level]
+    df_subset = df_subset[df_subset["num_hits"] >= int(cutoff)][level]
     taxon_names = list(df_subset)
 
     return taxon_names

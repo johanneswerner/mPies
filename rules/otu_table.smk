@@ -1,47 +1,58 @@
-SAMPLES = ["OSD14"]
-RUN_SINGLEM = False
-
-if RUN_SINGLEM:
+if config["otu_table"]["run_singlem"]:
     rule generate_otu_table:
         input:
-            "{sample}/reads/{sample}_R1.fastq.gz",
-            "{sample}/reads/{sample}_R2.fastq.gz"
+            expand("{sample}/trimmed/{sample}_R1_trimmed_pe.fastq.gz", sample=config["sample"]),
+            expand("{sample}/trimmed/{sample}_R2_trimmed_pe.fastq.gz", sample=config["sample"]),
+            expand("{sample}/trimmed/{sample}_trimmed_se.fastq.gz", sample=config["sample"])
         output:
-            "{sample}/singlem/singlem_otu.tsv"
+            temp(expand("{sample}/singlem/singlem_otu.tsv", sample=config["sample"]))
+        log:
+            expand("{sample}/log/singlem.log", sample=config["sample"])
+        params:
+            mode=config["otu_table"]["generate_otu_table"]["mode"]
         threads:
-            28
-        message:
-            "Executing singlem with {threads} threads on the following input files: {input}, producing {output}."
+            config["ressources"]["threads"]
         shell:
-            "./appimages/singlem.AppImage pipe --sequences {input} --otu_table {output} --threads {threads}"
+            """
+            ./appimages/singlem.AppImage {params.mode} --sequences {input} --otu_table {output} --threads {threads} \
+              > {log} 2>&1
+            """
 
     rule obtain_tax_list:
         input:
-            expand("{sample}/singlem/singlem_otu.tsv", sample=SAMPLES)
+            expand("{sample}/singlem/singlem_otu.tsv", sample=config["sample"])
         output:
-            "{sample}/amplicon/taxlist.txt"
+            expand("{sample}/amplicon/taxlist.txt", sample=config["sample"])
+        params:
+            mode=config["otu_table"]["obtain_tax_list"]["mode"],
+            cutoff=config["otu_table"]["obtain_tax_list"]["cutoff"]
         shell:
-            "./main.py -v parse_singlem -t {input} -u {output}"
+            "./main.py -v {params.mode} -t {input} -u {output} -c {params.cutoff}"
 
     rule obtain_proteome:
         input:
-            expand("{sample}/amplicon/taxlist.txt", sample=SAMPLES)
+            expand("{sample}/amplicon/taxlist.txt", sample=config["sample"])
         output:
-            "{sample}/proteome/{sample}_amplicon.faa"
+            temp(expand("{sample}/proteome/amplicon.faa", sample=config["sample"]))
+        params:
+            mode=config["otu_table"]["obtain_proteome"]["mode"]
         shell:
-            "./main.py -v amplicon -g {input} -p {output}"
+            "./main.py -v {params.mode} -g {input} -p {output}"
 
 else:
     rule obtain_proteome:
         input:
-            expand("{sample}/amplicon/genuslist_test.txt", sample=SAMPLES)
+            expand("{sample}/amplicon/genuslist_test.txt", sample=config["sample"])
         output:
-            "{sample}/proteome/{sample}_amplicon.faa"
+            temp(expand("{sample}/proteome/amplicon.faa", sample=config["sample"]))
+        params:
+            mode=config["otu_table"]["obtain_proteome"]["mode"]
         shell:
-            "./main.py -v amplicon -g {input} -p {output}"
+            "./main.py -v {params.mode} -g {input} -p {output}"
 
 rule get_amplicon_proteome_done:
     input:
-        expand("{sample}/proteome/{sample}_amplicon.faa", sample=SAMPLES)
+        expand("{sample}/proteome/amplicon.faa", sample=config["sample"])
     output:
         touch("checkpoints/amplicon_proteome.done")
+

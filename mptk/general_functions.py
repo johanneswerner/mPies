@@ -7,8 +7,10 @@ This module includes the functions `get_desired_ranks`, `get_names_dmp`, and `cr
 the NCBI taxonomy.
 """
 
+import gzip
 import logging
 import os
+import pandas as pd
 import re
 import tarfile
 import urllib.parse
@@ -132,4 +134,53 @@ def create_tax_dict(abspath_names_dmp):
                 ncbi_tax_dict[int(curr_line[0])] = curr_line[1]
 
     return ncbi_tax_dict
+
+
+def parse_uniprot_file(uniprot_file, uniprot_table):
+    """
+    Parse GO annotations from UniProt dat files.
+
+    The function uses the dat file from the UniProt FTP Server and creates a tab-separated file with accession number
+    and corresponding GO annotations.
+
+    Parameters
+    ----------
+      uniprot_file: the zipped UniProt dat file
+
+    Returns
+    -------
+      None
+
+    """
+    with gzip.open(uniprot_file, "rt") as f, gzip.open(uniprot_table, "wb") as uniprot_table_open:
+        for line in f:
+            if re.match(r"ID", line):
+                id_field = line.split()[1]
+            if re.match(r"DR\s+GO;", line):
+                go_field = line.split(maxsplit=1)[1:]
+                go_field = go_field[0].split("; ")[1:3]
+                uniprot_table_open.write(bytes(id_field + "\t" + go_field[0] + "\t" + go_field[1] + "\n", encoding="utf-8"))
+
+    return None
+
+
+def parse_diamond_output(diamond_file):
+    """
+    Read the output table created by diamond and return a corresponding pandas data frame from it.
+
+    The function `parse_diamond_output` reads the diamond table and returns a pandas data frame.
+
+    Parameters
+    ----------
+      diamond_file: diamond output file
+
+    Returns
+    -------
+      df: a pandas data frame of the diamond output
+
+    """
+    column_names = ["qseqid", "sseqid", "pident", "length", "mismatch", "gapopen", "qstart", "qend", "sstart", "send", "evalue", "bitscore"]
+    df = pd.read_csv(diamond_file, sep="\t", header=None, names=column_names)
+
+    return df
 
