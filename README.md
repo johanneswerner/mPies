@@ -15,7 +15,7 @@ source activate mpies
 ```
 
 SingleM has been packaged by AppImage (due to the Python 2 dependency).  Download 
-[AppImage](https://github.com/probonopd/AppImageKit/releases) and build the image with
+[AppImage](https://github.com/AppImage/AppImageKit/releases) and build the image with
 
 ```bash
 cd appimages
@@ -75,7 +75,7 @@ to false in the snake config file.
 
 Some prerequisites are necessary to run the taxonomic analysis for the created proteome fasta file.
 
-1. Download [MEGAN](http://ab.inf.uni-tuebingen.de/data/software/megan6/download/welcome.html). Don't forget to also
+1. Download [MEGAN](https://ab.inf.uni-tuebingen.de/software/megan6). Don't forget to also
 to download and unzip the file `prot_acc2tax-June2018X1.abin.zip` from the same page.
 
 2. Download the `nr.gz` fasta file from NCBI (size: 40 GB).
