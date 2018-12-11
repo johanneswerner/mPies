@@ -1,4 +1,4 @@
-configfile: "snake.json"
+configfile: "database_creation.json"
 
 inputs = []
 
