@@ -1,6 +1,6 @@
 # mPies: metaProteomics in environmental sciences
 
-mPies is a tool to create suitable databases for metaproteomic analysis. 
+mPies is a workflow to create annotated databases for metaproteomic analysis.
 
 This workflow uses three different databases for a metagenome (i) OTU-table, (ii) assembled-derived, (iii) and
 unassembled-derived to build a consensus of these databases and increase the mapping sensitivity.
@@ -41,36 +41,36 @@ The preprocessing trims the raw reads and combines the single reads into one fil
 
 In order to create the amplicon-derived proteome file, there are two possibilities. If amplicon data is available,
 then a text file with the taxon names (one per line) is used for downloading the proteomes from UniProt. If no
-amplicon data is available, you can set the option config["otu_table"]["run_singlem"] to `true` and a taxon file is
-created with `singlem` (singlem finds OTUs based on metagenome shotgun sequencing data).
+amplicon data is available, you can set the option `config["otu_table"]["run_singlem"]` to `true` and a taxon file is
+created with SingleM (this tool detects OTU abundances based on metagenome shotgun sequencing data).
 
 #### Assembled-derived proteome file
 
 If only raw data is available, it is possible to run an assembly with MEGAHIT or metaSPAdes (set
-config["assembled"]["run_assembly"] to `true` and config["assembled"]["assembler"] to "megahit" or "metaspades").
+`config["assembled"]["run_assembly"]` to `true` and config["assembled"]["assembler"] to `megahit` or `metaspades`).
 Please keep in mind that assemblies can take a lot of time depending on the size of the dataset. If you already have an
-assembly, set config["assembled"]["run_assembly"] to `false` and create a symlink of your assembly into
-`{sample}/assembly/contigs.fa`. If you have no gene calling yet, remember to set config["assembled"]["run_genecalling"]
-to `true`.
+assembly, set `config["assembled"]["run_assembly"]` to `false` and create a symlink of your assembly into
+`{sample}/assembly/contigs.fa`. If you have no gene calling yet, remember to set
+`config["assembled"]["run_genecalling"]` to `true`.
 
-If you have both assembly and gene calling already performed, set config["assembled"]["run_assembly"] and
-config["assembled"]["run_genecalling"] to `false` and create a symlink of the assembled proteome into
+If you have both assembly and gene calling already performed, set `config["assembled"]["run_assembly"]` and
+`config["assembled"]["run_genecalling"]` to `false` and create a symlink of the assembled proteome into
 `{sample}/proteome/assembled.faa`.
 
 #### Unassembled-derived proteome file
 
-To create the unassembled-derived proteome file, `FragGeneScan` is called (and prior to that a fastq-to-fasta
+To create the unassembled-derived proteome file, FragGeneScan is used (and prior to that a fastq-to-fasta
 conversion).
 
 #### Postprocessing
 
-During the postprocessing, the all three proteomes are combined into one file. Short sequences (below 30 amino acids)
+During the postprocessing, the all three proteomes are combined into one file. Short sequences (< 30 amino acids)
 are deleted and all duplicates are removed. Afterwards, the fasta headers are hashed to shorten the headers (and save
-some disk space especially for large proteome files).
+some disk space).
 
 #### Taxonomical analysis
 
-The taxonomic analysis is performed with blast2lca from the MEGAN package. Per default, the taxonomic analysis is set
+The taxonomic analysis is performed with `blast2lca` from the MEGAN package. Per default, the taxonomic analysis is set
 to false in the snake config file.
 
 Some prerequisites are necessary to run the taxonomic analysis for the created proteome fasta file.
@@ -94,8 +94,8 @@ If the checksum does not match, the download was probably not complete. `wget -c
 diamond makedb --threads <number_of_threads> --in nr.gz --db nr.dmnd
 ```
 
-4. Now you can set config["taxonomy"]["run_taxonomy"] to `true` and run `snakemake`. Remember to set the paths for the
-diamond database, the binary of blast2lca and the path to the file `prot_acc2tax-Jun2018X1.abin`. Please note that
+4. Now you can set `config["taxonomy"]["run_taxonomy"]` to `true` and run `snakemake`. Remember to set the paths for the
+diamond database, the binary of `blast2lca` and the path to the file `prot_acc2tax-Jun2018X1.abin`. Please note that
 `diamond blastp` takes a very long time to execute. 
 
 #### Functional analysis
@@ -121,7 +121,7 @@ wget ftp://ftp.ncbi.nih.gov/pub/COG/COG2014/data/fun2003-2014.tab
 diamond makedb --threads <number_of_threads> --in prot2003-2014.fa.gz --db cog.dmnd
 ```
 
-3. Now you can set config["functions"]["run_cog"]["run_functions_cog"] to `true` and run `snakemake`. Remember to set
+3. Now you can set `config["functions"]["run_cog"]["run_functions_cog"]` to `true` and run `snakemake`. Remember to set
 the paths for the diamond database and the files `cog_table`, `cog_names`, and `cog_functions`.
 
 ##### UniProt/GO
@@ -149,7 +149,7 @@ Please note that TrEMBL is quite large (29 GB for `uniprot_trembl.fasta.gz` and 
 diamond makedb --threads <number_of_threads> --in uniprot_sprot.fasta.gz --db sprot.dmnd
 ```
 
-3. Use the dat file downloaded from UniProt to create a table with protein accessions and GO annotations.
+3. Use the dat file downloaded from UniProt to create a table with protein accessions and GO annotations
 
 ```bash
 ./main.py prepare_uniprot_files -u .../uniprot_sprot.dat.gz -t .../sprot.table.gz
@@ -157,7 +157,7 @@ diamond makedb --threads <number_of_threads> --in uniprot_sprot.fasta.gz --db sp
 
 Please note that input and output files must be/are compressed with gzip.
 
-4. Now you can set config["functions"]["run_uniprot"]["run_functions_uniprot"] to `true` and run `snakemake`.
+4. Now you can set `config["functions"]["run_uniprot"]["run_functions_uniprot"]` to `true` and run `snakemake`.
 
 ## Test data
 
