@@ -25,26 +25,32 @@ appimagetool-x86_64.AppImage singlem-x86_64.AppImage/ singlem.AppImage
 
 ## Usage
 
-The entire workflow is written in Snakemake.
+mPies consists of two parts: database creation and annotation. Both parts are written in Snakemake.
 
 ```bash
-snakemake --configfile snake.json
+# database creation
+snakemake --snakefile database_creation.snake --configfile database_creation.json --cores 28
+
+# annotation
+snakemake --snakefile annotation.snake --configfile annotation.json --cores 28
 ```
 
 ### Detailed explanation of the mpies workflow
 
-#### Preprocessing
+#### Database creation
+
+##### Preprocessing
 
 The preprocessing trims the raw reads and combines the single reads into one file.
 
-#### Amplicon-derived proteome file
+##### Amplicon-derived proteome file
 
 In order to create the amplicon-derived proteome file, there are two possibilities. If amplicon data is available,
 then a text file with the taxon names (one per line) is used for downloading the proteomes from UniProt. If no
 amplicon data is available, you can set the option `config["otu_table"]["run_singlem"]` to `true` and a taxon file is
 created with SingleM (this tool detects OTU abundances based on metagenome shotgun sequencing data).
 
-#### Assembled-derived proteome file
+##### Assembled-derived proteome file
 
 If only raw data is available, it is possible to run an assembly with MEGAHIT or metaSPAdes (set
 `config["assembled"]["run_assembly"]` to `true` and config["assembled"]["assembler"] to `megahit` or `metaspades`).
@@ -57,18 +63,20 @@ If you have both assembly and gene calling already performed, set `config["assem
 `config["assembled"]["run_genecalling"]` to `false` and create a symlink of the assembled proteome into
 `{sample}/proteome/assembled.faa`.
 
-#### Unassembled-derived proteome file
+##### Unassembled-derived proteome file
 
 To create the unassembled-derived proteome file, FragGeneScan is used (and prior to that a fastq-to-fasta
 conversion).
 
-#### Postprocessing
+##### Postprocessing
 
 During the postprocessing, the all three proteomes are combined into one file. Short sequences (< 30 amino acids)
 are deleted and all duplicates are removed. Afterwards, the fasta headers are hashed to shorten the headers (and save
 some disk space).
 
-#### Taxonomical analysis
+#### Annotation
+
+##### Taxonomical annotation
 
 The taxonomic analysis is performed with `blast2lca` from the MEGAN package. Per default, the taxonomic analysis is set
 to false in the snake config file.
@@ -98,11 +106,11 @@ diamond makedb --threads <number_of_threads> --in nr.gz --db nr.dmnd
 diamond database, the binary of `blast2lca` and the path to the file `prot_acc2tax-Jun2018X1.abin`. Please note that
 `diamond blastp` takes a very long time to execute. 
 
-#### Functional analysis
+##### Functional annotation
 
 Different databases can be used to add functional annotation. Per default, the funtional annotation is set to `false`.
 
-##### COG
+###### COG
 
 In order to use the COG database, some prerequisites have to be fulfilled before.
 
@@ -124,7 +132,7 @@ diamond makedb --threads <number_of_threads> --in prot2003-2014.fa.gz --db cog.d
 3. Now you can set `config["functions"]["run_cog"]["run_functions_cog"]` to `true` and run `snakemake`. Remember to set
 the paths for the diamond database and the files `cog_table`, `cog_names`, and `cog_functions`.
 
-##### UniProt/GO
+###### UniProt/GO
 
 In order to use the GO ontologies included in the UniProt database (SwissProt or TrEMBL), some prerequisites have to
 be fulfilled before.

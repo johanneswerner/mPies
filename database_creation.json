@@ -1,0 +1,57 @@
+{
+    "sample": "OSD14subset",
+    "ressources": {
+        "threads": 28,
+        "megahit_memory": 0.9,
+        "metaspades_memory": 230
+    },
+    "preprocessing": {
+        "run_trimmomatic": {
+            "mode": "PE",
+            "illuminaclip": "/data/miniconda3/envs/mpies/share/trimmomatic-0.38-1/adapters/TruSeq3-PE.fa:2:30:10",
+            "leading": 3,
+            "trailing": 3,
+            "slidingwindow": "4:15",
+            "minlen": 36
+        }
+    },
+    "assembled": {
+        "run_assembly": true,
+        "assembler": "megahit",
+        "run_megahit": {
+            "klist": "21,33,55,77,99,127"
+        },
+        "run_genecalling": true,
+        "prodigal": {
+            "mode": "meta"
+        }
+    },
+    "unassembled": {
+        "run_fraggenescan": {
+            "train_file": "illumina_1"
+        }
+    },
+    "otu_table": {
+        "run_singlem": true,
+        "generate_otu_table": {
+            "mode": "pipe"
+        },
+        "obtain_tax_list": {
+            "mode": "parse_singlem",
+            "cutoff": 1
+        },
+        "obtain_proteome": {
+            "mode": "amplicon"
+        }
+    },
+    "postprocessing": {
+        "remove_short_sequences": {
+            min_length: 2000
+        },
+        "hash_headers": {
+            "mode": "hashing",
+            "hash_type": "md5"
+        }
+    }
+}
+

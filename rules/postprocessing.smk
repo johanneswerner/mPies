@@ -4,15 +4,15 @@ rule combine_proteomes:
         expand("{sample}/proteome/assembled.faa", sample=config["sample"]),
         expand("{sample}/proteome/unassembled.faa", sample=config["sample"])
     output:
-        expand("{sample}/proteome/combined.faa", sample=config["sample"])
+        expand("{sample}/proteome/metaproteome.faa", sample=config["sample"])
     shell:
         "cat {input} > {output}"
 
 rule remove_short_sequences:
     input:
-        expand("{sample}/proteome/combined.faa", sample=config["sample"])
+        expand("{sample}/proteome/metaproteome.faa", sample=config["sample"])
     output:
-        temp(expand("{sample}/proteome/combined.mincutoff.faa", sample=config["sample"]))
+        temp(expand("{sample}/proteome/metaproteome.mincutoff.faa", sample=config["sample"]))
     params:
         min_length=config["postprocessing"]["remove_short_sequences"]["min_length"]
     shell:
@@ -20,11 +20,11 @@ rule remove_short_sequences:
 
 rule remove_duplicates:
     input:
-        expand("{sample}/proteome/combined.mincutoff.faa", sample=config["sample"])
+        expand("{sample}/proteome/metaproteome.mincutoff.faa", sample=config["sample"])
     output:
-        expand("{sample}/proteome/combined.mincutoff.nodup.faa", sample=config["sample"]),
-        temp(expand("{sample}/proteome/combined.mincutoff.nodup.faa.clstr", sample=config["sample"])),
-        temp(expand("{sample}/proteome/combined.mincutoff.nodup.faa2.clstr", sample=config["sample"]))
+        expand("{sample}/proteome/metaproteome.mincutoff.nodup.faa", sample=config["sample"]),
+        temp(expand("{sample}/proteome/metaproteome.mincutoff.nodup.faa.clstr", sample=config["sample"])),
+        temp(expand("{sample}/proteome/metaproteome.mincutoff.nodup.faa2.clstr", sample=config["sample"]))
     log:
         expand("{sample}/log/{sample}_cdhit.log", sample=config["sample"])
     shell:
@@ -32,10 +32,10 @@ rule remove_duplicates:
 
 rule hash_headers:
     input:
-        expand("{sample}/proteome/combined.mincutoff.nodup.faa", sample=config["sample"])
+        expand("{sample}/proteome/metaproteome.mincutoff.nodup.faa", sample=config["sample"])
     output:
-        expand("{sample}/proteome/combined.mincutoff.nodup.hashed.faa", sample=config["sample"]),
-        expand("{sample}/proteome/combined.mincutoff.nodup.hashed.tsv", sample=config["sample"])
+        expand("{sample}/proteome/metaproteome.hashed.faa", sample=config["sample"]),
+        expand("{sample}/proteome/metaproteome.hashed.tsv", sample=config["sample"])
     params:
         mode=config["postprocessing"]["hash_headers"]["mode"],
         hash_type=config["postprocessing"]["hash_headers"]["hash_type"]
@@ -44,8 +44,8 @@ rule hash_headers:
 
 rule postprocessing_done:
     input:
-        expand("{sample}/proteome/combined.mincutoff.nodup.hashed.faa", sample=config["sample"]),
-        expand("{sample}/proteome/combined.mincutoff.nodup.hashed.tsv", sample=config["sample"])
+        expand("{sample}/proteome/metaproteome.hashed.faa", sample=config["sample"]),
+        expand("{sample}/proteome/metaproteome.hashed.tsv", sample=config["sample"])
     output:
         touch("checkpoints/postprocessing.done")
 
