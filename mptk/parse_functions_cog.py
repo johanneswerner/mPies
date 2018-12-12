@@ -67,7 +67,7 @@ def group_table(df, cog_functions):
 
     Returns
     -------
-      df_cog: the joined table
+      df: the joined table
 
     """
     column_names_cog_functions = ["functional_class", "functional_name"]
@@ -79,6 +79,7 @@ def group_table(df, cog_functions):
     cols = ["qseqid", "functional_class", "functional_name", "counts"]
     df = df[cols]
     df.sort_values(["qseqid", "counts"], ascending=[True, False], inplace=True)
+    df.rename(columns={"qseqid": "protein_group"}, inplace=True)
 
     return df
 

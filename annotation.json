@@ -1,5 +1,6 @@
 {
     "sample": "OSD14subset",
+    "excel_file": "/data/mpies/OSD14subset/identified/Gel_based_Combined_DBs_small.xlsx",
     "ressources": {
         "threads": 28
     },
@@ -7,19 +8,22 @@
         "mode": "subset_sequences"
     },
     "taxonomy": {
+        "protein_groups": {
+            "mode": "protein_groups"
+        },
         "run_taxonomy": true,
         "run_diamond": {
             "mode": "blastp",
-            "output_format": 100,
+            "output_format": 6,
             "diamond_database": "/data/mpies/taxonomy/nr.dmnd",
             "max_target_seqs": 20,
             "score": 80,
             "compress": 0,
-            "sensitive": "--sensitive"
+            "sensitive": ""
         },
         "run_blast2lca": {
             "binary": "/data/megan/tools/blast2lca",
-            "input_format": "DAA",
+            "input_format": "BlastTab",
             "blast_mode": "BlastP",
             "acc2tax_file": "/data/megan/data/prot_acc2tax-Jun2018X1.abin"
         },
@@ -28,6 +32,9 @@
         }
     },
     "functions": {
+        "protein_groups": {
+            "mode": "protein_groups"
+        },
         "run_functions_cog": true,
         "run_cog": {
             "run_diamond": {
@@ -37,7 +44,7 @@
                 "max_target_seqs": 20,
                 "score": 80,
                 "compress": 0,
-                "sensitive": "--sensitive"
+                "sensitive": ""
             },
             "parse_functions_cog": {
                 "mode": "functions_cog"
@@ -55,13 +62,18 @@
                 "max_target_seqs": 20,
                 "score": 80,
                 "compress": 0,
-                "sensitive": "--sensitive"
+                "sensitive": ""
             },
             "parse_functions_uniprot": {
-                "mode": "functions_uniprot"
+                "mode": "functions_uniprot",
+                "go_annotation": ""
             },
-            "uniprot_table": "/data/mpies/functions/uniprot/sprot.table.gz"
+            "uniprot_table": "/data/mpies/functions/uniprot/sprot.table.gz",
+            "uniprot_proteinname_table": "/data/mpies/functions/uniprot/sprot.protein_name.gz"
         }
+    },
+    "export_tables": {
+        "mode": "export_tables"
     }
 }
 

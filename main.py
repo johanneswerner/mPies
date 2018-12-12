@@ -75,15 +75,19 @@ def main():
     subparser_hashing = subparsers.add_parser("hashing", help="hash fasta headers")
     subparser_subset_sequences = subparsers.add_parser("subset_sequences",
                                                        help="subsets sequences (only keeps identified proteins)")
+    subparser_protein_groups = subparsers.add_parser("protein_groups", help="use protein groups")
     subparser_taxonomy = subparsers.add_parser("taxonomy", help="parse taxonomy results")
     subparser_functions_cog = subparsers.add_parser("functions_cog", help="parse diamond results against COG database")
     subparser_functions_uniprot = subparsers.add_parser("functions_uniprot",
                                                         help="parse diamond results against Uniprot database")
+    subparser_export_tables = subparsers.add_parser("export_tables", help="export annotated tables")
 
     subparser_prepareuniprot.add_argument("-u", "--uniprot_file", action="store", dest="uniprot_file", default=None,
                                           required=True, help="zipped uniprot dat file")
     subparser_prepareuniprot.add_argument("-t", "--uniprot_table", action="store", dest="uniprot_table", default=None,
                                           required=True, help="uniprot output table (accession - GO annotation)")
+    subparser_prepareuniprot.add_argument("-g", "--go_annotation", action="store_true", dest="go_annotation",
+                                          default=False, help="uniprot output table (with protein names)")
 
     subparser_singlem.add_argument("-n", "--names_dmp", action="store", dest="names_dmp", default=None,required=False,
                                    help="location of names.dmp")
@@ -123,6 +127,14 @@ def main():
     subparser_subset_sequences.add_argument("-s", "--database_subset", action="store", dest="database_subset",
                                             required=True, help="subsetted metaproteomics database")
 
+    subparser_protein_groups.add_argument("-d", "--diamond_file", action="store", dest="diamond_file", required=True,
+                                          help="diamond output file")
+    subparser_protein_groups.add_argument("-e", "--excel_file", action="store", dest="excel_file", required=True,
+                                          help="ProteinPilot results file")
+    subparser_protein_groups.add_argument("-p", "--diamond_protein_groups", action="store",
+                                          dest="diamond_protein_groups", required=True,
+                                          help="diamond file reformatted with protein groups")
+
     subparser_taxonomy.add_argument("-m", "--megan_table", action="store", dest="megan_results", required=True,
                                    help="megan results file")
     subparser_taxonomy.add_argument("-t", "--output_table", action="store", dest="taxonomy_table", required=True,
@@ -145,6 +157,15 @@ def main():
                                              required=True, help="compressed UniProt table")
     subparser_functions_uniprot.add_argument("-e", "--export_table", action="store", dest="export_table",
                                              required=True, help="path for output table")
+    subparser_functions_uniprot.add_argument("-g", "--go_annotation", action="store_true", dest="go_annotation",
+                                             default=False, help="uniprot output table (with protein names)")
+
+    subparser_export_tables.add_argument("-e", "--excel_file", action="store", dest="excel_file", required=True,
+                                          help="ProteinPilot results file")
+    subparser_export_tables.add_argument("-t", "--annotated_table", action="store", dest="annotated_table",
+                                          required=True, help="annotated results table")
+    subparser_export_tables.add_argument("-o", "--output_table", action="store", dest="output_table", required=True,
+                                          help="file of exported table")
 
     args = parser.parse_args()
 
@@ -163,7 +184,8 @@ def main():
 
     if args.mode == "prepare_uniprot_files":
         logger.info("parsing UniProt file")
-        general_functions.parse_uniprot_file(uniprot_file=args.uniprot_file, uniprot_table=args.uniprot_table)
+        general_functions.parse_uniprot_file(uniprot_file=args.uniprot_file, uniprot_table=args.uniprot_table,
+                                             go_annotation=args.go_annotation)
 
     elif args.mode == "parse_singlem":
         logger.info("parsing OTU table")
@@ -194,6 +216,11 @@ def main():
         subset_sequences.subset_sequence_file(df=df, sequence_file=args.database_file,
                                                               sequence_file_subset=args.database_subset)
 
+    elif args.mode == "protein_groups":
+        logger.info("use protein groups")
+        general_functions.map_protein_groups(diamond_file=args.diamond_file, excel_file=args.excel_file,
+                                             diamond_file_protein_groups=args.diamond_protein_groups)
+
     elif args.mode == "taxonomy":
         logger.info("parsing megan taxonomy file")
         parse_taxonomy.parse_table(input_file=args.megan_results, output_file=args.taxonomy_table)
@@ -208,9 +235,15 @@ def main():
     elif args.mode == "functions_uniprot":
         logger.info("running Uniprot analysis")
         uniprot_df = general_functions.parse_diamond_output(diamond_file=args.diamond_file)
-        uniprot_df_merged = parse_functions_uniprot.join_tables(uniprot_df, uniprot_table=args.uniprot_table)
+        uniprot_df_merged = parse_functions_uniprot.join_tables(uniprot_df, uniprot_table=args.uniprot_table,
+                                                                go_annotation=args.go_annotation)
         uniprot_df_grouped = parse_functions_uniprot.group_table(uniprot_df_merged)
         parse_functions_uniprot.export_table(df=uniprot_df_grouped, output_file=args.export_table)
+
+    elif args.mode == "export_tables":
+        logger.info("exporting tables")
+        general_functions.export_result_tables(excel_file=args.excel_file, annotated_table=args.annotated_table,
+                                               output_table=args.output_table)
 
     logger.info("Done and finished!")
 

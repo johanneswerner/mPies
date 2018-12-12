@@ -14,7 +14,7 @@ import re
 logger = logging.getLogger("mptk.parse_functions_uniprot")
 
 
-def join_tables(df, uniprot_table):
+def join_tables(df, uniprot_table, go_annotation):
     """
     Joins the data frame with the UniProt table.
 
@@ -31,7 +31,10 @@ def join_tables(df, uniprot_table):
       df_uniprot: the joined table
 
     """
-    column_names_uniprot_table = ["uniprot_id", "GO_id", "GO_category"]
+    if go_annotation:
+        column_names_uniprot_table = ["uniprot_id", "GO_id", "GO_category"]
+    else:
+        column_names_uniprot_table = ["uniprot_id", "protein_name"]
     uniprot_table_df = pd.read_csv(uniprot_table, compression="gzip", sep="\t", header=None,
                                    names=column_names_uniprot_table, index_col=False)
 
@@ -43,7 +46,7 @@ def join_tables(df, uniprot_table):
     return df_uniprot
 
 
-def group_table(df):
+def group_table(df, go_annotation=False):
     """
     Performs a group-by operation to count the occurences of the hits in the data frame.
 
@@ -58,9 +61,14 @@ def group_table(df):
       df_uniprot: the joined table
 
     """
-    df = df[["qseqid", "GO_category"]]
-    df_uniprot = df.groupby(["qseqid", "GO_category"]).size().reset_index(name='counts')
+    if go_annotation:
+        df = df[["qseqid", "GO_category"]]
+        df_uniprot = df.groupby(["qseqid", "GO_category"]).size().reset_index(name='counts')
+    else:
+        df = df[["qseqid", "protein_name"]]
+        df_uniprot = df.groupby(["qseqid", "protein_name"]).size().reset_index(name='counts')
     df_uniprot.sort_values(["qseqid", "counts"], ascending=[True, False], inplace=True)
+    df_uniprot.rename(columns={"qseqid": "protein_group"}, inplace=True)
 
     return df_uniprot
 

@@ -136,7 +136,7 @@ def create_tax_dict(abspath_names_dmp):
     return ncbi_tax_dict
 
 
-def parse_uniprot_file(uniprot_file, uniprot_table):
+def parse_uniprot_file(uniprot_file, uniprot_table, go_annotation=False):
     """
     Parse GO annotations from UniProt dat files.
 
@@ -156,10 +156,16 @@ def parse_uniprot_file(uniprot_file, uniprot_table):
         for line in f:
             if re.match(r"ID", line):
                 id_field = line.split()[1]
-            if re.match(r"DR\s+GO;", line):
-                go_field = line.split(maxsplit=1)[1:]
-                go_field = go_field[0].split("; ")[1:3]
-                uniprot_table_open.write(bytes(id_field + "\t" + go_field[0] + "\t" + go_field[1] + "\n", encoding="utf-8"))
+            if go_annotation:
+                if re.match(r"DR\s+GO;", line):
+                    go_field = line.split(maxsplit=1)[1:]
+                    go_field = go_field[0].split("; ")[1:3]
+                    uniprot_table_open.write(bytes(id_field + "\t" + go_field[0] + "\t" + go_field[1] + "\n", encoding="utf-8"))
+            else:
+                if re.match(r"DE\s+RecName:", line):
+                    proteinname = line.split(maxsplit=1)[1:]
+                    proteinname_field = proteinname[0].split("=")[1].rstrip()
+                    uniprot_table_open.write(bytes(id_field + "\t" + proteinname_field + "\n", encoding="utf-8"))
 
     return None
 
@@ -183,4 +189,71 @@ def parse_diamond_output(diamond_file):
     df = pd.read_csv(diamond_file, sep="\t", header=None, names=column_names)
 
     return df
+
+
+def map_protein_groups(diamond_file, excel_file, diamond_file_protein_groups):
+    """
+    Replaces protein ids with protein groups in diamond output file.
+
+    The function `map_protein_groups` uses the protein groups from the ProteinPilot result file and maps them back on
+    the diamond output file. The function creates an updated diamond file with protein groups in the first column.
+
+    Parameters
+    ----------
+      diamond_file: diamond output file
+      excel_file: the ProteinPilot result excel file
+      diamond_file_protein_groups: diamond output file with protein groups as qseqid
+
+    Returns
+    -------
+      None
+
+    """
+    column_names = ["qseqid", "sseqid", "pident", "length", "mismatch", "gapopen", "qstart", "qend", "sstart", "send", "evalue", "bitscore"]
+    diamond_df = pd.read_csv(diamond_file, sep="\t", header=None, names=column_names)
+
+    excel_df = pd.read_excel(excel_file)
+    excel_df = excel_df[["N", "Accession"]]
+    excel_df["Accession"] = excel_df["Accession"].str.split("|", expand=False).str[0]
+
+    diamond_df = pd.merge(left=diamond_df, right=excel_df.set_index("Accession"), how="left", left_on="qseqid",
+                          right_index=True, sort=False)
+    diamond_df["qseqid"] = diamond_df["N"]
+    diamond_df = diamond_df.drop("N", axis=1)
+    diamond_df = diamond_df.sort_values(by=["qseqid", "bitscore"], ascending=[True, False])
+
+    diamond_df.to_csv(diamond_file_protein_groups, sep="\t", encoding="utf-8", index=False, header=False)
+
+    return None
+
+
+def export_result_tables(excel_file, annotated_table, output_table):
+    """
+    The function `export_result_tables` merges the excel file with the annotations.
+
+    The columns of interest from the Excel file are merged and exported with the annotations (including taxonomy
+    inferred from MEGAN/LCA and function based on COG or UniProt).
+
+    Parameters
+    ----------
+      excel_file: the ProteinPilot result excel file
+      annotated_table: table containing protein group and annotation (taxonomy or function)
+      output_table: file of merged table
+
+    Returns
+    -------
+      None
+
+    """
+    excel_df = pd.read_excel(excel_file)
+    excel_df = excel_df[["N", "Accession"]]
+    excel_df["Accession"] = excel_df["Accession"].str.split("|", expand=False).str[0]
+
+    df_annotated = pd.read_csv(annotated_table, sep="\t")
+    merged_df = pd.merge(left=excel_df, right=df_annotated.set_index("protein_group"), how="left", left_on="N",
+                         right_index=True, sort=False)
+
+    merged_df.to_csv(output_table, sep="\t", encoding="utf-8", index=False, header=True)
+
+    return None
 
