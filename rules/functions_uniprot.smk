@@ -37,16 +37,27 @@ rule parse_functions_uniprot:
     input:
         expand("{sample}/functions/metaproteome.uniprot.protein_groups.tsv", sample=config["sample"])
     output:
-        expand("{sample}/functions/metaproteome.functions.uniprot.txt", sample=config["sample"])
+        expand("{sample}/functions/metaproteome.functions.uniprot.parsed_table.tsv", sample=config["sample"])
     params:
         mode=config["functions"]["run_uniprot"]["parse_functions_uniprot"]["mode"],
         uniprot_table=config["functions"]["run_uniprot"]["uniprot_table"]
     shell:
         "./main.py -v {params.mode} -d {input} -t {params.uniprot_table} -e {output}"
 
+rule export_table_functions_uniprot:
+    input:
+        expand("{sample}/identified/Gel_based_Combined_DBs_small.xlsx", sample=config["sample"]),
+        temp(expand("{sample}/functions/metaproteome.functions.uniprot.parsed_table.tsv", sample=config["sample"]))
+    output:
+        expand("{sample}/functions/metaproteome.functions.uniprot.tsv", sample=config["sample"])
+    params:
+        mode=config["export_tables"]["mode"]
+    shell:
+        "./main.py -v {params.mode} -e {input[0]} -t {input[1]} -o {output}"
+
 rule get_functions_uniprot:
     input:
-        expand("{sample}/functions/metaproteome.functions.uniprot.txt", sample=config["sample"])
+        expand("{sample}/functions/metaproteome.functions.uniprot.tsv", sample=config["sample"])
     output:
         touch("checkpoints/functions_uniprot.done")
 

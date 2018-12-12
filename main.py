@@ -80,6 +80,7 @@ def main():
     subparser_functions_cog = subparsers.add_parser("functions_cog", help="parse diamond results against COG database")
     subparser_functions_uniprot = subparsers.add_parser("functions_uniprot",
                                                         help="parse diamond results against Uniprot database")
+    subparser_export_tables = subparsers.add_parser("export_tables", help="export annotated tables")
 
     subparser_prepareuniprot.add_argument("-u", "--uniprot_file", action="store", dest="uniprot_file", default=None,
                                           required=True, help="zipped uniprot dat file")
@@ -155,6 +156,13 @@ def main():
     subparser_functions_uniprot.add_argument("-e", "--export_table", action="store", dest="export_table",
                                              required=True, help="path for output table")
 
+    subparser_export_tables.add_argument("-e", "--excel_file", action="store", dest="excel_file", required=True,
+                                          help="ProteinPilot results file")
+    subparser_export_tables.add_argument("-t", "--annotated_table", action="store", dest="annotated_table",
+                                          required=True, help="annotated results table")
+    subparser_export_tables.add_argument("-o", "--output_table", action="store", dest="output_table", required=True,
+                                          help="file of exported table")
+
     args = parser.parse_args()
 
     lvl = "INFO"
@@ -225,6 +233,11 @@ def main():
         uniprot_df_merged = parse_functions_uniprot.join_tables(uniprot_df, uniprot_table=args.uniprot_table)
         uniprot_df_grouped = parse_functions_uniprot.group_table(uniprot_df_merged)
         parse_functions_uniprot.export_table(df=uniprot_df_grouped, output_file=args.export_table)
+
+    elif args.mode == "export_tables":
+        logger.info("exporting tables")
+        general_functions.export_result_tables(excel_file=args.excel_file, annotated_table=args.annotated_table,
+                                               output_table=args.output_table)
 
     logger.info("Done and finished!")
 

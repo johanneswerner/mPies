@@ -2,7 +2,7 @@ rule run_diamond_tax:
     input:
         expand("{sample}/proteome/metaproteome.subset.faa", sample=config["sample"])
     output:
-        expand("{sample}/taxonomy/metaproteome.diamond.tsv", sample=config["sample"])
+        temp(expand("{sample}/taxonomy/metaproteome.diamond.tsv", sample=config["sample"]))
     params:
         mode=config["taxonomy"]["run_diamond"]["mode"],
         output_format=config["taxonomy"]["run_diamond"]["output_format"],
@@ -27,7 +27,7 @@ rule create_protein_groups_taxonomy:
         expand("{sample}/taxonomy/metaproteome.diamond.tsv", sample=config["sample"]),
         expand("{sample}/identified/Gel_based_Combined_DBs_small.xlsx", sample=config["sample"]),
     output:
-        expand("{sample}/taxonomy/metaproteome.tax.protein_groups.tsv", sample=config["sample"])
+        temp(expand("{sample}/taxonomy/metaproteome.tax.protein_groups.tsv", sample=config["sample"]))
     params:
         mode=config["taxonomy"]["protein_groups"]["mode"]
     shell:
@@ -37,7 +37,7 @@ rule run_blast2lca:
     input:
         expand("{sample}/taxonomy/metaproteome.tax.protein_groups.tsv", sample=config["sample"])
     output:
-        expand("{sample}/taxonomy/metaproteome.megan.tsv", sample=config["sample"])
+        temp(expand("{sample}/taxonomy/metaproteome.megan.tsv", sample=config["sample"]))
     params:
         blast2lca_bin=config["taxonomy"]["run_blast2lca"]["binary"],
         input_format=config["taxonomy"]["run_blast2lca"]["input_format"],
@@ -55,11 +55,22 @@ rule parse_taxonomy:
     input:
         expand("{sample}/taxonomy/metaproteome.megan.tsv", sample=config["sample"])
     output:
-        expand("{sample}/taxonomy/metaproteome.tax.tsv", sample=config["sample"])
+        temp(expand("{sample}/taxonomy/metaproteome.parsed_table.tsv", sample=config["sample"]))
     params:
         mode=config["taxonomy"]["parse_taxonomy"]["mode"]
     shell:
         "./main.py -v {params.mode} -m {input} -t {output}"
+
+rule export_table_taxonomy:
+    input:
+        expand("{sample}/identified/Gel_based_Combined_DBs_small.xlsx", sample=config["sample"]),
+        expand("{sample}/taxonomy/metaproteome.parsed_table.tsv", sample=config["sample"])
+    output:
+        expand("{sample}/taxonomy/metaproteome.tax.tsv", sample=config["sample"])
+    params:
+        mode=config["export_tables"]["mode"]
+    shell:
+        "./main.py -v {params.mode} -e {input[0]} -t {input[1]} -o {output}"
 
 rule get_taxonomy_done:
     input:

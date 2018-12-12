@@ -220,3 +220,34 @@ def map_protein_groups(diamond_file, excel_file, diamond_file_protein_groups):
 
     return None
 
+
+def export_result_tables(excel_file, annotated_table, output_table):
+    """
+    The function `export_result_tables` merges the excel file with the annotations.
+
+    The columns of interest from the Excel file are merged and exported with the annotations (including taxonomy
+    inferred from MEGAN/LCA and function based on COG or UniProt).
+
+    Parameters
+    ----------
+      excel_file: the ProteinPilot result excel file
+      annotated_table: table containing protein group and annotation (taxonomy or function)
+      output_table: file of merged table
+
+    Returns
+    -------
+      None
+
+    """
+    excel_df = pd.read_excel(excel_file)
+    excel_df = excel_df[["N", "Accession"]]
+    excel_df["Accession"] = excel_df["Accession"].str.split("|", expand=False).str[0]
+
+    df_annotated = pd.read_csv(annotated_table, sep="\t")
+    merged_df = pd.merge(left=excel_df, right=df_annotated.set_index("protein_group"), how="left", left_on="N",
+                         right_index=True, sort=False)
+
+    merged_df.to_csv(output_table, sep="\t", encoding="utf-8", index=False, header=True)
+
+    return None
+
