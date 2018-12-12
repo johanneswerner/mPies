@@ -136,7 +136,7 @@ def create_tax_dict(abspath_names_dmp):
     return ncbi_tax_dict
 
 
-def parse_uniprot_file(uniprot_file, uniprot_table):
+def parse_uniprot_file(uniprot_file, uniprot_table, go_annotation=False):
     """
     Parse GO annotations from UniProt dat files.
 
@@ -156,10 +156,16 @@ def parse_uniprot_file(uniprot_file, uniprot_table):
         for line in f:
             if re.match(r"ID", line):
                 id_field = line.split()[1]
-            if re.match(r"DR\s+GO;", line):
-                go_field = line.split(maxsplit=1)[1:]
-                go_field = go_field[0].split("; ")[1:3]
-                uniprot_table_open.write(bytes(id_field + "\t" + go_field[0] + "\t" + go_field[1] + "\n", encoding="utf-8"))
+            if go_annotation:
+                if re.match(r"DR\s+GO;", line):
+                    go_field = line.split(maxsplit=1)[1:]
+                    go_field = go_field[0].split("; ")[1:3]
+                    uniprot_table_open.write(bytes(id_field + "\t" + go_field[0] + "\t" + go_field[1] + "\n", encoding="utf-8"))
+            else:
+                if re.match(r"DE\s+RecName:", line):
+                    proteinname = line.split(maxsplit=1)[1:]
+                    proteinname_field = proteinname[0].split("=")[1].rstrip()
+                    uniprot_table_open.write(bytes(id_field + "\t" + proteinname_field + "\n", encoding="utf-8"))
 
     return None
 

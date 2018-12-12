@@ -2,7 +2,7 @@ rule run_diamond_uniprot:
     input:
         expand("{sample}/proteome/metaproteome.subset.faa", sample=config["sample"])
     output:
-        temp(expand("{sample}/functions/metaproteome.uniprot.diamond.tsv", sample=config["sample"]))
+        expand("{sample}/functions/metaproteome.uniprot.diamond.tsv", sample=config["sample"])
     params:
         mode=config["functions"]["run_uniprot"]["run_diamond"]["mode"],
         output_format=config["functions"]["run_uniprot"]["run_diamond"]["output_format"],
@@ -24,10 +24,10 @@ rule run_diamond_uniprot:
 
 rule create_protein_groups_uniprot:
     input:
-        temp(expand("{sample}/functions/metaproteome.uniprot.diamond.tsv", sample=config["sample"])),
+        expand("{sample}/functions/metaproteome.uniprot.diamond.tsv", sample=config["sample"]),
         config["excel_file"]
     output:
-        temp(expand("{sample}/functions/metaproteome.uniprot.protein_groups.tsv", sample=config["sample"]))
+        expand("{sample}/functions/metaproteome.uniprot.protein_groups.tsv", sample=config["sample"])
     params:
         mode=config["functions"]["protein_groups"]["mode"]
     shell:
@@ -40,14 +40,15 @@ rule parse_functions_uniprot:
         expand("{sample}/functions/metaproteome.functions.uniprot.parsed_table.tsv", sample=config["sample"])
     params:
         mode=config["functions"]["run_uniprot"]["parse_functions_uniprot"]["mode"],
-        uniprot_table=config["functions"]["run_uniprot"]["uniprot_table"]
+        uniprot_table=config["functions"]["run_uniprot"]["uniprot_proteinname_table"],
+        go_annotation=config["functions"]["run_uniprot"]["parse_functions_uniprot"]["go_annotation"]
     shell:
-        "./main.py -v {params.mode} -d {input} -t {params.uniprot_table} -e {output}"
+        "./main.py -v {params.mode} -d {input} -t {params.uniprot_table} -e {output} {params.go_annotation}"
 
 rule export_table_functions_uniprot:
     input:
         config["excel_file"],
-        temp(expand("{sample}/functions/metaproteome.functions.uniprot.parsed_table.tsv", sample=config["sample"]))
+        expand("{sample}/functions/metaproteome.functions.uniprot.parsed_table.tsv", sample=config["sample"])
     output:
         expand("{sample}/functions/metaproteome.functions.uniprot.tsv", sample=config["sample"])
     params:

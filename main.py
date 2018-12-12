@@ -86,6 +86,8 @@ def main():
                                           required=True, help="zipped uniprot dat file")
     subparser_prepareuniprot.add_argument("-t", "--uniprot_table", action="store", dest="uniprot_table", default=None,
                                           required=True, help="uniprot output table (accession - GO annotation)")
+    subparser_prepareuniprot.add_argument("-g", "--go_annotation", action="store_true", dest="go_annotation",
+                                          default=False, help="uniprot output table (with protein names)")
 
     subparser_singlem.add_argument("-n", "--names_dmp", action="store", dest="names_dmp", default=None,required=False,
                                    help="location of names.dmp")
@@ -155,6 +157,8 @@ def main():
                                              required=True, help="compressed UniProt table")
     subparser_functions_uniprot.add_argument("-e", "--export_table", action="store", dest="export_table",
                                              required=True, help="path for output table")
+    subparser_functions_uniprot.add_argument("-g", "--go_annotation", action="store_true", dest="go_annotation",
+                                             default=False, help="uniprot output table (with protein names)")
 
     subparser_export_tables.add_argument("-e", "--excel_file", action="store", dest="excel_file", required=True,
                                           help="ProteinPilot results file")
@@ -180,7 +184,8 @@ def main():
 
     if args.mode == "prepare_uniprot_files":
         logger.info("parsing UniProt file")
-        general_functions.parse_uniprot_file(uniprot_file=args.uniprot_file, uniprot_table=args.uniprot_table)
+        general_functions.parse_uniprot_file(uniprot_file=args.uniprot_file, uniprot_table=args.uniprot_table,
+                                             go_annotation=args.go_annotation)
 
     elif args.mode == "parse_singlem":
         logger.info("parsing OTU table")
@@ -230,7 +235,8 @@ def main():
     elif args.mode == "functions_uniprot":
         logger.info("running Uniprot analysis")
         uniprot_df = general_functions.parse_diamond_output(diamond_file=args.diamond_file)
-        uniprot_df_merged = parse_functions_uniprot.join_tables(uniprot_df, uniprot_table=args.uniprot_table)
+        uniprot_df_merged = parse_functions_uniprot.join_tables(uniprot_df, uniprot_table=args.uniprot_table,
+                                                                go_annotation=args.go_annotation)
         uniprot_df_grouped = parse_functions_uniprot.group_table(uniprot_df_merged)
         parse_functions_uniprot.export_table(df=uniprot_df_grouped, output_file=args.export_table)
 

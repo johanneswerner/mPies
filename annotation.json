@@ -65,9 +65,11 @@
                 "sensitive": ""
             },
             "parse_functions_uniprot": {
-                "mode": "functions_uniprot"
+                "mode": "functions_uniprot",
+                "go_annotation": ""
             },
-            "uniprot_table": "/data/mpies/functions/uniprot/sprot.table.gz"
+            "uniprot_table": "/data/mpies/functions/uniprot/sprot.table.gz",
+            "uniprot_proteinname_table": "/data/mpies/functions/uniprot/sprot.protein_name.gz"
         }
     },
     "export_tables": {
