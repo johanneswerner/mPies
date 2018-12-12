@@ -8,7 +8,7 @@
     "preprocessing": {
         "run_trimmomatic": {
             "mode": "PE",
-            "illuminaclip": "/data/miniconda3/envs/mpies/share/trimmomatic-0.38-1/adapters/TruSeq3-PE.fa:2:30:10",
+            "illuminaclip": "",
             "leading": 3,
             "trailing": 3,
             "slidingwindow": "4:15",

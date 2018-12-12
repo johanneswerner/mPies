@@ -1,6 +1,6 @@
 {
     "sample": "OSD14subset",
-    "excel_file": "/data/mpies/OSD14subset/identified/Gel_based_Combined_DBs_small.xlsx",
+    "excel_file": "",
     "ressources": {
         "threads": 28
     },
@@ -15,17 +15,17 @@
         "run_diamond": {
             "mode": "blastp",
             "output_format": 6,
-            "diamond_database": "/data/mpies/taxonomy/nr.dmnd",
+            "diamond_database": "",
             "max_target_seqs": 20,
             "score": 80,
             "compress": 0,
             "sensitive": ""
         },
         "run_blast2lca": {
-            "binary": "/data/megan/tools/blast2lca",
+            "binary": "",
             "input_format": "BlastTab",
             "blast_mode": "BlastP",
-            "acc2tax_file": "/data/megan/data/prot_acc2tax-Jun2018X1.abin"
+            "acc2tax_file": ""
         },
         "parse_taxonomy": {
             "mode": "taxonomy"
@@ -40,7 +40,7 @@
             "run_diamond": {
                 "mode": "blastp",
                 "output_format": 6,
-                "diamond_database": "/data/mpies/functions/cog/cog.dmnd",
+                "diamond_database": "",
                 "max_target_seqs": 20,
                 "score": 80,
                 "compress": 0,
@@ -49,16 +49,16 @@
             "parse_functions_cog": {
                 "mode": "functions_cog"
             },
-            "cog_table": "/data/mpies/functions/cog/cog2003-2014.csv",
-            "cog_names": "/data/mpies/functions/cog/cognames2003-2014.tab",
-            "cog_functions": "/data/mpies/functions/cog/fun2003-2014.tab"
+            "cog_table": "",
+            "cog_names": "",
+            "cog_functions": ""
         },
         "run_functions_uniprot": true,
         "run_uniprot": {
             "run_diamond": {
                 "mode": "blastp",
                 "output_format": 6,
-                "diamond_database": "/data/mpies/functions/uniprot/sprot.dmnd",
+                "diamond_database": "",
                 "max_target_seqs": 20,
                 "score": 80,
                 "compress": 0,
@@ -68,8 +68,8 @@
                 "mode": "functions_uniprot",
                 "go_annotation": ""
             },
-            "uniprot_table": "/data/mpies/functions/uniprot/sprot.table.gz",
-            "uniprot_proteinname_table": "/data/mpies/functions/uniprot/sprot.protein_name.gz"
+            "uniprot_table": "",
+            "uniprot_proteinname_table": ""
         }
     },
     "export_tables": {
