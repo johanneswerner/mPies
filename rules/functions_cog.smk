@@ -25,7 +25,7 @@ rule run_diamond_cog:
 rule create_protein_groups_cog:
     input:
         temp(expand("{sample}/functions/metaproteome.cog.diamond.tsv", sample=config["sample"])),
-        expand("{sample}/identified/Gel_based_Combined_DBs_small.xlsx", sample=config["sample"])
+        config["excel_file"]
     output:
         temp(expand("{sample}/functions/metaproteome.cog.protein_groups.tsv", sample=config["sample"]))
     params:
@@ -51,8 +51,8 @@ rule parse_functions_cog:
 
 rule export_table_functions_cog:
     input:
-        expand("{sample}/identified/Gel_based_Combined_DBs_small.xlsx", sample=config["sample"]),
-        expand("{sample}/functions/metaproteome.functions.cog.parsed_table.tsv", sample=config["sample"])
+        config["excel_file"],
+        temp(expand("{sample}/functions/metaproteome.functions.cog.parsed_table.tsv", sample=config["sample"]))
     output:
         expand("{sample}/functions/metaproteome.functions.cog.tsv", sample=config["sample"])
     params:

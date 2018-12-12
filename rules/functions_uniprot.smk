@@ -25,7 +25,7 @@ rule run_diamond_uniprot:
 rule create_protein_groups_uniprot:
     input:
         temp(expand("{sample}/functions/metaproteome.uniprot.diamond.tsv", sample=config["sample"])),
-        expand("{sample}/identified/Gel_based_Combined_DBs_small.xlsx", sample=config["sample"]),
+        config["excel_file"]
     output:
         temp(expand("{sample}/functions/metaproteome.uniprot.protein_groups.tsv", sample=config["sample"]))
     params:
@@ -46,7 +46,7 @@ rule parse_functions_uniprot:
 
 rule export_table_functions_uniprot:
     input:
-        expand("{sample}/identified/Gel_based_Combined_DBs_small.xlsx", sample=config["sample"]),
+        config["excel_file"],
         temp(expand("{sample}/functions/metaproteome.functions.uniprot.parsed_table.tsv", sample=config["sample"]))
     output:
         expand("{sample}/functions/metaproteome.functions.uniprot.tsv", sample=config["sample"])

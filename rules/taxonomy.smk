@@ -25,7 +25,7 @@ rule run_diamond_tax:
 rule create_protein_groups_taxonomy:
     input:
         expand("{sample}/taxonomy/metaproteome.diamond.tsv", sample=config["sample"]),
-        expand("{sample}/identified/Gel_based_Combined_DBs_small.xlsx", sample=config["sample"]),
+        config["excel_file"]
     output:
         temp(expand("{sample}/taxonomy/metaproteome.tax.protein_groups.tsv", sample=config["sample"]))
     params:
@@ -63,7 +63,7 @@ rule parse_taxonomy:
 
 rule export_table_taxonomy:
     input:
-        expand("{sample}/identified/Gel_based_Combined_DBs_small.xlsx", sample=config["sample"]),
+        config["excel_file"],
         expand("{sample}/taxonomy/metaproteome.parsed_table.tsv", sample=config["sample"])
     output:
         expand("{sample}/taxonomy/metaproteome.tax.tsv", sample=config["sample"])
