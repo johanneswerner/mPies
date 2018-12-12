@@ -118,6 +118,10 @@ def main():
 
     subparser_subset_sequences.add_argument("-e", "--excel_file", action="store", dest="excel_file", required=True,
                                             help="ProteinPilot results file")
+    subparser_subset_sequences.add_argument("-d", "--database_file", action="store", dest="database_file",
+                                            required=True, help="metaproteomics database file from part I")
+    subparser_subset_sequences.add_argument("-s", "--database_subset", action="store", dest="database_subset",
+                                            required=True, help="subsetted metaproteomics database")
 
     subparser_taxonomy.add_argument("-m", "--megan_table", action="store", dest="megan_results", required=True,
                                    help="megan results file")
@@ -187,7 +191,8 @@ def main():
     elif args.mode == "subset_sequences":
         logger.info("subsetting sequences")
         df = subset_sequences.parse_proteinpilot_file(excel_file=args.excel_file)
-        print(df)
+        subset_sequences.subset_sequence_file(df=df, sequence_file=args.database_file,
+                                                              sequence_file_subset=args.database_subset)
 
     elif args.mode == "taxonomy":
         logger.info("parsing megan taxonomy file")
