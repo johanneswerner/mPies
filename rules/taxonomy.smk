@@ -1,6 +1,6 @@
 rule run_diamond_tax:
     input:
-        expand("{sample}/proteome/combined.mincutoff.nodup.hashed.faa", sample=config["sample"])
+        expand("{sample}/proteome/metaproteome.subset.faa", sample=config["sample"])
     output:
         temp(expand("{sample}/taxonomy/combined.tax.daa", sample=config["sample"]))
     params:
@@ -18,7 +18,7 @@ rule run_diamond_tax:
     shell:
         """
         diamond {params.mode} -f {params.output_format} -p {threads} -d {params.diamond_database} \
-          -k {params.maxtargetseqs} --bit-score {params.score} --compress {params.compress} {params.sensitive} \
+          -k {params.maxtargetseqs} --min-score {params.score} --compress {params.compress} {params.sensitive} \
           -q {input} -o {output} > {log} 2>&1
         """
 

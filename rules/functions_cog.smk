@@ -1,6 +1,6 @@
 rule run_diamond_cog:
     input:
-        expand("{sample}/proteome/combined.mincutoff.nodup.hashed.faa", sample=config["sample"])
+        expand("{sample}/proteome/metaproteome.subset.faa", sample=config["sample"])
     output:
         temp(expand("{sample}/functions/cog/combined.cog.diamond.tsv", sample=config["sample"]))
     params:
