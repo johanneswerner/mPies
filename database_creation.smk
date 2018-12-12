@@ -1,4 +1,4 @@
-configfile: "snake.json"
+configfile: "database_creation.json"
 
 inputs = []
 
@@ -21,21 +21,6 @@ inputs.append("checkpoints/unassembled_proteome.done")
 include:
     "rules/postprocessing.smk"
 inputs.append("checkpoints/postprocessing.done")
-
-if config["taxonomy"]["run_taxonomy"]:
-    include:
-        "rules/taxonomy.smk"
-    inputs.append("checkpoints/taxonomy.done")
-
-
-if config["functions"]["run_functions_cog"]:
-    include:
-        "rules/functions_cog.smk"
-    inputs.append("checkpoints/functions_cog.done")
-if config["functions"]["run_functions_uniprot"]:
-    include:
-        "rules/functions_uniprot.smk"
-    inputs.append("checkpoints/functions_uniprot.done")
 
 rule ALL:
     input:

@@ -1,6 +1,6 @@
 rule run_diamond_uniprot:
     input:
-        expand("{sample}/proteome/combined.mincutoff.nodup.hashed.faa", sample=config["sample"])
+        expand("{sample}/proteome/metaproteome.subset.faa", sample=config["sample"])
     output:
         temp(expand("{sample}/functions/uniprot/combined.uniprot.diamond.tsv", sample=config["sample"]))
     params:

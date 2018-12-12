@@ -6,8 +6,8 @@ import logging
 import logging.config
 import os
 import sys
-from mptk import general_functions, hash_headers, parse_singlem, use_amplicon, parse_taxonomy, parse_functions_cog, \
-  parse_functions_uniprot
+from mptk import general_functions, hash_headers, parse_singlem, use_amplicon, subset_sequences, parse_taxonomy, \
+  parse_functions_cog, parse_functions_uniprot
 
 
 def configure_logger(name, log_file, level="DEBUG"):
@@ -73,6 +73,8 @@ def main():
     subparser_amplicon = subparsers.add_parser("amplicon",
                                                help="use genus list (amplicons) or singlem (metagenome reads)")
     subparser_hashing = subparsers.add_parser("hashing", help="hash fasta headers")
+    subparser_subset_sequences = subparsers.add_parser("subset_sequences",
+                                                       help="subsets sequences (only keeps identified proteins)")
     subparser_taxonomy = subparsers.add_parser("taxonomy", help="parse taxonomy results")
     subparser_functions_cog = subparsers.add_parser("functions_cog", help="parse diamond results against COG database")
     subparser_functions_uniprot = subparsers.add_parser("functions_uniprot",
@@ -113,6 +115,13 @@ def main():
                                    help="proteome output file with hashed headers")
     subparser_hashing.add_argument("-x", "--hash_type", choices=["md5", "sha1"], dest="hash_type", default="md5",
                                    help="hash algorithm to use")
+
+    subparser_subset_sequences.add_argument("-e", "--excel_file", action="store", dest="excel_file", required=True,
+                                            help="ProteinPilot results file")
+    subparser_subset_sequences.add_argument("-d", "--database_file", action="store", dest="database_file",
+                                            required=True, help="metaproteomics database file from part I")
+    subparser_subset_sequences.add_argument("-s", "--database_subset", action="store", dest="database_subset",
+                                            required=True, help="subsetted metaproteomics database")
 
     subparser_taxonomy.add_argument("-m", "--megan_table", action="store", dest="megan_results", required=True,
                                    help="megan results file")
@@ -178,6 +187,12 @@ def main():
         logger.info("hashing protein headers")
         hash_headers.write_hashed_protein_header_fasta_file(input_file=args.proteome_file, output_file=args.hashed_file,
                                                             tsv_file=args.tsv_file, hash_type=args.hash_type)
+
+    elif args.mode == "subset_sequences":
+        logger.info("subsetting sequences")
+        df = subset_sequences.parse_proteinpilot_file(excel_file=args.excel_file)
+        subset_sequences.subset_sequence_file(df=df, sequence_file=args.database_file,
+                                                              sequence_file_subset=args.database_subset)
 
     elif args.mode == "taxonomy":
         logger.info("parsing megan taxonomy file")

@@ -31,8 +31,9 @@ def parse_table(input_file, output_file):
 
     """
     column_names = ["id", "_blank", "d_name", "d_score", "p_name", "p_score", "c_name", "c_score", "o_name", "o_score",
-                    "f_name", "f_score", "g_name", "g_score", "s_name", "s_score", "__blank"],
-    df = pd.read_csv(input_file, sep=";", engine="python", header=None, names=column_names, usecols=column_names)
+                    "f_name", "f_score", "g_name", "g_score", "s_name", "s_score", "__blank"]
+    print(input_file)
+    df = pd.read_csv(input_file, sep=";", engine="python", header=None, names=column_names, usecols=list(range(17)))
     df.drop(df.columns[[1, -1]], axis=1, inplace=True)
 
     df.to_csv(output_file, sep="\t", encoding="utf-8", index=False)
