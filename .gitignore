@@ -3,3 +3,9 @@ __pycache__/
 
 # vim swap files
 *.swp
+
+# bin directory
+bin/
+
+# snakemake hidden directory
+.snakemake/
