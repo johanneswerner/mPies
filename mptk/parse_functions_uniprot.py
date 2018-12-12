@@ -61,6 +61,7 @@ def group_table(df):
     df = df[["qseqid", "GO_category"]]
     df_uniprot = df.groupby(["qseqid", "GO_category"]).size().reset_index(name='counts')
     df_uniprot.sort_values(["qseqid", "counts"], ascending=[True, False], inplace=True)
+    df_uniprot.rename(columns={"qseqid": "protein_group"}, inplace=True)
 
     return df_uniprot
 

@@ -2,7 +2,7 @@ rule run_diamond_tax:
     input:
         expand("{sample}/proteome/metaproteome.subset.faa", sample=config["sample"])
     output:
-        temp(expand("{sample}/taxonomy/combined.tax.daa", sample=config["sample"]))
+        expand("{sample}/taxonomy/metaproteome.diamond.tsv", sample=config["sample"])
     params:
         mode=config["taxonomy"]["run_diamond"]["mode"],
         output_format=config["taxonomy"]["run_diamond"]["output_format"],
@@ -22,11 +22,22 @@ rule run_diamond_tax:
           -q {input} -o {output} > {log} 2>&1
         """
 
+rule create_protein_groups_taxonomy:
+    input:
+        expand("{sample}/taxonomy/metaproteome.diamond.tsv", sample=config["sample"]),
+        expand("{sample}/identified/Gel_based_Combined_DBs_small.xlsx", sample=config["sample"]),
+    output:
+        expand("{sample}/taxonomy/metaproteome.tax.protein_groups.tsv", sample=config["sample"])
+    params:
+        mode=config["taxonomy"]["protein_groups"]["mode"]
+    shell:
+        "./main.py -v {params.mode} -d {input[0]} -e {input[1]} -p {output}"
+
 rule run_blast2lca:
     input:
-        expand("{sample}/taxonomy/combined.tax.daa", sample=config["sample"])
+        expand("{sample}/taxonomy/metaproteome.tax.protein_groups.tsv", sample=config["sample"])
     output:
-        temp(expand("{sample}/taxonomy/combined.megan.txt", sample=config["sample"]))
+        expand("{sample}/taxonomy/metaproteome.megan.tsv", sample=config["sample"])
     params:
         blast2lca_bin=config["taxonomy"]["run_blast2lca"]["binary"],
         input_format=config["taxonomy"]["run_blast2lca"]["input_format"],
@@ -42,17 +53,17 @@ rule run_blast2lca:
 
 rule parse_taxonomy:
     input:
-        expand("{sample}/taxonomy/combined.megan.txt", sample=config["sample"])
+        expand("{sample}/taxonomy/metaproteome.megan.tsv", sample=config["sample"])
     output:
-        expand("{sample}/taxonomy/combined.tax.txt", sample=config["sample"])
+        expand("{sample}/taxonomy/metaproteome.tax.tsv", sample=config["sample"])
     params:
-        mode=config["taxonomy"]["parse_taxonomy"]["mode"],
+        mode=config["taxonomy"]["parse_taxonomy"]["mode"]
     shell:
         "./main.py -v {params.mode} -m {input} -t {output}"
 
 rule get_taxonomy_done:
     input:
-        expand("{sample}/taxonomy/combined.tax.txt", sample=config["sample"])
+        expand("{sample}/taxonomy/metaproteome.tax.tsv", sample=config["sample"])
     output:
         touch("checkpoints/taxonomy.done")
 

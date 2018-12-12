@@ -75,6 +75,7 @@ def main():
     subparser_hashing = subparsers.add_parser("hashing", help="hash fasta headers")
     subparser_subset_sequences = subparsers.add_parser("subset_sequences",
                                                        help="subsets sequences (only keeps identified proteins)")
+    subparser_protein_groups = subparsers.add_parser("protein_groups", help="use protein groups")
     subparser_taxonomy = subparsers.add_parser("taxonomy", help="parse taxonomy results")
     subparser_functions_cog = subparsers.add_parser("functions_cog", help="parse diamond results against COG database")
     subparser_functions_uniprot = subparsers.add_parser("functions_uniprot",
@@ -122,6 +123,14 @@ def main():
                                             required=True, help="metaproteomics database file from part I")
     subparser_subset_sequences.add_argument("-s", "--database_subset", action="store", dest="database_subset",
                                             required=True, help="subsetted metaproteomics database")
+
+    subparser_protein_groups.add_argument("-d", "--diamond_file", action="store", dest="diamond_file", required=True,
+                                          help="diamond output file")
+    subparser_protein_groups.add_argument("-e", "--excel_file", action="store", dest="excel_file", required=True,
+                                          help="ProteinPilot results file")
+    subparser_protein_groups.add_argument("-p", "--diamond_protein_groups", action="store",
+                                          dest="diamond_protein_groups", required=True,
+                                          help="diamond file reformatted with protein groups")
 
     subparser_taxonomy.add_argument("-m", "--megan_table", action="store", dest="megan_results", required=True,
                                    help="megan results file")
@@ -193,6 +202,11 @@ def main():
         df = subset_sequences.parse_proteinpilot_file(excel_file=args.excel_file)
         subset_sequences.subset_sequence_file(df=df, sequence_file=args.database_file,
                                                               sequence_file_subset=args.database_subset)
+
+    elif args.mode == "protein_groups":
+        logger.info("use protein groups")
+        general_functions.map_protein_groups(diamond_file=args.diamond_file, excel_file=args.excel_file,
+                                             diamond_file_protein_groups=args.diamond_protein_groups)
 
     elif args.mode == "taxonomy":
         logger.info("parsing megan taxonomy file")

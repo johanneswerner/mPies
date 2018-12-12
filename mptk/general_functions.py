@@ -184,3 +184,39 @@ def parse_diamond_output(diamond_file):
 
     return df
 
+
+def map_protein_groups(diamond_file, excel_file, diamond_file_protein_groups):
+    """
+    Replaces protein ids with protein groups in diamond output file.
+
+    The function `map_protein_groups` uses the protein groups from the ProteinPilot result file and maps them back on
+    the diamond output file. The function creates an updated diamond file with protein groups in the first column.
+
+    Parameters
+    ----------
+      diamond_file: diamond output file
+      excel_file: the ProteinPilot result excel file
+      diamond_file_protein_groups: diamond output file with protein groups as qseqid
+
+    Returns
+    -------
+      None
+
+    """
+    column_names = ["qseqid", "sseqid", "pident", "length", "mismatch", "gapopen", "qstart", "qend", "sstart", "send", "evalue", "bitscore"]
+    diamond_df = pd.read_csv(diamond_file, sep="\t", header=None, names=column_names)
+
+    excel_df = pd.read_excel(excel_file)
+    excel_df = excel_df[["N", "Accession"]]
+    excel_df["Accession"] = excel_df["Accession"].str.split("|", expand=False).str[0]
+
+    diamond_df = pd.merge(left=diamond_df, right=excel_df.set_index("Accession"), how="left", left_on="qseqid",
+                          right_index=True, sort=False)
+    diamond_df["qseqid"] = diamond_df["N"]
+    diamond_df = diamond_df.drop("N", axis=1)
+    diamond_df = diamond_df.sort_values(by=["qseqid", "bitscore"], ascending=[True, False])
+
+    diamond_df.to_csv(diamond_file_protein_groups, sep="\t", encoding="utf-8", index=False, header=False)
+
+    return None
+

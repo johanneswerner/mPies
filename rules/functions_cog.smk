@@ -2,7 +2,7 @@ rule run_diamond_cog:
     input:
         expand("{sample}/proteome/metaproteome.subset.faa", sample=config["sample"])
     output:
-        temp(expand("{sample}/functions/cog/combined.cog.diamond.tsv", sample=config["sample"]))
+        temp(expand("{sample}/functions/metaproteome.cog.diamond.tsv", sample=config["sample"]))
     params:
         mode=config["functions"]["run_cog"]["run_diamond"]["mode"],
         output_format=config["functions"]["run_cog"]["run_diamond"]["output_format"],
@@ -22,11 +22,22 @@ rule run_diamond_cog:
           -q {input} -o {output} > {log} 2>&1
         """
 
+rule create_protein_groups_cog:
+    input:
+        temp(expand("{sample}/functions/metaproteome.cog.diamond.tsv", sample=config["sample"])),
+        expand("{sample}/identified/Gel_based_Combined_DBs_small.xlsx", sample=config["sample"])
+    output:
+        temp(expand("{sample}/functions/metaproteome.cog.protein_groups.tsv", sample=config["sample"]))
+    params:
+        mode=config["functions"]["protein_groups"]["mode"]
+    shell:
+        "./main.py -v {params.mode} -d {input[0]} -e {input[1]} -p {output}"
+
 rule parse_functions_cog:
     input:
-        expand("{sample}/functions/cog/combined.cog.diamond.tsv", sample=config["sample"])
+        expand("{sample}/functions/metaproteome.cog.protein_groups.tsv", sample=config["sample"])
     output:
-        expand("{sample}/functions/cog/combined.functions.cog.txt", sample=config["sample"])
+        expand("{sample}/functions/metaproteome.functions.cog.txt", sample=config["sample"])
     params:
         mode=config["functions"]["run_cog"]["parse_functions_cog"]["mode"],
         cog_tables=config["functions"]["run_cog"]["cog_table"],
@@ -40,7 +51,7 @@ rule parse_functions_cog:
 
 rule get_functions_cog_done:
     input:
-        expand("{sample}/functions/cog/combined.functions.cog.txt", sample=config["sample"])
+        expand("{sample}/functions/metaproteome.functions.cog.txt", sample=config["sample"])
     output:
         touch("checkpoints/functions_cog.done")
 
