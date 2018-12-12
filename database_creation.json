@@ -46,7 +46,7 @@
     },
     "postprocessing": {
         "remove_short_sequences": {
-            min_length: 2000
+            "min_length": 2000
         },
         "hash_headers": {
             "mode": "hashing",
