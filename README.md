@@ -29,10 +29,10 @@ mPies consists of two parts: database creation and annotation. Both parts are wr
 
 ```bash
 # database creation
-snakemake --snakefile database_creation.snake --configfile database_creation.json --cores 28
+snakemake --snakefile database_creation.smk --configfile database_creation.json --cores 28
 
 # annotation
-snakemake --snakefile annotation.snake --configfile annotation.json --cores 28
+snakemake --snakefile annotation.smk --configfile annotation.json --cores 28
 ```
 
 ### Detailed explanation of the mpies workflow
@@ -75,6 +75,12 @@ are deleted and all duplicates are removed. Afterwards, the fasta headers are ha
 some disk space).
 
 #### Annotation
+
+##### Preprocessing
+
+For now, the identified proteins are inferred from ProteinPilot. The resulting Excel file is used to create a protein
+fasta file that only contains the identified proteins. Taxonomic and functional analysis are conducted for the
+identified proteins.
 
 ##### Taxonomical annotation
 
