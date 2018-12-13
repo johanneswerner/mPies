@@ -46,7 +46,7 @@ def join_tables(df, uniprot_table, go_annotation):
     return df_uniprot
 
 
-def group_table(df, go_annotation=False):
+def group_table(df, go_annotation=False, number_of_entries=1):
     """
     Performs a group-by operation to count the occurences of the hits in the data frame.
 
@@ -69,6 +69,7 @@ def group_table(df, go_annotation=False):
         df_uniprot = df.groupby(["qseqid", "protein_name"]).size().reset_index(name='counts')
     df_uniprot.sort_values(["qseqid", "counts"], ascending=[True, False], inplace=True)
     df_uniprot.rename(columns={"qseqid": "protein_group"}, inplace=True)
+    df_uniprot = df_uniprot.groupby("protein_group").head(number_of_entries)
 
     return df_uniprot
 

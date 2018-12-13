@@ -54,7 +54,7 @@ def join_tables(df, cog_table, cog_names):
     return df
 
 
-def group_table(df, cog_functions):
+def group_table(df, cog_functions, number_of_entries=1):
     """
     Performs a group-by operation to count the occurences of the hits in the data frame.
 
@@ -80,6 +80,7 @@ def group_table(df, cog_functions):
     df = df[cols]
     df.sort_values(["qseqid", "counts"], ascending=[True, False], inplace=True)
     df.rename(columns={"qseqid": "protein_group"}, inplace=True)
+    df_uniprot = df_uniprot.groupby("protein_group").head(number_of_entries)
 
     return df
 
