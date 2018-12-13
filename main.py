@@ -65,6 +65,7 @@ def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("-v", "--verbose", action="store_true", dest="verbose", required=False, help="verbose output")
+    parser.add_argument("-l", "--license", action="store_true", dest="license", required=False, help="prints license")
 
     subparsers = parser.add_subparsers(dest="mode",help="select the run mode")
     subparser_prepareuniprot = subparsers.add_parser("prepare_uniprot_files",
@@ -174,6 +175,16 @@ def main():
         lvl = "DEBUG"
     logger = configure_logger(name='mpies', log_file="mpies.log", level=lvl)
 
+    if args.license:
+        print("mPies (metaProteomics in environmental scienes)")
+        print("Copyright 2018 Johannes Werner (Leibniz-Institute for Baltic Sea Research)")
+        print("Copyright 2018 Augustin Geron (University of Mons, University of Stirling)")
+        print("Copyright 2018 Sabine Matallana Surget (University of Stirling)\n")
+        print("This program comes with ABSOLUTELY NO WARRANTY.")
+        print("This is free software, and you are welcome to redistribute it under certain conditions.")
+
+        sys.exit(0)
+
     logger.info("(metaproteomics toolkit) started")
 
     if len(sys.argv) == 1:
@@ -250,3 +261,21 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# mPies (metaProteomics in environmental sciences) creates annotated databases for metaproteomics analysis.
+# Copyright 2018 Johannes Werner (Leibniz-Institute for Baltic Sea Research)
+# Copyright 2018 Augustin Geron (University of Stirling)
+# Copyright 2018 Sabine Matallana Surget (University of Stirling)
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
