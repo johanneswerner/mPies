@@ -17,7 +17,7 @@ conda config --add channels conda-forge
 conda create -n singlem python=2.7.15 numpy=1.15.2 diamond=0.9.22 hmmer=3.2.1 \
   krona=2.7 orfm=0.7.1 pplacer=1.1.alpha19 -y
 source activate singlem
-mkdir bin 
+mkdir bin
 wget https://github.com/ctSkennerton/fxtract/releases/download/2.3/fxtract2.3-Linux-64bit-static \
   -O bin/fxtract
 chmod +x bin/fxtract
@@ -47,3 +47,21 @@ Icon=terminal_icon
 Type=Application
 StartupNotify=true
 EOF
+
+# mPies (metaProteomics in environmental sciences) creates annotated databases for metaproteomics analysis.
+# Copyright 2018 Johannes Werner (Leibniz-Institute for Baltic Sea Research)
+# Copyright 2018 Augustin Geron (University of Stirling)
+# Copyright 2018 Sabine Matallana Surget (University of Stirling)
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
