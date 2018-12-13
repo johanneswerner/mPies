@@ -65,6 +65,7 @@ def main():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("-v", "--verbose", action="store_true", dest="verbose", required=False, help="verbose output")
+    parser.add_argument("-l", "--license", action="store_true", dest="license", required=False, help="prints license")
 
     subparsers = parser.add_subparsers(dest="mode",help="select the run mode")
     subparser_prepareuniprot = subparsers.add_parser("prepare_uniprot_files",
@@ -173,6 +174,16 @@ def main():
     if args.verbose:
         lvl = "DEBUG"
     logger = configure_logger(name='mpies', log_file="mpies.log", level=lvl)
+
+    if args.license:
+        print("mPies (metaProteomics in environmental scienes)")
+        print("Copyright 2018 Johannes Werner (Leibniz-Institute for Baltic Sea Research)")
+        print("Copyright 2018 Augustin Geron (University of Stirling)")
+        print("Sabine Matallana Surget (University of Stirling)\n")
+        print("This program comes with ABSOLUTELY NO WARRANTY.")
+        print("This is free software, and you are welcome to redistribute it under certain conditions.")
+
+        sys.exit(0)
 
     logger.info("(metaproteomics toolkit) started")
 
