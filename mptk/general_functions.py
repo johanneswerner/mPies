@@ -246,7 +246,7 @@ def export_result_tables(excel_file, annotated_table, output_table):
 
     """
     excel_df = pd.read_excel(excel_file)
-    excel_df = excel_df[["N", "Accession"]]
+    excel_df = excel_df[["N", "Accession", "Peptides(95%)"]]
     excel_df["Accession"] = excel_df["Accession"].str.split("|", expand=False).str[0]
 
     df_annotated = pd.read_csv(annotated_table, sep="\t")
