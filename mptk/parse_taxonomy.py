@@ -35,6 +35,7 @@ def parse_table(input_file, output_file):
     df = pd.read_csv(input_file, sep=";", engine="python", header=None, names=column_names, usecols=list(range(17)))
     df.drop(df.columns[[1, -1]], axis=1, inplace=True)
     df.rename(columns={"id": "protein_group"}, inplace=True)
+    df = df.groupby("protein_group").head(1)
 
     df.to_csv(output_file, sep="\t", encoding="utf-8", index=False)
 
