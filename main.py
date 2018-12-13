@@ -178,7 +178,7 @@ def main():
     if args.license:
         print("mPies (metaProteomics in environmental scienes)")
         print("Copyright 2018 Johannes Werner (Leibniz-Institute for Baltic Sea Research)")
-        print("Copyright 2018 Augustin Geron (University of Stirling)")
+        print("Copyright 2018 Augustin Geron (University of Mons, University of Stirling)")
         print("Copyright 2018 Sabine Matallana Surget (University of Stirling)\n")
         print("This program comes with ABSOLUTELY NO WARRANTY.")
         print("This is free software, and you are welcome to redistribute it under certain conditions.")

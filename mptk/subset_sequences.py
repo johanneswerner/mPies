@@ -74,7 +74,7 @@ def subset_sequence_file(df, sequence_file, sequence_file_subset):
 
 # mPies (metaProteomics in environmental sciences) creates annotated databases for metaproteomics analysis.
 # Copyright 2018 Johannes Werner (Leibniz-Institute for Baltic Sea Research)
-# Copyright 2018 Augustin Geron (University of Stirling)
+# Copyright 2018 Augustin Geron (University of Mons, University of Stirling)
 # Copyright 2018 Sabine Matallana Surget (University of Stirling)
 #
 # This program is free software: you can redistribute it and/or modify
