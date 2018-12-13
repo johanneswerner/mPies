@@ -2,7 +2,7 @@ rule run_diamond_uniprot:
     input:
         expand("{sample}/proteome/metaproteome.subset.faa", sample=config["sample"])
     output:
-        expand("{sample}/functions/metaproteome.uniprot.diamond.tsv", sample=config["sample"])
+        temp(expand("{sample}/functions/metaproteome.uniprot.diamond.tsv", sample=config["sample"]))
     params:
         mode=config["functions"]["run_uniprot"]["run_diamond"]["mode"],
         output_format=config["functions"]["run_uniprot"]["run_diamond"]["output_format"],
@@ -27,7 +27,7 @@ rule create_protein_groups_uniprot:
         expand("{sample}/functions/metaproteome.uniprot.diamond.tsv", sample=config["sample"]),
         config["excel_file"]
     output:
-        expand("{sample}/functions/metaproteome.uniprot.protein_groups.tsv", sample=config["sample"])
+        temp(expand("{sample}/functions/metaproteome.uniprot.protein_groups.tsv", sample=config["sample"]))
     params:
         mode=config["functions"]["protein_groups"]["mode"]
     shell:
@@ -37,7 +37,7 @@ rule parse_functions_uniprot:
     input:
         expand("{sample}/functions/metaproteome.uniprot.protein_groups.tsv", sample=config["sample"])
     output:
-        expand("{sample}/functions/metaproteome.functions.uniprot.parsed_table.tsv", sample=config["sample"])
+        temp(expand("{sample}/functions/metaproteome.functions.uniprot.parsed_table.tsv", sample=config["sample"]))
     params:
         mode=config["functions"]["run_uniprot"]["parse_functions_uniprot"]["mode"],
         uniprot_table=config["functions"]["run_uniprot"]["uniprot_proteinname_table"],
