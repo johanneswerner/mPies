@@ -257,6 +257,9 @@ def export_result_tables(excel_file, annotated_table, output_table):
     idx = merged_df.groupby(["N"])["Peptides(95%)"].transform(max) == merged_df["Peptides(95%)"]
     merged_df = merged_df[idx]
 
+    merged_df.drop("Accession", axis=1, inplace=True)
+    merged_df = merged_df.groupby("N").first().reset_index()
+
     merged_df.to_csv(output_table, sep="\t", encoding="utf-8", index=False, header=True)
 
     return None
