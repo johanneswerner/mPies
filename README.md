@@ -1,4 +1,5 @@
-# mPies: metaProteomics in environmental sciences
+# mPies: metaProteomics in environmental sciences [![DOI](https://zenodo.org/badge/161555171.svg)](https://zenodo.org/badge/latestdoi/161555171)
+
 
 mPies is a workflow to create annotated databases for metaproteomic analysis.
 
