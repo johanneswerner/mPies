@@ -8,14 +8,14 @@ unassembled-derived to build a consensus of these databases and increase the map
 
 ## Installation
 
-The easiest way is to use bioconda and create a new environment. 
+The easiest way is to use bioconda and create a new environment.
 
 ```bash
 conda create -n mpies --file conda_env.conf
 source activate mpies
 ```
 
-SingleM has been packaged by AppImage (due to the Python 2 dependency).  Download 
+SingleM has been packaged by AppImage (due to the Python 2 dependency).  Download
 [AppImage](https://github.com/AppImage/AppImageKit/releases) and build the image with
 
 ```bash
@@ -50,6 +50,27 @@ In order to create the amplicon-derived proteome file, there are two possibiliti
 then a text file with the taxon names (one per line) is used for downloading the proteomes from UniProt. If no
 amplicon data is available, you can set the option `config["otu_table"]["run_singlem"]` to `true` and a taxon file is
 created with SingleM (this tool detects OTU abundances based on metagenome shotgun sequencing data).
+
+##### Functional-derived subset
+
+It is also possible to create a subset derived from UniProt based not only on taxonomy but to also restrict the
+gene and functional names instead of downloading the entire proteomes for the taxa of interest. To do so, a TOML file
+should be created (see example below)
+
+```toml
+Taxonomy = [
+    "Bacteria"
+]
+Gene_names = [
+     "dnaK",
+     "soxA"
+]
+Protein_names = [
+    "Heat shock protein 70", # something commented
+]
+```
+
+and the path needs to be set in the snakemake configuration (`config["functional_subset"]["toml_file"]`).
 
 ##### Assembled-derived proteome file
 
@@ -111,7 +132,7 @@ diamond makedb --threads <number_of_threads> --in nr.gz --db nr.dmnd
 
 4. Now you can set `config["taxonomy"]["run_taxonomy"]` to `true` and run `snakemake`. Remember to set the paths for the
 diamond database, the binary of `blast2lca` and the path to the file `prot_acc2tax-Jun2018X1.abin`. Please note that
-`diamond blastp` takes a very long time to execute. 
+`diamond blastp` takes a very long time to execute.
 
 ##### Functional annotation
 
@@ -179,4 +200,3 @@ Please note that input and output files must be/are compressed with gzip.
 The test data set is a subset from the Ocean Sampling Day (first 18,000 lines for each read file), Accession number
 ERR770958 obtained from https://www.ebi.ac.uk/ena/data/view/ERR770958). The data is deposited in the test_data
 directory of this repository.
-

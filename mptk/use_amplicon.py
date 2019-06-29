@@ -90,8 +90,8 @@ def add_taxonomy_to_fasta(fasta_file, ncbi_tax_dict):
     return None
 
 
-def get_protein_sequences(tax_list, output_file, ncbi_tax_dict, reviewed=False,
-                          add_taxonomy=True, remove_backup=True):
+def get_protein_sequences(tax_list, output_file, ncbi_tax_dict, query=None, reviewed=False,
+                          add_taxonomy=True):
     """
     Fetch the proteomes for all tax IDs.
 
@@ -102,6 +102,7 @@ def get_protein_sequences(tax_list, output_file, ncbi_tax_dict, reviewed=False,
     ----------
       tax_list: unique list with tax IDs
       output_file: output file for the downloaded protein sequences
+      query: query can be passed from the use_functional_subset module (if None, download entire proteome of taxa of interest)
       reviewed: use TrEMBL (False) or SwissProt (True)
 
     Returns
@@ -112,15 +113,18 @@ def get_protein_sequences(tax_list, output_file, ncbi_tax_dict, reviewed=False,
     logger.info("fetching protein sequences ...")
     filename = output_file
 
-    taxon_queries = ['taxonomy:"%s"' % tid for tid in tax_list]
-    taxon_query = ' OR '.join(taxon_queries)
     rev = " reviewed:%s" % reviewed if reviewed else ''
+    if not tax_list:
+        taxon_queries = ['taxonomy:"%s"' % tid for tid in tax_list]
+        taxon_query = ' OR '.join(taxon_queries)
+        query = "%s%s" % (taxon_query, rev)
 
     url = 'https://www.uniprot.org/uniprot/'
-    query = "%s%s" % (taxon_query, rev)
+
     params = {'query': query, 'force': 'yes', 'format': 'fasta'}
     data = urllib.parse.urlencode(params).encode("utf-8")
-    logger.info("Taxid: " + str(tax_list))
+    if not tax_list:
+        logger.info("Taxid: " + str(tax_list))
     msg = urllib.request.urlretrieve(url=url, filename=filename, data=data)[1]
     headers = {j[0]: j[1].strip() for j in [i.split(':', 1)
                                                 for i in str(msg).strip().splitlines()]}

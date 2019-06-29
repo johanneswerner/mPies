@@ -6,8 +6,8 @@ import logging
 import logging.config
 import os
 import sys
-from mptk import general_functions, hash_headers, parse_singlem, use_amplicon, subset_sequences, parse_taxonomy, \
-  parse_functions_cog, parse_functions_uniprot
+from mptk import general_functions, hash_headers, parse_singlem, use_amplicon, use_functional_subset, \
+  subset_sequences, parse_taxonomy, parse_functions_cog, parse_functions_uniprot
 
 
 def configure_logger(name, log_file, level="DEBUG"):
@@ -73,6 +73,8 @@ def main():
     subparser_singlem = subparsers.add_parser("parse_singlem", help="build genus list from singlem OTU table")
     subparser_amplicon = subparsers.add_parser("amplicon",
                                                help="use genus list (amplicons) or singlem (metagenome reads)")
+    subparser_functionsubset = subparser.add_parser("function_subset",
+                                                    help="use gene, protein and taxonomy name subset")
     subparser_hashing = subparsers.add_parser("hashing", help="hash fasta headers")
     subparser_subset_sequences = subparsers.add_parser("subset_sequences",
                                                        help="subsets sequences (only keeps identified proteins)")
@@ -111,6 +113,13 @@ def main():
                                     help="use unreviewed TrEMBL hits (default) or only reviewed SwissProt")
     subparser_amplicon.add_argument("-t", "--taxonomy", action="store_true", dest="taxonomy", required=False,
                                     help="add taxonomic lineage to fasta header")
+
+    subparser_functionsubset.add_argument("-t", "--toml_file", action="store", dest="toml_file", required=True,
+                                          help="toml file with taxonomy, gene and protein names")
+    subparser_functionsubset.add_argument("-r", "--reviewed", action="store_true", dest="reviewed", required=False,
+                                          help="use unreviewed TrEMBL hits (default) or only reviewed SwissProt")
+    subparser_functionsubset.add_argument("-p", "--proteome_file", action="store", dest="proteome_file", required=True,
+                                    help="proteome file")
 
     subparser_hashing.add_argument("-p", "--proteome_file", action="store", dest="proteome_file", required=True,
                                    help="proteome input file")
@@ -215,6 +224,11 @@ def main():
         taxids = use_amplicon.get_taxid(input_file=args.genus_list)
         use_amplicon.get_protein_sequences(tax_list=taxids, output_file=args.proteome_file, ncbi_tax_dict=tax_dict,
                                            reviewed=args.reviewed, add_taxonomy=args.taxonomy)
+
+    elif args.mode == "function_subset":
+        logger.info("creating functional subsets")
+        query_command = use_functional_subset.search_lists_to_query_url(args.toml_file)
+        use_amplicon.get_protein_sequences(tax_list=False, query=query_command, output_file=args.proteome_file, reviewed=args.reviewed, add_taxonomy=args.taxonomy)
 
     elif args.mode == "hashing":
         logger.info("hashing protein headers")

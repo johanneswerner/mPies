@@ -44,6 +44,10 @@
             "mode": "amplicon"
         }
     },
+    "functional_subset": {
+        "toml_file": "functional_subset.toml",
+        "mode": "function_subset"
+    },
     "postprocessing": {
         "remove_short_sequences": {
             "min_length": 2000
@@ -54,4 +58,3 @@
         }
     }
 }
-

@@ -1,36 +1,18 @@
-configfile: "database_creation.json"
-
-inputs = []
-
-include:
-    "rules/preprocessing.smk"
-inputs.append("checkpoints/preprocessing.done")
-
-include:
-    "rules/otu_table.smk"
-inputs.append("checkpoints/amplicon_proteome.done")
-
-include:
-    "rules/functional_subset.smk"
-inputs.append("checkpoints/functional_subset_proteome.done")
-
-include:
-    "rules/assembled.smk"
-inputs.append("checkpoints/assembled_proteome.done")
-
-include:
-    "rules/unassembled.smk"
-inputs.append("checkpoints/unassembled_proteome.done")
-
-include:
-    "rules/postprocessing.smk"
-inputs.append("checkpoints/postprocessing.done")
-
-rule ALL:
+rule obtain_functional_subset:
     input:
-        inputs
+        expand("{sample}/functional_subset/functional_subset.toml", sample=config["sample"])
     output:
-        touch('checkpoints/mpies.done')
+        expand("{sample}/functional_subset/functional_subset.faa", sample=config["sample"])
+    params:
+        mode=config["functional_subset"]["mode"]
+    shell:
+        "./main.py -v {params.mode} -t {input} -p {output}"
+
+rule get_functional_subset_done:
+    input:
+        expand("{sample}/functional_subset/functional_subset.faa", sample=config["sample"])
+    output:
+        touch("checkpoints/functional_subset.done")
 
 
 # mPies (metaProteomics in environmental sciences) creates annotated databases for metaproteomics analysis.
