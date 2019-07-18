@@ -10,9 +10,9 @@ include:
     "rules/otu_table.smk"
 inputs.append("checkpoints/amplicon_proteome.done")
 
-include:
-    "rules/functional_subset.smk"
-inputs.append("checkpoints/functional_subset_proteome.done")
+#include:
+#    "rules/functional_subset.smk"
+#inputs.append("checkpoints/functional_subset_proteome.done")
 
 include:
     "rules/assembled.smk"

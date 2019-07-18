@@ -73,8 +73,8 @@ def main():
     subparser_singlem = subparsers.add_parser("parse_singlem", help="build genus list from singlem OTU table")
     subparser_amplicon = subparsers.add_parser("amplicon",
                                                help="use genus list (amplicons) or singlem (metagenome reads)")
-    subparser_functionsubset = subparser.add_parser("function_subset",
-                                                    help="use gene, protein and taxonomy name subset")
+    subparser_functionsubset = subparsers.add_parser("function_subset",
+                                                     help="use gene, protein and taxonomy name subset")
     subparser_hashing = subparsers.add_parser("hashing", help="hash fasta headers")
     subparser_subset_sequences = subparsers.add_parser("subset_sequences",
                                                        help="subsets sequences (only keeps identified proteins)")

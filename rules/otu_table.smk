@@ -14,7 +14,7 @@ if config["otu_table"]["run_singlem"]:
             config["ressources"]["threads"]
         shell:
             """
-            ./appimages/singlem.AppImage {params.mode} --sequences {input} --otu_table {output} --threads {threads} \
+            /data/mPies/appimages/AppRun {params.mode} --sequences {input} --otu_table {output} --threads {threads} \
               > {log} 2>&1
             """
 
