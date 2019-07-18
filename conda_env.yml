@@ -4,23 +4,16 @@ channels:
   - bioconda
   - defaults
 dependencies:
-  - cd-hit-auxtools=4.6.8=h2d50403_1
-  - diamond=0.9.22=h065a656_0
-  - ete3=3.1.1=pyh24bf2e0_1
-  - fraggenescan=1.30=h470a237_2
-  - megahit=1.1.3=py36_0
-  - prodigal=2.6.3=1
-  - snakemake=5.3.0=py36_1
-  - snakemake-minimal=5.3.0=py36_0
-  - spades=3.12.0=1
-  - trimmomatic=0.38=1
+  - _libgcc_mutex=0.1=main
   - aioeasywebdav=2.2.0=py36_0
   - aiohttp=3.4.4=py36h470a237_0
   - appdirs=1.4.3=py_1
   - asn1crypto=0.24.0=py36_1003
   - async-timeout=3.0.0=py36_0
   - attrs=18.2.0=py_0
+  - bcrypt=3.1.4=py36h14c3975_0
   - biopython=1.72=py36_0
+  - blas=1.0=mkl
   - boost=1.66.0=py36_1
   - boost-cpp=1.66.0=1
   - boto3=1.9.20=py_0
@@ -29,18 +22,23 @@ dependencies:
   - ca-certificates=2018.11.29=ha4d7672_0
   - cachetools=2.1.0=py_0
   - cairo=1.14.12=h276e583_5
+  - cd-hit-auxtools=4.6.8=h2d50403_1
   - certifi=2018.11.29=py36_1000
   - cffi=1.11.5=py36h5e8e0c9_1
   - chardet=3.0.4=py36_1003
   - configargparse=0.13.0=py_1
   - cryptography=2.3.1=py36hdffb7b8_0
   - cryptography-vectors=2.3.1=py36_1000
+  - datrie=0.7.1=py36h7b6447c_1
   - decorator=4.3.0=py_0
+  - diamond=0.9.22=h065a656_0
   - docutils=0.14=py36_1001
   - dropbox=9.1.0=py_0
+  - ete3=3.1.1=pyh24bf2e0_1
   - expat=2.2.5=hfc679d8_2
   - filechunkio=1.8=py_2
   - fontconfig=2.13.1=h65d0f4c_0
+  - fraggenescan=1.30=h470a237_2
   - freetype=2.9.1=h6debe1e_4
   - ftputil=3.4=py_0
   - gettext=0.19.8.1=h5e8e0c9_1
@@ -57,32 +55,40 @@ dependencies:
   - icu=58.2=hfc679d8_0
   - idna=2.7=py36_1002
   - idna_ssl=1.0.0=0
+  - intel-openmp=2019.0=118
   - jinja2=2.10=py_1
   - jmespath=0.9.3=py_1
   - jpeg=9c=h470a237_1
   - jsonschema=2.6.0=py36_1002
   - libffi=3.2.1=hfc679d8_5
   - libgcc=7.2.0=h69d50b8_2
+  - libgcc-ng=8.2.0=hdf63c60_1
   - libgfortran=3.0.0=1
   - libgfortran-ng=7.2.0=hdf63c60_3
   - libiconv=1.15=h470a237_3
+  - libopenblas=0.3.3=h5a2b251_3
   - libpng=1.6.35=ha92aebf_2
   - libprotobuf=3.6.1=hd28b015_0
   - libstdcxx-ng=7.2.0=hdf63c60_3
   - libtiff=4.0.9=he6b73bb_2
   - libtool=2.4.6=h470a237_2
-  - libuuid=2.32.1=h470a237_2
+  - libuuid=2.32.1=h14c3975_1000
   - libxcb=1.13=h470a237_2
   - libxml2=2.9.8=h422b904_5
   - libxslt=1.1.32=h88dbc4e_2
   - lxml=4.2.5=py36hc9114bc_0
   - markupsafe=1.0=py36h470a237_1
+  - megahit=1.1.3=py36_0
+  - mkl=2018.0.3=1
   - mkl_fft=1.0.6=py36_0
   - mkl_random=1.0.1=py36_0
   - multidict=4.4.2=py36h470a237_0
   - ncurses=6.1=hfc679d8_1
   - networkx=2.2=py_1
+  - numpy=1.15.4=py36h1d66e8a_0
+  - numpy-base=1.15.4=py36h81de0dd_0
   - openblas=0.3.3=ha44fe06_1
+  - openjdk=8.0.152=h46b5887_1
   - openssl=1.0.2p=h470a237_1
   - pandas=0.23.4=py36hf8a1672_0
   - pango=1.40.14=he752989_2
@@ -92,6 +98,7 @@ dependencies:
   - pip=18.1=py36_1000
   - pixman=0.34.0=h470a237_3
   - prettytable=0.7.2=py_2
+  - prodigal=2.6.3=1
   - protobuf=3.6.1=py36hfc679d8_1
   - psutil=5.4.7=py36h470a237_1
   - pthread-stubs=0.4=h470a237_1
@@ -109,16 +116,22 @@ dependencies:
   - python-irodsclient=0.7.0=py_0
   - pytz=2018.5=py_0
   - pyyaml=3.13=py36h470a237_1
+  - qt=4.8.7=4
   - ratelimiter=1.2.0=py36_1000
   - readline=7.0=haf1bffa_1
   - requests=2.19.1=py36_1001
   - rsa=3.4.2=py_1
   - s3transfer=0.1.13=py36_1001
+  - scipy=1.1.0=py36hc49cb51_0
   - setuptools=40.4.3=py36_0
   - sip=4.18=py36_1
   - six=1.11.0=py36_1001
+  - snakemake=5.3.0=py36_1
+  - snakemake-minimal=5.3.0=py36_0
+  - spades=3.12.0=1
   - sqlite=3.25.2=hb1c47c0_0
   - tk=8.6.8=ha92aebf_0
+  - trimmomatic=0.38=1
   - urllib3=1.23=py36_1001
   - wheel=0.32.1=py36_0
   - wrapt=1.10.11=py36h470a237_1
@@ -141,18 +154,6 @@ dependencies:
   - yaml=0.1.7=h470a237_1
   - yarl=1.2.6=py36h470a237_0
   - zlib=1.2.11=h470a237_3
-  - bcrypt=3.1.4=py36h14c3975_0
-  - blas=1.0=mkl
-  - datrie=0.7.1=py36h7b6447c_1
-  - intel-openmp=2019.0=118
-  - libgcc-ng=8.2.0=hdf63c60_1
-  - libopenblas=0.3.3=h5a2b251_3
-  - mkl=2018.0.3=1
-  - numpy=1.15.4=py36h1d66e8a_0
-  - numpy-base=1.15.4=py36h81de0dd_0
-  - openjdk=8.0.152=h46b5887_1
-  - qt=4.8.7=4
-  - scipy=1.1.0=py36hc49cb51_0
   - pip:
     - toml==0.10.0
 prefix: /data/miniconda3/envs/mpies

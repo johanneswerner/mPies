@@ -11,8 +11,8 @@ unassembled-derived to build a consensus of these databases and increase the map
 The easiest way is to use bioconda and create a new environment.
 
 ```bash
-conda create -n mpies --file conda_env.conf
-source activate mpies
+conda env create -n mpies --file conda_env.yml
+conda activate mpies
 ```
 
 SingleM has been packaged by AppImage (due to the Python 2 dependency).  Download
