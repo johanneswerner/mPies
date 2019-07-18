@@ -49,7 +49,7 @@ if config["assembled"]["run_genecalling"]:
         input:
             expand("{sample}/assembly/contigs.fa", sample=config["sample"])
         output:
-            temp(expand("{sample}/proteome/assembled.faa", sample=config["sample"])),
+            expand("{sample}/proteome/assembled.faa", sample=config["sample"]),
             temp(expand("{sample}/proteome/assembled.gbk", sample=config["sample"]))
         params:
             mode=config["assembled"]["prodigal"]["mode"]

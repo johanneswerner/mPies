@@ -33,7 +33,7 @@ if config["otu_table"]["run_singlem"]:
         input:
             expand("{sample}/amplicon/taxlist.txt", sample=config["sample"])
         output:
-            temp(expand("{sample}/proteome/amplicon.faa", sample=config["sample"]))
+            expand("{sample}/proteome/amplicon.faa", sample=config["sample"])
         params:
             mode=config["otu_table"]["obtain_proteome"]["mode"]
         shell:
@@ -42,9 +42,9 @@ if config["otu_table"]["run_singlem"]:
 else:
     rule obtain_proteome:
         input:
-            expand("{sample}/amplicon/genuslist_test.txt", sample=config["sample"])
+            expand("{sample}/amplicon/genuslist.txt", sample=config["sample"])
         output:
-            temp(expand("{sample}/proteome/amplicon.faa", sample=config["sample"]))
+            expand("{sample}/proteome/amplicon.faa", sample=config["sample"])
         params:
             mode=config["otu_table"]["obtain_proteome"]["mode"]
         shell:
