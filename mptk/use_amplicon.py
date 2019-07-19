@@ -114,7 +114,7 @@ def get_protein_sequences(tax_list, output_file, ncbi_tax_dict, query=None, revi
     filename = output_file
 
     rev = " reviewed:%s" % reviewed if reviewed else ''
-    if not tax_list:
+    if not query:
         taxon_queries = ['taxonomy:"%s"' % tid for tid in tax_list]
         taxon_query = ' OR '.join(taxon_queries)
         query = "%s%s" % (taxon_query, rev)
