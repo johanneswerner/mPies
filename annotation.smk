@@ -1,5 +1,6 @@
 configfile: "annotation.json"
 
+identified_ids = config["excel_file_no_ext"].split()
 inputs = []
 
 include:

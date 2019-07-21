@@ -30,7 +30,7 @@ rule ALL:
     input:
         inputs
     output:
-        touch('checkpoints/mpies.done')
+        touch("checkpoints/mpies.done")
 
 
 # mPies (metaProteomics in environmental sciences) creates annotated databases for metaproteomics analysis.

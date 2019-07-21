@@ -1,8 +1,8 @@
 rule run_diamond_uniprot:
     input:
-        expand("{sample}/proteome/metaproteome.subset.faa", sample=config["sample"])
+        "{sample}/annotated/{identified_id}/proteome/metaproteome.subset.faa"
     output:
-        temp(expand("{sample}/functions/metaproteome.uniprot.diamond.tsv", sample=config["sample"]))
+        "{sample}/annotated/{identified_id}/functions/metaproteome.uniprot.diamond.tsv"
     params:
         mode=config["functions"]["run_uniprot"]["run_diamond"]["mode"],
         output_format=config["functions"]["run_uniprot"]["run_diamond"]["output_format"],
@@ -12,7 +12,7 @@ rule run_diamond_uniprot:
         compress=config["functions"]["run_uniprot"]["run_diamond"]["compress"],
         sensitive=config["functions"]["run_uniprot"]["run_diamond"]["sensitive"]
     log:
-        expand("{sample}/log/diamond_functions_uniprot.log", sample=config["sample"])
+        "{sample}/log/diamond_functions_uniprot_{sample}_{identified_id}.log"
     threads:
         config["ressources"]["threads"]
     shell:
@@ -24,10 +24,10 @@ rule run_diamond_uniprot:
 
 rule create_protein_groups_uniprot:
     input:
-        expand("{sample}/functions/metaproteome.uniprot.diamond.tsv", sample=config["sample"]),
-        config["excel_file"]
+        "{sample}/annotated/{identified_id}/functions/metaproteome.uniprot.diamond.tsv",
+        "{sample}/identified/{identified_id}.xlsx"
     output:
-        temp(expand("{sample}/functions/metaproteome.uniprot.protein_groups.tsv", sample=config["sample"]))
+        "{sample}/annotated/{identified_id}/functions/metaproteome.uniprot.protein_groups.tsv"
     params:
         mode=config["functions"]["protein_groups"]["mode"]
     shell:
@@ -35,22 +35,23 @@ rule create_protein_groups_uniprot:
 
 rule parse_functions_uniprot:
     input:
-        expand("{sample}/functions/metaproteome.uniprot.protein_groups.tsv", sample=config["sample"])
+        "{sample}/annotated/{identified_id}/functions/metaproteome.uniprot.protein_groups.tsv",
+        "{sample}/identified/{identified_id}.xlsx"
     output:
-        temp(expand("{sample}/functions/metaproteome.functions.uniprot.parsed_table.tsv", sample=config["sample"]))
+        "{sample}/annotated/{identified_id}/functions/metaproteome.functions.uniprot.parsed_table.tsv"
     params:
         mode=config["functions"]["run_uniprot"]["parse_functions_uniprot"]["mode"],
-        uniprot_table=config["functions"]["run_uniprot"]["uniprot_proteinname_table"],
+        uniprot_table=config["functions"]["run_uniprot"]["uniprot_table"],
         go_annotation=config["functions"]["run_uniprot"]["parse_functions_uniprot"]["go_annotation"]
     shell:
-        "./main.py -v {params.mode} -d {input} -t {params.uniprot_table} -e {output} {params.go_annotation}"
+        "./main.py -v {params.mode} -d {input[0]} -t {params.uniprot_table} -e {input[1]} -o {output} {params.go_annotation}"
 
 rule export_table_functions_uniprot:
     input:
-        config["excel_file"],
-        expand("{sample}/functions/metaproteome.functions.uniprot.parsed_table.tsv", sample=config["sample"])
+        "{sample}/identified/{identified_id}.xlsx",
+        "{sample}/annotated/{identified_id}/functions/metaproteome.functions.uniprot.parsed_table.tsv"
     output:
-        expand("{sample}/functions/metaproteome.functions.uniprot.tsv", sample=config["sample"])
+        "{sample}/annotated/{identified_id}/functions/metaproteome.functions.uniprot.tsv"
     params:
         mode=config["export_tables"]["mode"]
     shell:
@@ -58,7 +59,7 @@ rule export_table_functions_uniprot:
 
 rule get_functions_uniprot:
     input:
-        expand("{sample}/functions/metaproteome.functions.uniprot.tsv", sample=config["sample"])
+        expand("{sample}/annotated/{identified_id}/functions/metaproteome.functions.uniprot.tsv", sample=config["sample"], identified_id=identified_ids)
     output:
         touch("checkpoints/functions_uniprot.done")
 

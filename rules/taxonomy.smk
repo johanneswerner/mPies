@@ -1,8 +1,8 @@
 rule run_diamond_tax:
     input:
-        expand("{sample}/proteome/metaproteome.subset.faa", sample=config["sample"])
+        "{sample}/annotated/{identified_id}/proteome/metaproteome.subset.faa"
     output:
-        temp(expand("{sample}/taxonomy/metaproteome.diamond.tsv", sample=config["sample"]))
+        "{sample}/annotated/{identified_id}/taxonomy/metaproteome.diamond.tsv"
     params:
         mode=config["taxonomy"]["run_diamond"]["mode"],
         output_format=config["taxonomy"]["run_diamond"]["output_format"],
@@ -12,7 +12,7 @@ rule run_diamond_tax:
         compress=config["taxonomy"]["run_diamond"]["compress"],
         sensitive=config["taxonomy"]["run_diamond"]["sensitive"]
     log:
-        expand("{sample}/log/diamond.log", sample=config["sample"])
+        "{sample}/log/diamond_{sample}_{identified_id}.log"
     threads:
         config["ressources"]["threads"]
     shell:
@@ -24,10 +24,10 @@ rule run_diamond_tax:
 
 rule create_protein_groups_taxonomy:
     input:
-        expand("{sample}/taxonomy/metaproteome.diamond.tsv", sample=config["sample"]),
-        config["excel_file"]
+        "{sample}/annotated/{identified_id}/taxonomy/metaproteome.diamond.tsv",
+        "{sample}/identified/{identified_id}.xlsx"
     output:
-        temp(expand("{sample}/taxonomy/metaproteome.tax.protein_groups.tsv", sample=config["sample"]))
+        "{sample}/annotated/{identified_id}/taxonomy/metaproteome.tax.protein_groups.tsv"
     params:
         mode=config["taxonomy"]["protein_groups"]["mode"]
     shell:
@@ -35,16 +35,16 @@ rule create_protein_groups_taxonomy:
 
 rule run_blast2lca:
     input:
-        expand("{sample}/taxonomy/metaproteome.tax.protein_groups.tsv", sample=config["sample"])
+        "{sample}/annotated/{identified_id}/taxonomy/metaproteome.tax.protein_groups.tsv"
     output:
-        temp(expand("{sample}/taxonomy/metaproteome.megan.tsv", sample=config["sample"]))
+        "{sample}/annotated/{identified_id}/taxonomy/metaproteome.megan.tsv"
     params:
         blast2lca_bin=config["taxonomy"]["run_blast2lca"]["binary"],
         input_format=config["taxonomy"]["run_blast2lca"]["input_format"],
         blast_mode=config["taxonomy"]["run_blast2lca"]["blast_mode"],
         acc2tax_file=config["taxonomy"]["run_blast2lca"]["acc2tax_file"]
     log:
-        expand("{sample}/log/blast2lca.log", sample=config["sample"])
+        "{sample}/log/blast2lca_{sample}_{identified_id}.log"
     shell:
         """
         {params.blast2lca_bin} -i {input} -f {params.input_format} -m {params.blast_mode} -o {output} \
@@ -53,9 +53,9 @@ rule run_blast2lca:
 
 rule parse_taxonomy:
     input:
-        expand("{sample}/taxonomy/metaproteome.megan.tsv", sample=config["sample"])
+        "{sample}/annotated/{identified_id}/taxonomy/metaproteome.megan.tsv"
     output:
-        temp(expand("{sample}/taxonomy/metaproteome.parsed_table.tsv", sample=config["sample"]))
+        "{sample}/annotated/{identified_id}/taxonomy/metaproteome.parsed_table.tsv"
     params:
         mode=config["taxonomy"]["parse_taxonomy"]["mode"]
     shell:
@@ -63,10 +63,10 @@ rule parse_taxonomy:
 
 rule export_table_taxonomy:
     input:
-        config["excel_file"],
-        expand("{sample}/taxonomy/metaproteome.parsed_table.tsv", sample=config["sample"])
+        "{sample}/identified/{identified_id}.xlsx",
+        "{sample}/annotated/{identified_id}/taxonomy/metaproteome.parsed_table.tsv"
     output:
-        expand("{sample}/taxonomy/metaproteome.tax.tsv", sample=config["sample"])
+        "{sample}/annotated/{identified_id}/taxonomy/metaproteome.tax.tsv"
     params:
         mode=config["export_tables"]["mode"]
     shell:
@@ -74,7 +74,7 @@ rule export_table_taxonomy:
 
 rule get_taxonomy_done:
     input:
-        expand("{sample}/taxonomy/metaproteome.tax.tsv", sample=config["sample"])
+        expand("{sample}/annotated/{identified_id}/taxonomy/metaproteome.tax.tsv", sample=config["sample"], identified_id=identified_ids)
     output:
         touch("checkpoints/taxonomy.done")
 

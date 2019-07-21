@@ -1,6 +1,6 @@
 {
     "sample": "OSD14subset",
-    "excel_file": "",
+    "excel_file_no_ext": "2J2SET13 2JSET11 2N2SET14 2NSET12",
     "ressources": {
         "threads": 28
     },
@@ -69,7 +69,6 @@
                 "go_annotation": ""
             },
             "uniprot_table": "",
-            "uniprot_proteinname_table": ""
         }
     },
     "export_tables": {

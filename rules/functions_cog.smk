@@ -1,8 +1,8 @@
 rule run_diamond_cog:
     input:
-        expand("{sample}/proteome/metaproteome.subset.faa", sample=config["sample"])
+        "{sample}/annotated/{identified_id}/proteome/metaproteome.subset.faa"
     output:
-        temp(expand("{sample}/functions/metaproteome.cog.diamond.tsv", sample=config["sample"]))
+        temp("{sample}/annotated/{identified_id}/functions/metaproteome.cog.diamond.tsv")
     params:
         mode=config["functions"]["run_cog"]["run_diamond"]["mode"],
         output_format=config["functions"]["run_cog"]["run_diamond"]["output_format"],
@@ -12,7 +12,7 @@ rule run_diamond_cog:
         compress=config["functions"]["run_cog"]["run_diamond"]["compress"],
         sensitive=config["functions"]["run_cog"]["run_diamond"]["sensitive"]
     log:
-        expand("{sample}/log/diamond_functions_cog.log", sample=config["sample"])
+        "{sample}/log/diamond_functions_cog_{sample}_{identified_id}.log"
     threads:
         config["ressources"]["threads"]
     shell:
@@ -24,10 +24,10 @@ rule run_diamond_cog:
 
 rule create_protein_groups_cog:
     input:
-        temp(expand("{sample}/functions/metaproteome.cog.diamond.tsv", sample=config["sample"])),
-        config["excel_file"]
+        "{sample}/annotated/{identified_id}/functions/metaproteome.cog.diamond.tsv",
+        "{sample}/identified/{identified_id}.xlsx"
     output:
-        temp(expand("{sample}/functions/metaproteome.cog.protein_groups.tsv", sample=config["sample"]))
+        temp("{sample}/annotated/{identified_id}/functions/metaproteome.cog.protein_groups.tsv")
     params:
         mode=config["functions"]["protein_groups"]["mode"]
     shell:
@@ -35,9 +35,9 @@ rule create_protein_groups_cog:
 
 rule parse_functions_cog:
     input:
-        expand("{sample}/functions/metaproteome.cog.protein_groups.tsv", sample=config["sample"])
+        "{sample}/annotated/{identified_id}/functions/metaproteome.cog.protein_groups.tsv"
     output:
-        temp(expand("{sample}/functions/metaproteome.functions.cog.parsed_table.tsv", sample=config["sample"]))
+        temp("{sample}/annotated/{identified_id}/functions/metaproteome.functions.cog.parsed_table.tsv")
     params:
         mode=config["functions"]["run_cog"]["parse_functions_cog"]["mode"],
         cog_tables=config["functions"]["run_cog"]["cog_table"],
@@ -51,10 +51,10 @@ rule parse_functions_cog:
 
 rule export_table_functions_cog:
     input:
-        config["excel_file"],
-        temp(expand("{sample}/functions/metaproteome.functions.cog.parsed_table.tsv", sample=config["sample"]))
+        "{sample}/identified/{identified_id}.xlsx",
+        "{sample}/annotated/{identified_id}/functions/metaproteome.functions.cog.parsed_table.tsv"
     output:
-        expand("{sample}/functions/metaproteome.functions.cog.tsv", sample=config["sample"])
+        "{sample}/annotated/{identified_id}/functions/metaproteome.functions.cog.tsv"
     params:
         mode=config["export_tables"]["mode"]
     shell:
@@ -62,7 +62,7 @@ rule export_table_functions_cog:
 
 rule get_functions_cog_done:
     input:
-        expand("{sample}/functions/metaproteome.functions.cog.tsv", sample=config["sample"])
+        expand("{sample}/annotated/{identified_id}/functions/metaproteome.functions.cog.tsv", sample=config["sample"], identified_id=identified_ids)
     output:
         touch("checkpoints/functions_cog.done")
 

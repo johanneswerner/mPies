@@ -1,9 +1,9 @@
 rule subset_sequences:
     input:
-        config["excel_file"],
-        expand("{sample}/proteome/metaproteome.hashed.faa", sample=config["sample"])
+        "{sample}/identified/{identified_id}.xlsx",
+        "{sample}/proteome/metaproteome.hashed.faa"
     output:
-        temp(expand("{sample}/proteome/metaproteome.subset.faa", sample=config["sample"]))
+        "{sample}/annotated/{identified_id}/proteome/metaproteome.subset.faa"
     params:
         mode=config["subset_sequences"]["mode"]
     shell:
@@ -11,7 +11,7 @@ rule subset_sequences:
 
 rule subset_sequences_done:
     input:
-        expand("{sample}/proteome/metaproteome.subset.faa", sample=config["sample"])
+        expand("{sample}/annotated/{identified_id}/proteome/metaproteome.subset.faa", sample=config["sample"], identified_id=identified_ids)
     output:
         touch("checkpoints/subset_sequences.done")
 
