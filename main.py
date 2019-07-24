@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
+import datetime
 import hashlib
 import logging
 import logging.config
@@ -66,6 +67,7 @@ def main():
 
     parser.add_argument("-v", "--verbose", action="store_true", dest="verbose", required=False, help="verbose output")
     parser.add_argument("-l", "--license", action="store_true", dest="license", required=False, help="prints license")
+    parser.add_argument("-e", "--log_event_file", action="store", dest="log_file", required=False, help="log file")
 
     subparsers = parser.add_subparsers(dest="mode",help="select the run mode")
     subparser_prepareuniprot = subparsers.add_parser("prepare_uniprot_files",
@@ -182,7 +184,8 @@ def main():
     lvl = "INFO"
     if args.verbose:
         lvl = "DEBUG"
-    logger = configure_logger(name='mpies', log_file="mpies.log", level=lvl)
+    logger = configure_logger(name="mptk_" + args.mode, log_file=args.log_file, level=lvl)
+    logger.setLevel(lvl)
 
     if args.license:
         print("mPies (metaProteomics in environmental scienes)")
@@ -198,7 +201,7 @@ def main():
 
     if len(sys.argv) == 1:
         msg = "No parameter passed. Exiting..."
-        logging.error(msg)
+        logger.error(msg)
         parser.print_help(sys.stderr)
         raise ValueError(msg)
 

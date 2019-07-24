@@ -1,5 +1,5 @@
 {
-    "sample": "OSD14subset",
+    "sample": "testproject02",
     "ressources": {
         "threads": 28,
         "megahit_memory": 0.9,
@@ -58,3 +58,4 @@
         }
     }
 }
+

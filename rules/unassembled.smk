@@ -1,13 +1,5 @@
 READS = ["R1", "R2"]
 
-# rule create_train_dir:
-#     input:
-#         "/data/miniconda3/envs/mpies/bin/train/"
-#     output:
-#         "checkpoints/train_dir.done"
-#     shell:
-#         "ln -s {input} . && touch ${output}"
-
 rule fastq2fasta:
     input:
         expand("{sample}/trimmed/{sample}_R1_trimmed_pe.fastq.gz", sample=config["sample"]),

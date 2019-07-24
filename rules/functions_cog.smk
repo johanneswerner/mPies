@@ -30,8 +30,10 @@ rule create_protein_groups_cog:
         temp("{sample}/annotated/{identified_id}/functions/metaproteome.cog.protein_groups.tsv")
     params:
         mode=config["functions"]["protein_groups"]["mode"]
+    log:
+        expand("{sample}/log/mptk_proteingroups_cog_{identified_id}.log", sample=config["sample"])
     shell:
-        "./main.py -v {params.mode} -d {input[0]} -e {input[1]} -p {output}"
+        "./main.py -v -e {log} {params.mode} -d {input[0]} -e {input[1]} -p {output}"
 
 rule parse_functions_cog:
     input:
@@ -43,9 +45,11 @@ rule parse_functions_cog:
         cog_tables=config["functions"]["run_cog"]["cog_table"],
         cog_names=config["functions"]["run_cog"]["cog_names"],
         cog_functions=config["functions"]["run_cog"]["cog_functions"]
+    log:
+        expand("{sample}/log/mptk_functions_cog_{identified_id}.log", sample=config["sample"])
     shell:
         """
-        ./main.py -v {params.mode} -d {input} -t {params.cog_tables} -n {params.cog_names} -f {params.cog_functions} \
+        ./main.py -v -e {log} {params.mode} -d {input} -t {params.cog_tables} -n {params.cog_names} -f {params.cog_functions} \
           -e {output}
         """
 
@@ -57,8 +61,10 @@ rule export_table_functions_cog:
         "{sample}/annotated/{identified_id}/functions/metaproteome.functions.cog.tsv"
     params:
         mode=config["export_tables"]["mode"]
+    log:
+        expand("{sample}/log/mptk_exporttables_cog_{identified_id}.log", sample=config["sample"])
     shell:
-        "./main.py -v {params.mode} -e {input[0]} -t {input[1]} -o {output}"
+        "./main.py -v e {log} {params.mode} -e {input[0]} -t {input[1]} -o {output}"
 
 rule get_functions_cog_done:
     input:

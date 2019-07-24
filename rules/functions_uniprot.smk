@@ -30,8 +30,10 @@ rule create_protein_groups_uniprot:
         "{sample}/annotated/{identified_id}/functions/metaproteome.uniprot.protein_groups.tsv"
     params:
         mode=config["functions"]["protein_groups"]["mode"]
+    log:
+        expand("{sample}/log/mptk_proteingroups_uniprot_{identified_id}.log", sample=config["sample"])
     shell:
-        "./main.py -v {params.mode} -d {input[0]} -e {input[1]} -p {output}"
+        "./main.py -v -e {log} {params.mode} -d {input[0]} -e {input[1]} -p {output}"
 
 rule parse_functions_uniprot:
     input:
@@ -43,8 +45,10 @@ rule parse_functions_uniprot:
         mode=config["functions"]["run_uniprot"]["parse_functions_uniprot"]["mode"],
         uniprot_table=config["functions"]["run_uniprot"]["uniprot_table"],
         go_annotation=config["functions"]["run_uniprot"]["parse_functions_uniprot"]["go_annotation"]
+    log:
+        expand("{sample}/log/mptk_parsefunctions_uniprot_{identified_id}.log", sample=config["sample"])
     shell:
-        "./main.py -v {params.mode} -d {input[0]} -t {params.uniprot_table} -e {input[1]} -o {output} {params.go_annotation}"
+        "./main.py -v -e {log} {params.mode} -d {input[0]} -t {params.uniprot_table} -e {input[1]} -o {output} {params.go_annotation}"
 
 rule export_table_functions_uniprot:
     input:
@@ -54,8 +58,10 @@ rule export_table_functions_uniprot:
         "{sample}/annotated/{identified_id}/functions/metaproteome.functions.uniprot.tsv"
     params:
         mode=config["export_tables"]["mode"]
+    log:
+        expand("{sample}/log/mptk_exporttables_uniprot_{identified_id}.log", sample=config["sample"])
     shell:
-        "./main.py -v {params.mode} -e {input[0]} -t {input[1]} -o {output}"
+        "./main.py -v -e {log} {params.mode} -e {input[0]} -t {input[1]} -o {output}"
 
 rule get_functions_uniprot:
     input:

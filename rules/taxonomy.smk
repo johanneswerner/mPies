@@ -30,8 +30,10 @@ rule create_protein_groups_taxonomy:
         "{sample}/annotated/{identified_id}/taxonomy/metaproteome.tax.protein_groups.tsv"
     params:
         mode=config["taxonomy"]["protein_groups"]["mode"]
+    log:
+        expand("{sample}/log/mptk_proteingroups_taxonomy_{identified_id}.log", sample=config["sample"])
     shell:
-        "./main.py -v {params.mode} -d {input[0]} -e {input[1]} -p {output}"
+        "./main.py -v -e {log} {params.mode} -d {input[0]} -e {input[1]} -p {output}"
 
 rule run_blast2lca:
     input:
@@ -58,8 +60,10 @@ rule parse_taxonomy:
         "{sample}/annotated/{identified_id}/taxonomy/metaproteome.parsed_table.tsv"
     params:
         mode=config["taxonomy"]["parse_taxonomy"]["mode"]
+    log:
+        expand("{sample}/log/mptk_parse_taxonomy_{identified_id}.log", sample=config["sample"])
     shell:
-        "./main.py -v {params.mode} -m {input} -t {output}"
+        "./main.py -v -e {log} {params.mode} -m {input} -t {output}"
 
 rule export_table_taxonomy:
     input:
@@ -69,8 +73,10 @@ rule export_table_taxonomy:
         "{sample}/annotated/{identified_id}/taxonomy/metaproteome.tax.tsv"
     params:
         mode=config["export_tables"]["mode"]
+    log:
+        expand("{sample}/log/mptk_exporttable_taxonomy_{identified_id}.log", sample=config["sample"])
     shell:
-        "./main.py -v {params.mode} -e {input[0]} -t {input[1]} -o {output}"
+        "./main.py -v -e {log} {params.mode} -e {input[0]} -t {input[1]} -o {output}"
 
 rule get_taxonomy_done:
     input:

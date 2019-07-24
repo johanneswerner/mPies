@@ -1,13 +1,18 @@
 rule subset_sequences:
     input:
+        #config["excel_file"],
         "{sample}/identified/{identified_id}.xlsx",
         "{sample}/proteome/metaproteome.hashed.faa"
     output:
         "{sample}/annotated/{identified_id}/proteome/metaproteome.subset.faa"
     params:
         mode=config["subset_sequences"]["mode"]
+    log:
+        expand("{sample}/log/mptk_subsetsequences_{identified_id}.log", sample=config["sample"])
     shell:
-        "./main.py -v {params.mode} -e {input[0]} -d {input[1]} -s {output}"
+        """
+        ./main.py -v -e {log} {params.mode} -e {input[0]} -d {input[1]} -s {output}
+        """
 
 rule subset_sequences_done:
     input:

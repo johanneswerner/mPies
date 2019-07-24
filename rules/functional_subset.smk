@@ -5,8 +5,10 @@ rule obtain_functional_subset:
         expand("{sample}/functional_subset/functional_subset.faa", sample=config["sample"])
     params:
         mode=config["functional_subset"]["mode"]
+    log:
+        expand("{sample}/log/mptk_functionalsubset.log", sample=config["sample"])
     shell:
-        "./main.py -v {params.mode} -t {input} -p {output}"
+        "./main.py -v -e {log} {params.mode} -t {input} -p {output}"
 
 rule get_functional_subset_done:
     input:
