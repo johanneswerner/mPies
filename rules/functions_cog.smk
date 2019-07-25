@@ -31,7 +31,7 @@ rule create_protein_groups_cog:
     params:
         mode=config["functions"]["protein_groups"]["mode"]
     log:
-        expand("{sample}/log/mptk_proteingroups_cog_{identified_id}.log", sample=config["sample"])
+        "{sample}/log/mptk_proteingroups_cog_{identified_id}.log"
     shell:
         "./main.py -v -e {log} {params.mode} -d {input[0]} -e {input[1]} -p {output}"
 
@@ -46,7 +46,7 @@ rule parse_functions_cog:
         cog_names=config["functions"]["run_cog"]["cog_names"],
         cog_functions=config["functions"]["run_cog"]["cog_functions"]
     log:
-        expand("{sample}/log/mptk_functions_cog_{identified_id}.log", sample=config["sample"])
+        "{sample}/log/mptk_functions_cog_{identified_id}.log"
     shell:
         """
         ./main.py -v -e {log} {params.mode} -d {input} -t {params.cog_tables} -n {params.cog_names} -f {params.cog_functions} \
@@ -62,7 +62,7 @@ rule export_table_functions_cog:
     params:
         mode=config["export_tables"]["mode"]
     log:
-        expand("{sample}/log/mptk_exporttables_cog_{identified_id}.log", sample=config["sample"])
+        "{sample}/log/mptk_exporttables_cog_{identified_id}.log"
     shell:
         "./main.py -v e {log} {params.mode} -e {input[0]} -t {input[1]} -o {output}"
 

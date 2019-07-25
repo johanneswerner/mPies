@@ -8,7 +8,7 @@ rule subset_sequences:
     params:
         mode=config["subset_sequences"]["mode"]
     log:
-        expand("{sample}/log/mptk_subsetsequences_{identified_id}.log", sample=config["sample"])
+        "{sample}/log/mptk_subsetsequences_{identified_id}.log"
     shell:
         """
         ./main.py -v -e {log} {params.mode} -e {input[0]} -d {input[1]} -s {output}

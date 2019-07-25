@@ -31,7 +31,7 @@ rule create_protein_groups_taxonomy:
     params:
         mode=config["taxonomy"]["protein_groups"]["mode"]
     log:
-        expand("{sample}/log/mptk_proteingroups_taxonomy_{identified_id}.log", sample=config["sample"])
+        "{sample}/log/mptk_proteingroups_taxonomy_{identified_id}.log"
     shell:
         "./main.py -v -e {log} {params.mode} -d {input[0]} -e {input[1]} -p {output}"
 
@@ -61,7 +61,7 @@ rule parse_taxonomy:
     params:
         mode=config["taxonomy"]["parse_taxonomy"]["mode"]
     log:
-        expand("{sample}/log/mptk_parse_taxonomy_{identified_id}.log", sample=config["sample"])
+        "{sample}/log/mptk_parse_taxonomy_{identified_id}.log"
     shell:
         "./main.py -v -e {log} {params.mode} -m {input} -t {output}"
 
@@ -74,7 +74,7 @@ rule export_table_taxonomy:
     params:
         mode=config["export_tables"]["mode"]
     log:
-        expand("{sample}/log/mptk_exporttable_taxonomy_{identified_id}.log", sample=config["sample"])
+        "{sample}/log/mptk_exporttable_taxonomy_{identified_id}.log"
     shell:
         "./main.py -v -e {log} {params.mode} -e {input[0]} -t {input[1]} -o {output}"
 
