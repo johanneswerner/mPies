@@ -8,7 +8,7 @@ rule obtain_functional_subset:
     log:
         expand("{sample}/log/mptk_functionalsubset.log", sample=config["sample"])
     shell:
-        "./main.py -v -e {log} {params.mode} -t {input} -p {output}"
+        "./main.py -v -z {log} {params.mode} -t {input} -p {output}"
 
 rule get_functional_subset_done:
     input:

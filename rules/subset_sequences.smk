@@ -11,7 +11,7 @@ rule subset_sequences:
         "{sample}/log/mptk_subsetsequences_{identified_id}.log"
     shell:
         """
-        ./main.py -v -e {log} {params.mode} -e {input[0]} -d {input[1]} -s {output}
+        ./main.py -v -z {log} {params.mode} -e {input[0]} -d {input[1]} -s {output}
         """
 
 rule subset_sequences_done:

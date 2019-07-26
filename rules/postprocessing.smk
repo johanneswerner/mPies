@@ -42,7 +42,7 @@ rule hash_headers:
     log:
         expand("{sample}/log/mptk_hashheaders.log", sample=config["sample"])
     shell:
-        "./main.py -v -e {log} {params.mode} -p {input} -s {output[0]} -t {output[1]} -x {params.hash_type}"
+        "./main.py -v -z {log} {params.mode} -p {input} -s {output[0]} -t {output[1]} -x {params.hash_type}"
 
 rule postprocessing_done:
     input:

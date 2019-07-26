@@ -33,7 +33,7 @@ rule create_protein_groups_cog:
     log:
         "{sample}/log/mptk_proteingroups_cog_{identified_id}.log"
     shell:
-        "./main.py -v -e {log} {params.mode} -d {input[0]} -e {input[1]} -p {output}"
+        "./main.py -v -z {log} {params.mode} -d {input[0]} -e {input[1]} -p {output}"
 
 rule parse_functions_cog:
     input:
@@ -49,7 +49,7 @@ rule parse_functions_cog:
         "{sample}/log/mptk_functions_cog_{identified_id}.log"
     shell:
         """
-        ./main.py -v -e {log} {params.mode} -d {input} -t {params.cog_tables} -n {params.cog_names} -f {params.cog_functions} \
+        ./main.py -v -z {log} {params.mode} -d {input} -t {params.cog_tables} -n {params.cog_names} -f {params.cog_functions} \
           -e {output}
         """
 
@@ -64,7 +64,7 @@ rule export_table_functions_cog:
     log:
         "{sample}/log/mptk_exporttables_cog_{identified_id}.log"
     shell:
-        "./main.py -v e {log} {params.mode} -e {input[0]} -t {input[1]} -o {output}"
+        "./main.py -v z {log} {params.mode} -e {input[0]} -t {input[1]} -o {output}"
 
 rule get_functions_cog_done:
     input:

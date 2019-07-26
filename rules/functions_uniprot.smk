@@ -33,12 +33,11 @@ rule create_protein_groups_uniprot:
     log:
         "{sample}/log/mptk_proteingroups_uniprot_{identified_id}.log"
     shell:
-        "./main.py -v -e {log} {params.mode} -d {input[0]} -e {input[1]} -p {output}"
+        "./main.py -v -z {log} {params.mode} -d {input[0]} -e {input[1]} -p {output}"
 
 rule parse_functions_uniprot:
     input:
-        "{sample}/annotated/{identified_id}/functions/metaproteome.uniprot.protein_groups.tsv",
-        "{sample}/identified/{identified_id}.xlsx"
+        "{sample}/annotated/{identified_id}/functions/metaproteome.uniprot.protein_groups.tsv"
     output:
         "{sample}/annotated/{identified_id}/functions/metaproteome.functions.uniprot.parsed_table.tsv"
     params:
@@ -48,7 +47,7 @@ rule parse_functions_uniprot:
     log:
         "{sample}/log/mptk_parsefunctions_uniprot_{identified_id}.log"
     shell:
-        "./main.py -v -e {log} {params.mode} -d {input[0]} -t {params.uniprot_table} -e {input[1]} -o {output} {params.go_annotation}"
+        "./main.py -v -z {log} {params.mode} -d {input} -t {params.uniprot_table} -e {output} {params.go_annotation}"
 
 rule export_table_functions_uniprot:
     input:
@@ -61,7 +60,7 @@ rule export_table_functions_uniprot:
     log:
         "{sample}/log/mptk_exporttables_uniprot_{identified_id}.log"
     shell:
-        "./main.py -v -e {log} {params.mode} -e {input[0]} -t {input[1]} -o {output}"
+        "./main.py -v -z {log} {params.mode} -e {input[0]} -t {input[1]} -o {output}"
 
 rule get_functions_uniprot:
     input:

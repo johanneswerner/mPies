@@ -29,7 +29,7 @@ if config["otu_table"]["run_singlem"]:
         log:
             expand("{sample}/log/mptk_otu_gettaxlist.log", sample=config["sample"])
         shell:
-            "./main.py -v -e {log} {params.mode} -t {input} -u {output} -c {params.cutoff}"
+            "./main.py -v -z {log} {params.mode} -t {input} -u {output} -c {params.cutoff}"
 
     rule obtain_proteome:
         input:
@@ -41,7 +41,7 @@ if config["otu_table"]["run_singlem"]:
         log:
             expand("{sample}/log/mptk_otu_getproteome.log", sample=config["sample"])
         shell:
-            "./main.py -v -e {log} {params.mode} -g {input} -p {output}"
+            "./main.py -v -z {log} {params.mode} -g {input} -p {output}"
 
 else:
     rule obtain_proteome:
@@ -54,7 +54,7 @@ else:
         log:
             expand("{sample}/log/mptk_otu_getproteome.log", sample=config["sample"])
         shell:
-            "./main.py -v -e {log} {params.mode} -g {input} -p {output}"
+            "./main.py -v -z {log} {params.mode} -g {input} -p {output}"
 
 rule get_amplicon_proteome_done:
     input:

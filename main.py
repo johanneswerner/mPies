@@ -67,7 +67,7 @@ def main():
 
     parser.add_argument("-v", "--verbose", action="store_true", dest="verbose", required=False, help="verbose output")
     parser.add_argument("-l", "--license", action="store_true", dest="license", required=False, help="prints license")
-    parser.add_argument("-e", "--log_event_file", action="store", dest="log_file", required=False, help="log file")
+    parser.add_argument("-z", "--log_event_file", action="store", dest="log_file", required=False, help="log file")
 
     subparsers = parser.add_subparsers(dest="mode",help="select the run mode")
     subparser_prepareuniprot = subparsers.add_parser("prepare_uniprot_files",
@@ -181,6 +181,11 @@ def main():
 
     args = parser.parse_args()
 
+    if len(sys.argv) == 1:
+        msg = "No parameter passed. Exiting..."
+        parser.print_help(sys.stderr)
+        raise ValueError(msg)
+
     lvl = "INFO"
     if args.verbose:
         lvl = "DEBUG"
@@ -198,12 +203,6 @@ def main():
         sys.exit(0)
 
     logger.info("(metaproteomics toolkit) started")
-
-    if len(sys.argv) == 1:
-        msg = "No parameter passed. Exiting..."
-        logger.error(msg)
-        parser.print_help(sys.stderr)
-        raise ValueError(msg)
 
     if args.mode == "prepare_uniprot_files":
         logger.info("parsing UniProt file")
