@@ -80,7 +80,7 @@ def group_table(df, cog_functions, number_of_entries=1):
     df = df[cols]
     df.sort_values(["qseqid", "counts"], ascending=[True, False], inplace=True)
     df.rename(columns={"qseqid": "protein_group"}, inplace=True)
-    df_uniprot = df_uniprot.groupby("protein_group").head(number_of_entries)
+    df = df.groupby("protein_group").head(number_of_entries)
 
     return df
 

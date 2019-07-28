@@ -64,7 +64,7 @@ rule export_table_functions_cog:
     log:
         "{sample}/log/mptk_exporttables_cog_{identified_id}.log"
     shell:
-        "./main.py -v z {log} {params.mode} -e {input[0]} -t {input[1]} -o {output}"
+        "./main.py -v -z {log} {params.mode} -e {input[0]} -t {input[1]} -o {output}"
 
 rule get_functions_cog_done:
     input:
