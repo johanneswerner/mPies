@@ -6,6 +6,10 @@ mPies is a workflow to create annotated databases for metaproteomic analysis.
 This workflow uses three different databases for a metagenome (i) OTU-table, (ii) assembled-derived, (iii) and
 unassembled-derived to build a consensus of these databases and increase the mapping sensitivity.
 
+If you use mPies for your research, please cite our publication:
+
+Werner, J., Géron, A., Kerssemakers, J. et al. mPies: a novel metaproteomics tool for the creation of relevant protein databases and automatized protein annotation. Biol Direct 14, 21 (2019) doi: [10.1186/s13062-019-0253-x](https://doi.org/10.1186/s13062-019-0253-x)
+
 ## Installation
 
 The easiest way is to use bioconda and create a new environment.
