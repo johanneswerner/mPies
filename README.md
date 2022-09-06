@@ -19,15 +19,6 @@ conda env create -n mpies --file conda_env.yml
 conda activate mpies
 ```
 
-SingleM has been packaged by AppImage (due to the Python 2 dependency).  Download
-[AppImage](https://github.com/AppImage/AppImageKit/releases) and build the image with
-
-```bash
-cd appimages
-./appimage_singlem.sh
-appimagetool-x86_64.AppImage singlem-x86_64.AppImage/ singlem.AppImage
-```
-
 ## Usage
 
 mPies consists of two parts: database creation and annotation. Both parts are written in Snakemake.
@@ -54,6 +45,10 @@ In order to create the amplicon-derived proteome file, there are two possibiliti
 then a text file with the taxon names (one per line) is used for downloading the proteomes from UniProt. If no
 amplicon data is available, you can set the option `config["otu_table"]["run_singlem"]` to `true` and a taxon file is
 created with SingleM (this tool detects OTU abundances based on metagenome shotgun sequencing data).
+
+###### Important Note: SingleM
+
+SingleM currently cannot be used as it uses orator as a dependency that still relies on Python 3.5. As long as this is not fixed (and since the last code edit in the orator Github repository is 3 years ago (state of this comment: September, 2022), it is not likely that this will happen anytime soon), SingleM cannot be used and is deactivated until further notice.
 
 ##### Functional-derived subset
 
