@@ -32,11 +32,11 @@ dependencies:
   - brotlipy=0.7.0=py39hb9d737c_1004
   - bzip2=1.0.8=h7f98852_4
   - c-ares=1.18.1=h7f98852_0
-  - ca-certificates=2022.6.15=ha878542_0
+  - ca-certificates=2022.9.14=ha878542_0
   - cachetools=5.2.0=pyhd8ed1ab_0
   - cairo=1.16.0=ha12eb4b_1010
   - cd-hit-auxtools=4.8.1=h9f5acd7_2
-  - certifi=2022.6.15=py39hf3d152e_0
+  - certifi=2022.9.14=pyhd8ed1ab_0
   - cffi=1.15.1=py39he91dace_0
   - chardet=5.0.0=py39hf3d152e_0
   - charset-normalizer=2.1.1=pyhd8ed1ab_0
@@ -61,6 +61,7 @@ dependencies:
   - docutils=0.19=py39hf3d152e_0
   - dpath=2.0.6=py39hf3d152e_1
   - dropbox=11.34.0=pyhd8ed1ab_0
+  - et_xmlfile=1.0.1=py_1001
   - ete3=3.1.2=pyh9f0ad1d_0
   - expat=2.4.8=h27087fc_0
   - fftw=3.3.10=nompi_hf0379b8_105
@@ -203,6 +204,7 @@ dependencies:
   - openblas=0.3.21=pthreads_h320a7e8_3
   - openjdk=11.0.1=h516909a_1016
   - openjpeg=2.4.0=hb52868f_1
+  - openpyxl=3.0.10=py39hb9d737c_1
   - openssl=1.1.1q=h166bdaf_0
   - packaging=21.3=pyhd8ed1ab_0
   - pandas=1.4.4=py39h1832856_0
