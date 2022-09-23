@@ -10,6 +10,7 @@ the respective genera. The taxonomic lineage will be added to the protein header
 import logging
 import os
 import re
+import requests
 import urllib.parse
 import urllib.request
 from ete3 import NCBITaxa
@@ -119,12 +120,15 @@ def get_protein_sequences(tax_list, output_file, ncbi_tax_dict, query=None, revi
         taxon_query = ' OR '.join(taxon_queries)
         query = "%s%s" % (taxon_query, rev)
 
-    url = 'https://www.uniprot.org/uniprot/'
+    url = 'https://legacy.uniprot.org/uniprot/'
 
     params = {'query': query, 'force': 'yes', 'format': 'fasta'}
     data = urllib.parse.urlencode(params).encode("utf-8")
     if not tax_list:
         logger.info("Taxid: " + str(tax_list))
+    request = urllib.request.Request(url, data)
+    with urllib.request.urlopen(request) as response:
+        msg = response.read()
     msg = urllib.request.urlretrieve(url=url, filename=filename, data=data)[1]
     headers = {j[0]: j[1].strip() for j in [i.split(':', 1)
                                                 for i in str(msg).strip().splitlines()]}
