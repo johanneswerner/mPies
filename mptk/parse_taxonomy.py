@@ -31,9 +31,23 @@ def parse_table(input_file, output_file, score_cutoff=0):
       None
 
     """
-    column_names = ["id", "_blank", "d_name", "d_score", "p_name", "p_score", "c_name", "c_score", "o_name", "o_score",
-                    "f_name", "f_score", "g_name", "g_score", "s_name", "s_score", "__blank"]
-    df = pd.read_csv(input_file, sep=";", engine="python", header=None, names=column_names, usecols=list(range(17)))
+    column_names = ["id", "_blank",
+                    "d_name", "d_score",
+                    "p_name", "p_score",
+                    "c_name", "c_score",
+                    "o_name", "o_score",
+                    "f_name", "f_score",
+                    "g_name", "g_score",
+                    "s_name", "s_score",
+                    "ed_name", "ed_score",
+                    "ep_name", "ep_score",
+                    "ec_name", "ec_score",
+                    "eo_name", "eo_score",
+                    "ef_name", "ef_score",
+                    "eg_name", "eg_score",
+                    "es_name", "es_score",
+                    "__blank"]
+    df = pd.read_csv(input_file, sep=";", engine="python", header=None, names=column_names, usecols=list(range(31)))
     df.drop(df.columns[[1, -1]], axis=1, inplace=True)
 
     if score_cutoff != 0:
@@ -44,6 +58,14 @@ def parse_table(input_file, output_file, score_cutoff=0):
         df.loc[df["f_score"] < score_cutoff, "f_name"] = "f__belowScoreCutoff"
         df.loc[df["g_score"] < score_cutoff, "g_name"] = "g__belowScoreCutoff"
         df.loc[df["s_score"] < score_cutoff, "s_name"] = "s__belowScoreCutoff"
+        df.loc[df["ed_score"] < score_cutoff, "ed_name"] = "ed__belowScoreCutoff"
+        df.loc[df["ep_score"] < score_cutoff, "ep_name"] = "ep__belowScoreCutoff"
+        df.loc[df["ec_score"] < score_cutoff, "ec_name"] = "ec__belowScoreCutoff"
+        df.loc[df["eo_score"] < score_cutoff, "eo_name"] = "eo__belowScoreCutoff"
+        df.loc[df["ef_score"] < score_cutoff, "ef_name"] = "ef__belowScoreCutoff"
+        df.loc[df["eg_score"] < score_cutoff, "eg_name"] = "eg__belowScoreCutoff"
+        df.loc[df["es_score"] < score_cutoff, "es_name"] = "es__belowScoreCutoff"
+
 
     df.rename(columns={"id": "protein_group"}, inplace=True)
     df = df.groupby("protein_group").head(1)
