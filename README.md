@@ -12,7 +12,7 @@ Werner, J., Géron, A., Kerssemakers, J. et al. mPies: a novel metaproteomics to
 
 ## Installation
 
-The easiest way is to use bioconda and create a new environment.
+The easiest way is to use bioconda and create a new environment. For a faster installation, consider installing micromamba and replace `conda` with `mamba` in all runs.
 
 ```bash
 conda env create -n mpies --file conda_env.yml
