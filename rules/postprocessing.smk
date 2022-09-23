@@ -1,8 +1,9 @@
 rule combine_proteomes:
     input:
+        # expand("{sample}/proteome/functional_subset.faa", sample=config["sample"]),
         expand("{sample}/proteome/amplicon.faa", sample=config["sample"]),
-        expand("{sample}/proteome/assembled.faa", sample=config["sample"]),
-        expand("{sample}/proteome/unassembled.faa", sample=config["sample"])
+        # expand("{sample}/proteome/assembled.faa", sample=config["sample"]),
+        # expand("{sample}/proteome/unassembled.faa", sample=config["sample"])
     output:
         expand("{sample}/proteome/metaproteome.faa", sample=config["sample"])
     shell:

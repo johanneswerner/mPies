@@ -2,7 +2,7 @@ rule obtain_functional_subset:
     input:
         expand("{sample}/functional_subset/functional_subset.toml", sample=config["sample"])
     output:
-        expand("{sample}/functional_subset/functional_subset.faa", sample=config["sample"])
+        expand("{sample}/proteome/functional_subset.faa", sample=config["sample"])
     params:
         mode=config["functional_subset"]["mode"]
     log:
@@ -12,9 +12,9 @@ rule obtain_functional_subset:
 
 rule get_functional_subset_done:
     input:
-        expand("{sample}/functional_subset/functional_subset.faa", sample=config["sample"])
+        expand("{sample}/proteome/functional_subset.faa", sample=config["sample"])
     output:
-        touch("checkpoints/functional_subset.done")
+        touch("checkpoints/functional_subset_proteome.done")
 
 
 # mPies (metaProteomics in environmental sciences) creates annotated databases for metaproteomics analysis.
